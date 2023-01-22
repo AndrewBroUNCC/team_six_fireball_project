@@ -1,5 +1,5 @@
 package com.example.team_six_fireball_project;
-//Andrew Brown testt 2
+//Andrew Brown
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
