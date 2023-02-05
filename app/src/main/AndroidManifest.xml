@@ -7,7 +7,7 @@
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
         android:icon="@mipmap/ic_launcher"
-        android:label="@string/app_name"
+        android:label="FireBorn: Meteors"
         android:supportsRtl="true"
         android:theme="@style/Theme.Team_six_fireball_project"
         tools:targetApi="31">

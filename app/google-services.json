@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "65390748094",
+    "project_id": "team-six-fireball-project",
+    "storage_bucket": "team-six-fireball-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:65390748094:android:11688dc393df9ec9ec59ef",
+        "android_client_info": {
+          "package_name": "com.example.team_six_fireball_project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "65390748094-efq7djdf250jjl2drfukdjej6jau8t92.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC6TJIdhPve6WmKBn4zfdgn7kdSIm0cxcc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "65390748094-efq7djdf250jjl2drfukdjej6jau8t92.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

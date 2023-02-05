@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/frameLayout3"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".RegisterFragment">
+
+    <TextView
+        android:id="@+id/textViewRegPageTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="54dp"
+        android:text="Creating New Account"
+        android:textSize="34dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextRegisterPgEmail"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:ems="10"
+        android:hint="Enter Email "
+        android:inputType="textPersonName"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/textViewRegPageTitle"
+        app:layout_constraintStart_toStartOf="@+id/textViewRegPageTitle"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRegPageTitle" />
+
+    <EditText
+        android:id="@+id/editTextRegisterPgPassword"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:ems="10"
+        android:hint="Enter Password"
+        android:inputType="textPersonName"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgEmail"
+        app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgEmail"
+        app:layout_constraintTop_toBottomOf="@+id/editTextRegisterPgEmail" />
+
+    <Button
+        android:id="@+id/buttonRegisterPgRegister"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="50dp"
+        android:height="60dp"
+        android:text="Register"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgPassword"
+        app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgPassword"
+        app:layout_constraintTop_toBottomOf="@+id/editTextRegisterPgPassword" />
+
+    <Button
+        android:id="@+id/buttonRegisterPgCancel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:height="60dp"
+        android:text="Cancel"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/buttonRegisterPgRegister"
+        app:layout_constraintStart_toStartOf="@+id/buttonRegisterPgRegister"
+        app:layout_constraintTop_toBottomOf="@+id/buttonRegisterPgRegister" />
+</androidx.constraintlayout.widget.ConstraintLayout>
