@@ -22,14 +22,14 @@
         android:id="@+id/editTextRegisterPgEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="24dp"
         android:ems="10"
         android:hint="Enter Email "
         android:inputType="textPersonName"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/textViewRegPageTitle"
         app:layout_constraintStart_toStartOf="@+id/textViewRegPageTitle"
-        app:layout_constraintTop_toBottomOf="@+id/textViewRegPageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextRegFragName" />
 
     <EditText
         android:id="@+id/editTextRegisterPgPassword"
@@ -48,11 +48,12 @@
         android:id="@+id/buttonRegisterPgRegister"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="54dp"
         android:height="60dp"
         android:text="Register"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgPassword"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgPassword"
         app:layout_constraintTop_toBottomOf="@+id/editTextRegisterPgPassword" />
 
@@ -67,4 +68,17 @@
         app:layout_constraintEnd_toEndOf="@+id/buttonRegisterPgRegister"
         app:layout_constraintStart_toStartOf="@+id/buttonRegisterPgRegister"
         app:layout_constraintTop_toBottomOf="@+id/buttonRegisterPgRegister" />
+
+    <EditText
+        android:id="@+id/editTextRegFragName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="108dp"
+        android:ems="10"
+        android:hint="Enter Name"
+        android:inputType="textPersonName"
+        android:textSize="24sp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgPassword"
+        app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgPassword"
+        app:layout_constraintTop_toBottomOf="@+id/textViewRegPageTitle" />
 </androidx.constraintlayout.widget.ConstraintLayout>

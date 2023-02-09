@@ -59,46 +59,13 @@ public class LoginFragment extends Fragment {
         buttonLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                LoginRunnable logRunnable = new LoginRunnable();
+                new Thread(logRunnable).start();
 
-                String email = editTextEmail.getText().toString();
-                String password = editTextPassword.getText().toString();
-
-                if (email.isEmpty()) {
-                    Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
-                } else if (password.isEmpty()) {
-                    Toast.makeText(getContext(), "Password is Empty", Toast.LENGTH_SHORT).show();
-                } else {
-                    //calls firebase instance
-                    mAuth = FirebaseAuth.getInstance();
-                    //now to login = call V
-                    mAuth.signInWithEmailAndPassword(email, password)
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    //////now to see if task is successful
-                                    if (task.isSuccessful()){
-                                        Log.d(TAG, "onComplete: Logged in successfully");
-                                        //how to get currentUser if login is successful. if it isnt it will be null
-                                        mAuth.getCurrentUser();
-                                        //you can get stuff from user using = V
-                                        mAuth.getCurrentUser().getDisplayName();
-                                        mAuth.getCurrentUser().getUid();
-
-                                        getParentFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, new MainFragment())
-                                                .commit();
-
-                                    } else {
-                                        Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
-                                        Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                }
-                            });
-
-                }
             }
         });
 
+        //goes to register page
         buttonRegister.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -109,5 +76,50 @@ public class LoginFragment extends Fragment {
         });
 
         return view;
+    }
+
+    class LoginRunnable implements Runnable{
+
+        //does not need constructor. just needs to run.
+
+        @Override
+        public void run() {
+            String email = editTextEmail.getText().toString();
+            String password = editTextPassword.getText().toString();
+
+            if (email.isEmpty()) {
+                Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
+            } else if (password.isEmpty()) {
+                Toast.makeText(getContext(), "Password is Empty", Toast.LENGTH_SHORT).show();
+            } else {
+                //calls firebase instance
+                mAuth = FirebaseAuth.getInstance();
+                //now to login = call V
+                mAuth.signInWithEmailAndPassword(email, password)
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                //////now to see if task is successful
+                                if (task.isSuccessful()){
+                                    Log.d(TAG, "onComplete: Logged in successfully");
+                                    //how to get currentUser if login is successful. if it isnt it will be null
+                                    mAuth.getCurrentUser();
+                                    //you can get stuff from user using = V
+                                    mAuth.getCurrentUser().getDisplayName();
+                                    mAuth.getCurrentUser().getUid();
+
+                                    getParentFragmentManager().beginTransaction()
+                                            .replace(R.id.fragment_container, new MainFragment())
+                                            .commit();
+
+                                } else {
+                                    Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
+                                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        });
+
+            }
+        }
     }
 }

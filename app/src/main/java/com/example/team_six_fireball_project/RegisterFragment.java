@@ -40,7 +40,7 @@ public class RegisterFragment extends Fragment {
         }
     }
 
-    EditText editTextEmail, editTextPassword;
+    EditText editTextEmail, editTextPassword, editTextName;
     Button buttonRegister, buttonCancel;
 
     @Override
@@ -54,6 +54,7 @@ public class RegisterFragment extends Fragment {
         editTextPassword = view.findViewById(R.id.editTextRegisterPgPassword);
         buttonRegister = view.findViewById(R.id.buttonRegisterPgRegister);
         buttonCancel = view.findViewById(R.id.buttonRegisterPgCancel);
+        editTextName = view.findViewById(R.id.editTextRegFragName);
 
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -65,35 +66,50 @@ public class RegisterFragment extends Fragment {
         });
 
         buttonRegister.setOnClickListener(new View.OnClickListener() {
+            //made a new thread to run registering
             @Override
             public void onClick(View view) {
-                String email = editTextEmail.getText().toString();
-                String password = editTextPassword.getText().toString();
-
-                if (email.isEmpty()) {
-                    Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
-                } else if (password.isEmpty()) {
-                    Toast.makeText(getContext(), "Password is Empty", Toast.LENGTH_SHORT).show();
-                } else {
-                    mAuth = FirebaseAuth.getInstance();
-                    mAuth.createUserWithEmailAndPassword(email,password)
-                            .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                                @Override
-                                public void onComplete(@NonNull Task<AuthResult> task) {
-                                    if(task.isSuccessful()){
-                                        Log.d(TAG, "onComplete: Logged in successfully");
-                                        getParentFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, new MainFragment())
-                                                .commit();
-                                    } else {
-                                        Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
-                                    }
-                                }
-                            });
-                }
+                RegisterRunnable registerRunnable = new RegisterRunnable();
+                new Thread(registerRunnable).start();
             }
         });
 
         return view;
+    }
+
+    class RegisterRunnable implements Runnable {
+
+        @Override
+        public void run() {
+            String email = editTextEmail.getText().toString();
+            String password = editTextPassword.getText().toString();
+            String name = editTextName.getText().toString();
+
+            if(name.isEmpty()){
+                Toast.makeText(getContext(), "Name is Empty", Toast.LENGTH_SHORT).show();
+            }
+            else if (email.isEmpty()) {
+                Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
+            } else if (password.isEmpty()) {
+                Toast.makeText(getContext(), "Password is Empty", Toast.LENGTH_SHORT).show();
+            } else {
+                mAuth = FirebaseAuth.getInstance();
+                mAuth.createUserWithEmailAndPassword(email,password)
+                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+                                if(task.isSuccessful()){
+                                    //TODO: add data base to save user
+                                    Log.d(TAG, "onComplete: Logged in successfully");
+                                    getParentFragmentManager().beginTransaction()
+                                            .replace(R.id.fragment_container, new MainFragment())
+                                            .commit();
+                                } else {
+                                    Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
+                                }
+                            }
+                        });
+            }
+        }
     }
 }

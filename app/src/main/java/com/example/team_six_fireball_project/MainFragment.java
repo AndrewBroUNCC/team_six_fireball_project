@@ -40,18 +40,16 @@ public class MainFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
+        getActivity().setTitle("Home Page");
+
         mAuth = FirebaseAuth.getInstance();
         textViewLoginShow = view.findViewById(R.id.textViewMainFragmentLogin);
         textViewLogout = view.findViewById(R.id.textViewMainFragLogOut);
 
-        try {
+
             if (mAuth.getCurrentUser() != null) {
                 textViewLoginShow.setText(mAuth.getCurrentUser().getEmail() + " is Logged in");
             }
-
-        } finally {
-
-        }
 
         textViewLogout.setOnClickListener(new View.OnClickListener() {
             @Override

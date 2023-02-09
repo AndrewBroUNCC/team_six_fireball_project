@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 
+//https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
+
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
     DrawerLayout drawer;
 
@@ -57,30 +59,47 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-        switch (item.getItemId()){
-            case R.id.nav_home:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new MainFragment())
-                        .commit();
-                break;
-            case R.id.nav_login:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new LoginFragment())
-                        .commit();
-                break;
-            case R.id.nav_info:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new InfoFragment())
-                        .commit();
-                break;
-            case R.id.nav_map:
-                getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new MapFragment())
-                        .commit();
-                break;
-        }
-        drawer.closeDrawer(GravityCompat.START);
+
+        //running on a new thread to increase app speed
+        NavRunnable runnable = new NavRunnable(item);
+        new Thread(runnable).start();
+
         return true;
+    }
+
+    class NavRunnable implements Runnable{
+        MenuItem item;
+
+        public NavRunnable(MenuItem item) {
+            this.item = item;
+        }
+
+        @Override
+        public void run() {
+            switch (item.getItemId()){
+                case R.id.nav_home:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new MainFragment())
+                            .commit();
+                    break;
+                case R.id.nav_login:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new LoginFragment())
+                            .commit();
+                    break;
+                case R.id.nav_info:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new InfoFragment())
+                            .commit();
+                    break;
+                case R.id.nav_map:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new MapFragment())
+                            .commit();
+                    break;
+            }
+            drawer.closeDrawer(GravityCompat.START);
+        }
     }
 }
 
