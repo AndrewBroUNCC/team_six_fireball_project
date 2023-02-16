@@ -1,0 +1,117 @@
+package com.example.team_six_fireball_project;
+
+import android.annotation.SuppressLint;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
+
+import com.google.firebase.auth.FirebaseAuth;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+
+public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewForumsAdapter.UserViewHolder> {
+
+    final String TAG = "demo";
+    FirebaseAuth mAuth;
+    IRecycleViewForumsAdapter mRecycleViewForumsAdapter;
+    ArrayList<Forum> forums;
+    //RecycleViewExpensesFragAdapter.IRecycleViewExpensesFragAdapter mRecycleViewExpensesFragAdapter;
+
+    public RecycleViewForumsAdapter(ArrayList<Forum> data, IRecycleViewForumsAdapter adapter) {
+        //this.mRecycleViewExpensesFragAdapter = adapter;
+        this.forums = data;
+        mRecycleViewForumsAdapter = adapter;
+        //mRecycleViewExpensesFragAdapter = adapter;
+
+    }
+
+    @NonNull
+    @Override
+    public RecycleViewForumsAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_view_forum_item, parent, false);
+        RecycleViewForumsAdapter.UserViewHolder userViewHolder = new RecycleViewForumsAdapter.UserViewHolder(view);
+        return userViewHolder;
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull RecycleViewForumsAdapter.UserViewHolder holder, @SuppressLint("RecyclerView") int position) {
+        /*String user = users.get(position);
+        holder.textView.setText(user);
+
+        holder.sortViewContainer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //Log.d("demo", "onClick: " + position);
+                mUserRecyclerViewAdapter.sortByPositionClicked(position);
+            }
+        });*/
+
+
+
+        Forum forum = forums.get(position);
+
+        String title = forum.getTitle();
+        String creator = forum.getCreator();
+        String description = forum.getDescription();
+        String date = forum.getCreatedDate();
+
+        holder.textViewTitle.setText(title);
+        holder.textViewCreator.setText(creator);
+        holder.textViewDescription.setText(description);
+        holder.textViewDate.setText(date);
+
+        mAuth = FirebaseAuth.getInstance();
+        //Log.d(TAG, "onBindViewHolder: user LOGGED IN: id test = " + mAuth.getCurrentUser().getUid());
+        //Log.d(TAG, "onBindViewHolder: user id of post = " + forum.userID);
+
+        if (mAuth.getCurrentUser().getUid().equals(forum.userID)){
+            holder.imageViewTrash.setVisibility(View.VISIBLE);
+        } else{
+            holder.imageViewTrash.setVisibility(View.INVISIBLE);
+        }
+
+        holder.imageViewTrash.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecycleViewForumsAdapter.deleteThisExpense(position);
+            }
+        });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecycleViewForumsAdapter.openCommentSectionOfTopic(forum.getForumID());
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount() {
+        return this.forums.size();
+    }
+
+    public static class UserViewHolder extends RecyclerView.ViewHolder {
+        //TextView textView = itemView.findViewById(R.id.textViewSortText);
+        // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
+        TextView textViewTitle = itemView.findViewById(R.id.textViewForumViewTitle);
+        TextView textViewCreator = itemView.findViewById(R.id.textViewForumViewCreator);
+        TextView textViewDescription = itemView.findViewById(R.id.textViewForumViewDiscription);
+        TextView textViewDate = itemView.findViewById(R.id.textViewForumViewDate);
+        ImageView imageViewTrash = itemView.findViewById(R.id.imageViewTrashDelete);
+
+        public UserViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+    }
+    interface IRecycleViewForumsAdapter{
+        void deleteThisExpense(int position);
+        void openCommentSectionOfTopic(String forumID);
+    }
+}

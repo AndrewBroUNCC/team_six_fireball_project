@@ -1,7 +1,9 @@
 package com.example.team_six_fireball_project;
 
+import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
@@ -13,11 +15,19 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class MainFragment extends Fragment {
 
+    int alert;
     FirebaseAuth mAuth;
     TextView textViewLoginShow, textViewLogout;
     public MainFragment() {
         // Required empty public constructor
+        alert = 0;
     }
+
+    public MainFragment(int i) {
+        alert = i;
+    }
+
+
 
 
     public static MainFragment newInstance() {
@@ -42,6 +52,17 @@ public class MainFragment extends Fragment {
 
         getActivity().setTitle("Home Page");
 
+        if(alert == 1){
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Error")
+                    .setMessage("You must be Logged In to access Forum")
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).show();
+        }
         mAuth = FirebaseAuth.getInstance();
         textViewLoginShow = view.findViewById(R.id.textViewMainFragmentLogin);
         textViewLogout = view.findViewById(R.id.textViewMainFragLogOut);
