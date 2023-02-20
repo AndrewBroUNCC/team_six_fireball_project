@@ -24,6 +24,7 @@ import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 public class CommentFragment extends Fragment implements  RecycleViewCommentAdapter.IRecycleViewCommentAdapter {
 
@@ -118,9 +119,14 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
                             commentsList.add(comment);
                             commentTitle = comment.getTopic();
                         }
+                        Collections.sort(commentsList, new Comparator<Comment>() {
+                            @Override
+                            public int compare(Comment comment, Comment comment2) {
+                                return comment.date.compareTo(comment2.date)*-1;
+                            }
+                        });
                         textViewTitle.setText(commentTitle);
                         adapter.notifyDataSetChanged();
-
                     }
                 });
     }

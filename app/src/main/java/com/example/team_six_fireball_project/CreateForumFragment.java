@@ -145,9 +145,11 @@ public class CreateForumFragment extends Fragment {
         //    String commenterID;
         HashMap<String, Object> comment = new HashMap<>();
         comment.put("comment", description);
-        comment.put("commenterName", creator);
-        comment.put("topic", title);
         comment.put("commenterID", userID);
+        comment.put("commenterName", creator);
+        comment.put("date", date);
+        comment.put("topic", title);
+
 
         db2.collection("Forum")
                 .add(user)

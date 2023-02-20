@@ -39,7 +39,7 @@ public class CreateCommentFragment extends Fragment {
     String commenterName;
     String topic;
     String commenterID;
-
+    String date;
 
     public CreateCommentFragment() {
         // Required empty public constructor
@@ -169,10 +169,13 @@ public class CreateCommentFragment extends Fragment {
     private void setData() {
         FirebaseFirestore db2 = FirebaseFirestore.getInstance();
 
+        date = mCreateCommentFragment.getCreateDate();
+
         HashMap<String, Object> setComment = new HashMap<>();
         setComment.put("comment", comment);
         setComment.put("commenterID", commenterID);
         setComment.put("commenterName", commenterName);
+        setComment.put("date", date);
         setComment.put("topic", topic);
 
         db2.collection("Forum").document(forumID)
@@ -191,5 +194,6 @@ public class CreateCommentFragment extends Fragment {
 
     interface ICreateCommentFragment {
         String getCreateForumID();
+        String getCreateDate();
     }
 }

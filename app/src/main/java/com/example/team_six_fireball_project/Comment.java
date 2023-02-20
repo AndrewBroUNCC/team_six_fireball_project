@@ -6,14 +6,24 @@ public class Comment {
     String commenterName;
     String topic;
     String commenterID;
+    String date;
 
     public Comment() {
     }
 
-    public Comment(String comment, String commenterName, String topic, String commenterID) {
+    public String getDate() {
+        return date;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public Comment(String comment, String commenterName, String topic, String commenterID, String date) {
         this.comment = comment;
         this.commenterID = commenterID;
         this.commenterName = commenterName;
+        this.date = date;
         this.topic = topic;
 
     }

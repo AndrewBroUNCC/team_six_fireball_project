@@ -28,6 +28,7 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 
 //https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
 
@@ -107,6 +108,27 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
     @Override
     public String getCreateForumID() {
         return this.id;
+    }
+
+    @Override
+    public String getCreateDate() {
+        Calendar c;
+        String date, amPm;
+
+        c = Calendar.getInstance();
+        int day = c.get(Calendar.DAY_OF_MONTH);
+        int month = c.get(Calendar.MONTH);
+        int year = c.get(Calendar.YEAR);
+        if (c.get(Calendar.AM_PM) == 0) {
+            amPm = "AM";
+        } else if (c.get(Calendar.AM_PM) == 1){
+            amPm = "PM";
+        } else {
+            amPm = "";
+        }
+
+        date = (month+1) + "/" + day + "/" + year + " " + c.get(Calendar.HOUR) + ":" + c.get(Calendar.MINUTE) + ":" + c.get(Calendar.MILLISECOND) + " " + amPm;
+        return date;
     }
 
     @Override

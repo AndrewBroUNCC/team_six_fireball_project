@@ -43,11 +43,13 @@ public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewC
         String commenterName = commentHolder.getCommenterName();
         String topic = commentHolder.getTopic();
         String commenterID = commentHolder.getCommenterID();
+        String dateTime = commentHolder.getDate();
 
-        Log.d(TAG, "onBindViewHolder: " + commenterName);
+        //Log.d(TAG, "onBindViewHolder: " + commenterName);
 
         holder.textViewCommenterName.setText(commenterName);
         holder.textViewComment.setText(comment);
+        holder.textViewDateTime.setText(dateTime);
     }
 
     @Override
@@ -59,6 +61,7 @@ public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewC
         // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
         TextView textViewCommenterName = itemView.findViewById(R.id.textViewCommentersName);
         TextView textViewComment = itemView.findViewById(R.id.textViewComment);
+        TextView textViewDateTime = itemView.findViewById(R.id.textViewDateTime);
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);
