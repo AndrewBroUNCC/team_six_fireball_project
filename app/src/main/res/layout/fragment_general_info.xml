@@ -25,6 +25,14 @@
         tools:layout_editor_absoluteY="291dp" />
 
     <TextView
+        android:id="@+id/textView8"
+        android:layout_width="306dp"
+        android:layout_height="188dp"
+        android:text="Fireball events raise several potential concerns. 1.Fireballs can cause mass destruction. For example, in 2013, a large Fireball made impacted in Russia, resulting in 1,613 injurires. 2. Fireballs can potenitlly collide with satellites or rockets going into orbit. If a collision were to occur, there could be a disruption of critical technoliges like GPS. 3. Additionally, Fireball events can create unique weather phenomenon, which is of high importance to local weather stations. XXXXXXXXXXXXXX"
+        tools:layout_editor_absoluteX="50dp"
+        tools:layout_editor_absoluteY="383dp" />
+
+    <TextView
         android:id="@+id/textViewInfoPage"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,21 +68,5 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         tools:layout_editor_absoluteX="51dp"
         tools:layout_editor_absoluteY="263dp" />
-
-    <TextView
-        android:id="@+id/textView7"
-        android:layout_width="289dp"
-        android:layout_height="270dp"
-        android:text="Fireball events raise several potential concerns. 1.Fireballs can cause mass destruction. For example, in 2013, a large Fireball made impacted in Russia, resulting in 1,613 injurires. 2. Fireballs can potenitlly collide with satellites or rockets going into orbit. If a collision were to occur, there could be a disruption of critical technoliges like GPS. 3. Additionally, Fireball events can create unique weather phenomenon, which is of high importance to local weather stations"
-        tools:layout_editor_absoluteX="51dp"
-        tools:layout_editor_absoluteY="393dp" />
-
-    <Button
-        android:id="@+id/button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="External Resources"
-        tools:layout_editor_absoluteX="91dp"
-        tools:layout_editor_absoluteY="631dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
