@@ -28,7 +28,7 @@
         android:id="@+id/textView8"
         android:layout_width="306dp"
         android:layout_height="188dp"
-        android:text="Fireball events raise several potential concerns. 1.Fireballs can cause mass destruction. For example, in 2013, a large Fireball made impacted in Russia, resulting in 1,613 injurires. 2. Fireballs can potenitlly collide with satellites or rockets going into orbit. If a collision were to occur, there could be a disruption of critical technoliges like GPS. 3. Additionally, Fireball events can create unique weather phenomenon, which is of high importance to local weather stations. XXXXXXXXXXXXXX"
+        android:text="Fireball events raise several potential concerns. 1.Fireballs can cause mass destruction. For example, in 2013, a large Fireball made impacted in Russia, resulting in 1,613 injurires. 2. Fireballs can potenitlly collide with satellites or rockets going into orbit. If a collision were to occur, there could be a disruption of critical technoliges like GPS. 3. Additionally, Fireball events can create unique weather phenomenon, which is of high importance to local weather stations."
         tools:layout_editor_absoluteX="50dp"
         tools:layout_editor_absoluteY="383dp" />
 
