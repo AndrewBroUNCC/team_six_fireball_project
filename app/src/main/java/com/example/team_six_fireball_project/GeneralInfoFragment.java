@@ -9,18 +9,18 @@ import android.view.View;
 import android.view.ViewGroup;
 
 
-public class InfoFragment extends Fragment {
+public class GeneralInfoFragment extends Fragment {
 
 
 
-    public InfoFragment() {
+    public GeneralInfoFragment() {
         // Required empty public constructor
     }
 
 
     // TODO: Rename and change types and number of parameters
-    public static InfoFragment newInstance() {
-        InfoFragment fragment = new InfoFragment();
+    public static GeneralInfoFragment newInstance() {
+        GeneralInfoFragment fragment = new GeneralInfoFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
         return fragment;
@@ -37,6 +37,6 @@ public class InfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_info, container, false);
+        return inflater.inflate(R.layout.fragment_general_info, container, false);
     }
 }
