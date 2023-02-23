@@ -62,6 +62,27 @@ public class MainFragment extends Fragment {
 
                         }
                     }).show();
+        } else if (alert ==2){
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Logout")
+                    .setMessage("Would you like to logout?")
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            mAuth.signOut();
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new LoginFragment())
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    })
+                    .show();
         }
         mAuth = FirebaseAuth.getInstance();
         textViewLoginShow = view.findViewById(R.id.textViewMainFragmentLogin);

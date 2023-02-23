@@ -5,4 +5,12 @@
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
+    <string name="nav_account_display">Guest</string>
+    
+    <!--drop down list names-->
+    <string-array name="FireBall_Sort">
+        <item>test sort one</item>
+        <item>test sort two</item>
+        <item>test sort three</item>
+    </string-array>
 </resources>

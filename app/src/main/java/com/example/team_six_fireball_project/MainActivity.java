@@ -1,6 +1,7 @@
 package com.example.team_six_fireball_project;
 //Andrew Brown
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,7 +12,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -34,10 +37,14 @@ import java.util.Calendar;
 
 public class MainActivity extends AppCompatActivity implements RegisterFragment.IRegisterFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
+    NavigationView navigationView;
     DrawerLayout drawer;
     String id;
+    String navDisplayName;
     private static final String TAG = "MainActivity";
     FirebaseAuth mAuth;
+    //TODO: figure out how to update guest and account name in navigation
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,20 +56,18 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.ContentView);
-        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new MainFragment())
+                .addToBackStack(null)
+                .commit();
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
-
-        if (savedInstanceState == null){
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_container, new MainFragment())
-                    .commit();
-            navigationView.setCheckedItem(R.id.nav_home);
-        }
     }
 
     @Override
@@ -74,9 +79,10 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
         }
     }
 
+    
+    
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
         //running on a new thread to increase app speed
         NavRunnable runnable = new NavRunnable(item);
         new Thread(runnable).start();
@@ -140,32 +146,51 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
 
     class NavRunnable implements Runnable{
         MenuItem item;
-
+        
         public NavRunnable(MenuItem item) {
             this.item = item;
         }
 
         @Override
         public void run() {
+//            TextView navAccount = navigationView.findViewById(R.id.textViewNavAccountType);
+//            if (mAuth.getCurrentUser() != null){
+//                navAccount.setText(mAuth.getCurrentUser().getDisplayName());
+//            } else{
+//                navAccount.setText("Guest TEST");
+//            }
+            Log.d(TAG, "run: hamburger");
+
             switch (item.getItemId()){
                 case R.id.nav_home:
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new MainFragment())
+                            .addToBackStack(null)
                             .commit();
                     break;
                 case R.id.nav_login:
-                    getSupportFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new LoginFragment())
-                            .commit();
+                    if(mAuth.getCurrentUser() == null) {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new LoginFragment())
+                                .addToBackStack(null)
+                                .commit();
+                    } else {
+                        getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new MainFragment(2))
+                                .addToBackStack(null)
+                                .commit();
+                    }
                     break;
                 case R.id.nav_info:
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new InfoFragment())
+                            .addToBackStack(null)
                             .commit();
                     break;
                 case R.id.nav_map:
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new MapsFragment())
+                            .addToBackStack(null)
                             .commit();
                     break;
                 case R.id.nav_forum:
@@ -177,6 +202,7 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
                             public void run() {
                                 getSupportFragmentManager().beginTransaction()
                                         .replace(R.id.fragment_container, new MainFragment(1))
+                                        .addToBackStack(null)
                                         .commit();
                             }
                         });
@@ -184,6 +210,7 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
                     } else {
                         getSupportFragmentManager().beginTransaction()
                                 .replace(R.id.fragment_container, new ForumsFragment())
+                                .addToBackStack(null)
                                 .commit();
                     }
                     break;
@@ -192,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements RegisterFragment.
 
                     getSupportFragmentManager().beginTransaction()
                             .replace(R.id.fragment_container, new MainFragment())
+                            .addToBackStack(null)
                             .commit();
                     break;
             }

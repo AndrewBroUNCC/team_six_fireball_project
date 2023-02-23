@@ -21,6 +21,8 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -124,10 +126,37 @@ public class RegisterFragment extends Fragment {
 
                                     setData(name, mAuth.getCurrentUser().getUid(), email);
 
-                                    Log.d(TAG, "onComplete: Logged in successfully");
-                                    getParentFragmentManager().beginTransaction()
-                                            .replace(R.id.fragment_container, new MainFragment())
-                                            .commit();
+                                    //HOW TO UPDATE USER PROFILE
+//                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+//
+//                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+//                                            .setDisplayName("Jane Q. User")
+//                                            .setPhotoUri(Uri.parse("https://example.com/jane-q-user/profile.jpg"))
+//                                            .build();
+//
+//                                    user.updateProfile(profileUpdates)
+//                                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+//                                                @Override
+//                                                public void onComplete(@NonNull Task<Void> task) {
+//                                                    if (task.isSuccessful()) {
+//                                                        Log.d(TAG, "User profile updated.");
+//                                                    }
+//                                                }
+//                                            });
+                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                            .setDisplayName(name)
+                                            .build();
+                                    user.updateProfile(profileUpdates)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            Log.d(TAG, "onComplete: User has been registered successfully");
+                                                            getParentFragmentManager().beginTransaction()
+                                                                    .replace(R.id.fragment_container, new MainFragment())
+                                                                    .commit();
+                                                        }
+                                                    });
                                 } else {
                                     Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
 

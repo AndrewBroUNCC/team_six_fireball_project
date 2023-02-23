@@ -107,7 +107,6 @@ public class LoginFragment extends Fragment {
                                     //you can get stuff from user using = V
                                     mAuth.getCurrentUser().getDisplayName();
                                     mAuth.getCurrentUser().getUid();
-
                                     getParentFragmentManager().beginTransaction()
                                             .replace(R.id.fragment_container, new MainFragment())
                                             .commit();
