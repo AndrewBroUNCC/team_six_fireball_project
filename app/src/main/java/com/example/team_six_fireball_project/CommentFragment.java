@@ -33,11 +33,9 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
     LinearLayoutManager layoutManager;
     RecyclerView recyclerView;
     RecycleViewCommentAdapter adapter;
-
+    String commentTitle =  "", forumID;
     ArrayList<Comment> commentsList = new ArrayList<>();
-    String forumID;
     TextView textViewTitle;
-
     ICommentFragment mCommentFragment;
 
     public static CommentFragment newInstance() {
@@ -75,7 +73,6 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
         //gets list from main activity.
         //get forumID
         forumID = mCommentFragment.getForumID();
-
         getActivity().setTitle("Comment Page");
 
         recyclerView = view.findViewById(R.id.recycleViewComments);
@@ -96,40 +93,80 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
 
         textViewTitle = view.findViewById(R.id.textViewCommentFragTopicTitle);
 
-        getData(textViewTitle);
+        //implemented Thread to speed up application.
+        GetDataRunnable getData = new GetDataRunnable(textViewTitle);
+        new Thread(getData).start();
 
+        //now runs in thread above
+        //getData(textViewTitle);
 
         return view;
     }
 
-    String commentTitle =  "";
+    class GetDataRunnable implements Runnable{
+        TextView textViewTitle;
+        public GetDataRunnable(TextView textViewTitle){
+            this.textViewTitle = textViewTitle;
+        }
 
-    private void getData(TextView textViewTitle){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("Forum").document(forumID)
-                .collection("comments")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        commentsList.clear();
-                        for (QueryDocumentSnapshot document: value) {
-                            //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
-                            Comment comment = document.toObject(Comment.class);
-                            //Log.d(TAG, "onEvent: " + comment.commenterName);
-                            commentsList.add(comment);
-                            commentTitle = comment.getTopic();
-                        }
-                        Collections.sort(commentsList, new Comparator<Comment>() {
-                            @Override
-                            public int compare(Comment comment, Comment comment2) {
-                                return comment.date.compareTo(comment2.date)*-1;
+        @Override
+        public void run() {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("Forum").document(forumID)
+                    .collection("comments")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            commentsList.clear();
+                            for (QueryDocumentSnapshot document: value) {
+                                //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
+                                Comment comment = document.toObject(Comment.class);
+                                //Log.d(TAG, "onEvent: " + comment.commenterName);
+                                commentsList.add(comment);
+                                commentTitle = comment.getTopic();
                             }
-                        });
-                        textViewTitle.setText(commentTitle);
-                        adapter.notifyDataSetChanged();
-                    }
-                });
+                            Collections.sort(commentsList, new Comparator<Comment>() {
+                                @Override
+                                public int compare(Comment comment, Comment comment2) {
+                                    return comment.date.compareTo(comment2.date)*-1;
+                                }
+                            });
+
+                            //Log.d(TAG, "compare: list= " + commentsList);
+                            textViewTitle.setText(commentTitle);
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+        }
     }
+
+    //moved to a thread.
+//    private void getData(TextView textViewTitle){
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//        db.collection("Forum").document(forumID)
+//                .collection("comments")
+//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+//                        commentsList.clear();
+//                        for (QueryDocumentSnapshot document: value) {
+//                            //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
+//                            Comment comment = document.toObject(Comment.class);
+//                            //Log.d(TAG, "onEvent: " + comment.commenterName);
+//                            commentsList.add(comment);
+//                            commentTitle = comment.getTopic();
+//                        }
+//                        Collections.sort(commentsList, new Comparator<Comment>() {
+//                            @Override
+//                            public int compare(Comment comment, Comment comment2) {
+//                                return comment.date.compareTo(comment2.date)*-1;
+//                            }
+//                        });
+//                        textViewTitle.setText(commentTitle);
+//                        adapter.notifyDataSetChanged();
+//                    }
+//                });
+//    }
 
     interface ICommentFragment{
         String  getForumID();

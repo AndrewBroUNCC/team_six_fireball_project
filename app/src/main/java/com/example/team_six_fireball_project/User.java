@@ -1,14 +1,15 @@
 package com.example.team_six_fireball_project;
 
 public class User {
-    String name, userID;
+    String email, joinDate, name, userID;
 
-    @Override
-    public String toString() {
-        return "User{" +
-                "name='" + name + '\'' +
-                ", userID='" + userID + '\'' +
-                '}';
+    public User(String email, String joinDate, String name, String userID) {
+        this.joinDate = joinDate;
+        this.name = name;
+        this.userID = userID;
+    }
+
+    public User() {
     }
 
     public String getName() {
@@ -27,11 +28,27 @@ public class User {
         this.userID = userID;
     }
 
-    public User() {
+    public String getJoinDate() {
+        return joinDate;
     }
 
-    public User(String name, String userID) {
-        this.name = name;
-        this.userID = userID;
+    public void setJoinDate(String joinDate) {
+        this.joinDate = joinDate;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "name='" + name + '\'' +
+                ", userID='" + userID + '\'' +
+                '}';
     }
 }

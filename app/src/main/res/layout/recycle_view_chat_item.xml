@@ -38,7 +38,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <View
-        android:id="@+id/view6"
+        android:id="@+id/viewProfileFragTrashCan"
         android:layout_width="2dp"
         android:layout_height="0dp"
         android:layout_marginStart="2dp"

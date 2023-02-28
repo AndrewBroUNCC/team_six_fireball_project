@@ -5,7 +5,7 @@
     android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="216dp"
-    android:background="@color/teal_700"
+    android:background="@drawable/side_nav_bar"
     android:gravity="bottom"
     android:orientation="vertical"
     android:padding="16dp"
@@ -26,7 +26,7 @@
         tools:ignore="MissingConstraints">
 
         <ImageView
-            android:id="@+id/imageView1"
+            android:id="@+id/imageViewProfileFragProfileImage"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:src="@drawable/meteor_icon"></ImageView>

@@ -1,5 +1,6 @@
 package com.example.team_six_fireball_project;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -21,8 +22,10 @@ import com.google.firebase.auth.FirebaseAuth;
 
 public class LoginFragment extends Fragment {
 
+    //Thread Is set up and done
     private FirebaseAuth mAuth;
     final String TAG = "demo";
+    ILoginFragment mLoginFragment;
     EditText editTextEmail, editTextPassword;
     Button buttonLogin, buttonRegister;
 
@@ -41,6 +44,18 @@ public class LoginFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+        }
+    }
+
+    //need this for interface to work
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+
+        if (context instanceof LoginFragment.ILoginFragment) {
+            mLoginFragment = (LoginFragment.ILoginFragment) context;
+        } else {
+            throw new RuntimeException(context.toString());
         }
     }
 
@@ -103,13 +118,12 @@ public class LoginFragment extends Fragment {
                                 if (task.isSuccessful()){
                                     Log.d(TAG, "onComplete: Logged in successfully");
                                     //how to get currentUser if login is successful. if it isnt it will be null
-                                    mAuth.getCurrentUser();
+                                    //mAuth.getCurrentUser();
                                     //you can get stuff from user using = V
-                                    mAuth.getCurrentUser().getDisplayName();
-                                    mAuth.getCurrentUser().getUid();
-                                    getParentFragmentManager().beginTransaction()
-                                            .replace(R.id.fragment_container, new MainFragment())
-                                            .commit();
+                                    //mAuth.getCurrentUser().getDisplayName();
+
+                                    //in main activity
+                                    mLoginFragment.loginSignIn();
 
                                 } else {
                                     Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
@@ -120,5 +134,8 @@ public class LoginFragment extends Fragment {
 
             }
         }
+    }
+    interface ILoginFragment{
+        void loginSignIn();
     }
 }

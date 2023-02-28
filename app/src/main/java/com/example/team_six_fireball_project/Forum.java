@@ -8,6 +8,7 @@ public class Forum {
     String description;
     String createdDate;
     String forumID;
+    String userID;
 
     public String getForumID() {
         return forumID;
@@ -34,8 +35,6 @@ public class Forum {
         this.forumID = forumID;
 
     }
-
-    String userID;
 
     public Forum() {
     }

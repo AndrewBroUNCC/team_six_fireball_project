@@ -152,7 +152,7 @@ public class RegisterFragment extends Fragment {
                                                         @Override
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             Log.d(TAG, "onComplete: User has been registered successfully");
-                                                            getParentFragmentManager().beginTransaction()
+                                                            getActivity().getSupportFragmentManager().beginTransaction()
                                                                     .replace(R.id.fragment_container, new MainFragment())
                                                                     .commit();
                                                         }
@@ -175,30 +175,34 @@ public class RegisterFragment extends Fragment {
                         });
             }
         }
+
+        private void setData(String name, String user_id, String email) {
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            String joinDate = mRegisterFragment.getCurrentDateRegisterFrag();
+
+            HashMap<String, Object> user = new HashMap<>();
+            user.put("email", email);
+            user.put("joinDate", joinDate);
+            user.put("name", name);
+            user.put("userID", user_id);
+
+            db.collection("userList")
+                    .add(user)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                        }
+                    }).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+                        @Override
+                        public void onComplete(@NonNull Task<DocumentReference> task) {
+                            mRegisterFragment.goToHomeFragment();
+                        }
+                    });
+        }
     }
-    private void setData(String name, String user_id, String email) {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        HashMap<String, Object> user = new HashMap<>();
-        user.put("email", email);
-        user.put("name", name);
-        user.put("userID", user_id);
-
-        db.collection("userList")
-                .add(user)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        //Log.d(TAG, "onSuccess: " + documentReference.toString());
-
-                        mRegisterFragment.goToHomeFragment();
-//                                getParentFragmentManager().beginTransaction()
-//                                        .replace(R.id.fragment_container, new ForumsFragment())
-//                                        .commit();
-                            }
-                        });
-    }
     interface IRegisterFragment {
         void goToHomeFragment ();
+        String getCurrentDateRegisterFrag();
     }
 }

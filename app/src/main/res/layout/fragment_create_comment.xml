@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="@+id/editTextCreateCommentFragComment" />
 
     <View
-        android:id="@+id/view4"
+        android:id="@+id/viewProfileFragHomeButton"
         android:layout_width="2dp"
         android:layout_height="0dp"
         android:layout_marginStart="4dp"

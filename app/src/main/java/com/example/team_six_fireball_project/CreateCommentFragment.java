@@ -113,7 +113,6 @@ public class CreateCommentFragment extends Fragment {
             }
         });
 
-
         return view;
     }
 
@@ -129,68 +128,129 @@ public class CreateCommentFragment extends Fragment {
             commenterID = mAuth.getUid();
             getData();
         }
-    }
 
-    private void getData(){ //get users
+        private void getData(){ //get users
 
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-        db.collection("userList")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot value) {
-                        for (QueryDocumentSnapshot document : value) {
-                            User user = document.toObject(User.class);
-                            if(user.userID.equals(mAuth.getUid())){
-                                commenterName = user.getName();
+            db.collection("userList")
+                    .get()
+                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                        @Override
+                        public void onSuccess(QuerySnapshot value) {
+                            for (QueryDocumentSnapshot document : value) {
+                                User user = document.toObject(User.class);
+                                if(user.userID.equals(mAuth.getUid())){
+                                    commenterName = user.getName();
+                                }
                             }
+
+                            db.collection("Forum").document(forumID)
+                                    .get()
+                                    .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+                                        @Override
+                                        public void onSuccess(DocumentSnapshot value) {
+                                            Forum forum = value.toObject(Forum.class);
+                                            topic = forum.getDescription();
+                                            //    this.comment = comment;
+                                            //    this.commenterID = commenterID;
+                                            //    this.commenterName = commenterName;
+                                            //    this.topic = topic;
+                                            setData();
+                                        }
+                                    });
                         }
+                    });
+        }
 
-                        db.collection("Forum").document(forumID)
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
-                                    @Override
-                                    public void onSuccess(DocumentSnapshot value) {
-                                        Forum forum = value.toObject(Forum.class);
-                                        topic = forum.getDescription();
-                                        //    this.comment = comment;
-                                        //    this.commenterID = commenterID;
-                                        //    this.commenterName = commenterName;
-                                        //    this.topic = topic;
-                                        setData();
-                                    }
-                                });
-                    }
-                });
-    }
+        private void setData() {
+            FirebaseFirestore db2 = FirebaseFirestore.getInstance();
 
-    //TODO:
-    private void setData() {
-        FirebaseFirestore db2 = FirebaseFirestore.getInstance();
+            date = mCreateCommentFragment.getCreateDate();
 
-        date = mCreateCommentFragment.getCreateDate();
+            HashMap<String, Object> setComment = new HashMap<>();
+            setComment.put("comment", comment);
+            setComment.put("commenterID", commenterID);
+            setComment.put("commenterName", commenterName);
+            setComment.put("date", date);
+            setComment.put("topic", topic);
 
-        HashMap<String, Object> setComment = new HashMap<>();
-        setComment.put("comment", comment);
-        setComment.put("commenterID", commenterID);
-        setComment.put("commenterName", commenterName);
-        setComment.put("date", date);
-        setComment.put("topic", topic);
+            db2.collection("Forum").document(forumID)
+                    .collection("comments")
+                    .add(setComment)
+                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                        @Override
+                        public void onSuccess(DocumentReference documentReference) {
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new CommentFragment())
+                                    .commit();
+                        }
+                    });
 
-        db2.collection("Forum").document(forumID)
-                .collection("comments")
-                .add(setComment)
-                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                    @Override
-                    public void onSuccess(DocumentReference documentReference) {
-                        getParentFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new CommentFragment())
-                                .commit();
-                    }
-                });
+        }
 
     }
+
+    //moved to a thread to speed up app
+//    private void getData(){ //get users
+//
+//        FirebaseFirestore db = FirebaseFirestore.getInstance();
+//
+//        db.collection("userList")
+//                .get()
+//                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+//                    @Override
+//                    public void onSuccess(QuerySnapshot value) {
+//                        for (QueryDocumentSnapshot document : value) {
+//                            User user = document.toObject(User.class);
+//                            if(user.userID.equals(mAuth.getUid())){
+//                                commenterName = user.getName();
+//                            }
+//                        }
+//
+//                        db.collection("Forum").document(forumID)
+//                                .get()
+//                                .addOnSuccessListener(new OnSuccessListener<DocumentSnapshot>() {
+//                                    @Override
+//                                    public void onSuccess(DocumentSnapshot value) {
+//                                        Forum forum = value.toObject(Forum.class);
+//                                        topic = forum.getDescription();
+//                                        //    this.comment = comment;
+//                                        //    this.commenterID = commenterID;
+//                                        //    this.commenterName = commenterName;
+//                                        //    this.topic = topic;
+//                                        setData();
+//                                    }
+//                                });
+//                    }
+//                });
+//    }
+
+//    private void setData() {
+//        FirebaseFirestore db2 = FirebaseFirestore.getInstance();
+//
+//        date = mCreateCommentFragment.getCreateDate();
+//
+//        HashMap<String, Object> setComment = new HashMap<>();
+//        setComment.put("comment", comment);
+//        setComment.put("commenterID", commenterID);
+//        setComment.put("commenterName", commenterName);
+//        setComment.put("date", date);
+//        setComment.put("topic", topic);
+//
+//        db2.collection("Forum").document(forumID)
+//                .collection("comments")
+//                .add(setComment)
+//                .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+//                    @Override
+//                    public void onSuccess(DocumentReference documentReference) {
+//                        getParentFragmentManager().beginTransaction()
+//                                .replace(R.id.fragment_container, new CommentFragment())
+//                                .commit();
+//                    }
+//                });
+//
+//    }
 
     interface ICreateCommentFragment {
         String getCreateForumID();

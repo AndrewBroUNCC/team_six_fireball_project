@@ -1,6 +1,7 @@
 package com.example.team_six_fireball_project;
 
 import android.annotation.SuppressLint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,21 +44,8 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
 
     @Override
     public void onBindViewHolder(@NonNull RecycleViewForumsAdapter.UserViewHolder holder, @SuppressLint("RecyclerView") int position) {
-        /*String user = users.get(position);
-        holder.textView.setText(user);
-
-        holder.sortViewContainer.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Log.d("demo", "onClick: " + position);
-                mUserRecyclerViewAdapter.sortByPositionClicked(position);
-            }
-        });*/
-
-
-
         Forum forum = forums.get(position);
-
+        String forumId = forum.getForumID();
         String title = forum.getTitle();
         String creator = forum.getCreator();
         String description = forum.getDescription();
@@ -81,7 +69,8 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
         holder.imageViewTrash.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mRecycleViewForumsAdapter.deleteThisExpense(position);
+                //Log.d(TAG, "onClick: position " + position );
+                mRecycleViewForumsAdapter.deleteThisExpense(forumId);
             }
         });
         holder.itemView.setOnClickListener(new View.OnClickListener() {
@@ -111,7 +100,7 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
         }
     }
     interface IRecycleViewForumsAdapter{
-        void deleteThisExpense(int position);
+        void deleteThisExpense(String forumId);
         void openCommentSectionOfTopic(String forumID);
     }
 }

@@ -13,11 +13,12 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 
 public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewCommentAdapter.UserViewHolder> {
 
     private static final String TAG = "RecycleViewCommentAdapt";
-    FirebaseAuth mAuth;
     IRecycleViewCommentAdapter mRecycleViewCommentAdapter;
     ArrayList<Comment> comments = new ArrayList<>();
 

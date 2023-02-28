@@ -35,9 +35,6 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
     RecyclerView recyclerView;
     RecycleViewForumsAdapter adapter;
     ArrayList<Forum> forumList = new ArrayList<>();
-    ArrayList<Comment> commentsList = new ArrayList<>();
-    String id;
-    int number;
 
     IForumsFragment mForumsFragment;
 
@@ -103,56 +100,73 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
                         .commit();
             }
         });
-
-        //TODO: run in a thread to increase speed
-        getData();
+        //run in a thread to increase speed
+        ForumsRunnable forumsRunnable = new ForumsRunnable();
+        new Thread(forumsRunnable).start();
 
         return view;
     }
 
+    class ForumsRunnable implements Runnable{
+        @Override
+        public void run() {
+            getData();
+        }
+        private void getData(){
+            //get the instance of FIRE STORE/////////////////GET THE DATA BASE---IMPORTANT
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+            //THIS IS BEST WAY TO SHOW AND UPDATE DATA IN THE ADAPTER OF THE RECYCLE/LIST VIEW- SO IMPORTANT!!!!
+            db.collection("Forum")
+                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
+                        @Override
+                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                            forumList.clear(); //CLEARS LIST SO IT DOESNT RELOAD MORE ON TOP OF OLD LIST EACH UPDATE
+
+                            //for each loop to loop through the documents and pull out info.
+                            for (QueryDocumentSnapshot document: value) {
+                                //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
+                                Forum forum = document.toObject(Forum.class);
+                                forumList.add(forum);
+                            }
+                            Collections.sort(forumList, new Comparator<Forum>() {
+                                @Override
+                                public int compare(Forum forum, Forum forum2) {
+                                    return forum.createdDate.compareTo(forum2.createdDate) *-1;
+                                }
+                            });
+                            //HOW TO TELL THE ADAPTER TO UPDATE -----------------------SUPER IMPORTANT!!-----
+                            adapter.notifyDataSetChanged();
+                        }
+                    });
+        }
+    }
+
     @Override
-    public void deleteThisExpense(int position) {
+    public void deleteThisExpense(String forumId) {
         FirebaseFirestore dbDelete = FirebaseFirestore.getInstance();
 
-        ArrayList<String> idDelete = new ArrayList<>();
-
         dbDelete.collection("Forum")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot value) {
-                        int i = 0;
-                        for (QueryDocumentSnapshot document : value) {
-                            if(position == i) {
-                                idDelete.add((String) document.getId());
-                            }
-                            i++;
-                        }
-                        dbDelete.collection("Forum")
-                                .document(idDelete.get(0))
+                        .document(forumId)
                                 .collection("comments")
-                                .get()
-                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                    @Override
-                                    public void onSuccess(QuerySnapshot value2) {
+                                        .get()
+                                                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                                    @Override
+                                                    public void onSuccess(QuerySnapshot value) {
 
-                                        for (QueryDocumentSnapshot document: value2) {
-                                            dbDelete.collection("Forum")
-                                                    .document(idDelete.get(0))
-                                                    .collection("comments")
-                                                    .document(document.getId())
-                                                    .delete();
-                                            Log.d(TAG, "onSuccess: " + document.getId());
-                                        }
-                                        dbDelete.collection("Forum")
-                                                .document(idDelete.get(0)).delete();
+                                                        for (QueryDocumentSnapshot document: value) {
+                                                            dbDelete.collection("Forum")
+                                                                    .document(forumId)
+                                                                    .collection("comments")
+                                                                    .document(document.getId())
+                                                                    .delete();
+                                                        }
+                                                        dbDelete.collection("Forum")
+                                                                .document(forumId).delete();
+                                                    }
 
-                                    }
-                                });
-
+                                                });
                         adapter.notifyDataSetChanged();
-                    }
-                });
     }
 
     @Override
@@ -161,34 +175,6 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
         mForumsFragment.saveCommentArrayToMain(tempForumID);
     }
 
-    private void getData(){
-        //get the instance of FIRE STORE/////////////////GET THE DATA BASE---IMPORTANT
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        //THIS IS BEST WAY TO SHOW AND UPDATE DATA IN THE ADAPTER OF THE RECYCLE/LIST VIEW- SO IMPORTANT!!!!
-        db.collection("Forum")
-                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                    @Override
-                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                        forumList.clear(); //CLEARS LIST SO IT DOESNT RELOAD MORE ON TOP OF OLD LIST EACH UPDATE
-
-                        //for each loop to loop through the documents and pull out info.
-                        for (QueryDocumentSnapshot document: value) {
-                            //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
-                            Forum forum = document.toObject(Forum.class);
-                            forumList.add(forum);
-                        }
-                        Collections.sort(forumList, new Comparator<Forum>() {
-                            @Override
-                            public int compare(Forum forum, Forum forum2) {
-                                return forum.createdDate.compareTo(forum2.createdDate) *-1;
-                            }
-                        });
-                        //HOW TO TELL THE ADAPTER TO UPDATE -----------------------SUPER IMPORTANT!!-----
-                        adapter.notifyDataSetChanged();
-                    }
-                });
-    }
 
 
     interface IForumsFragment{
