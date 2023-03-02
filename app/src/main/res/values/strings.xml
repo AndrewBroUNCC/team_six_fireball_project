@@ -4,6 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
     <string name="nav_account_display">Guest</string>
+    <string name="website_homepage_title">website homepage title</string>
 
     <!--drop down list names-->
     <string-array name="FireBall_Sort">

@@ -9,6 +9,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -48,12 +49,10 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
         String forumId = forum.getForumID();
         String title = forum.getTitle();
         String creator = forum.getCreator();
-        String description = forum.getDescription();
         String date = forum.getCreatedDate();
 
         holder.textViewTitle.setText(title);
         holder.textViewCreator.setText(creator);
-        holder.textViewDescription.setText(description);
         holder.textViewDate.setText(date);
 
         mAuth = FirebaseAuth.getInstance();
@@ -91,9 +90,8 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
         // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
         TextView textViewTitle = itemView.findViewById(R.id.textViewForumViewTitle);
         TextView textViewCreator = itemView.findViewById(R.id.textViewForumViewCreator);
-        TextView textViewDescription = itemView.findViewById(R.id.textViewForumViewDiscription);
         TextView textViewDate = itemView.findViewById(R.id.textViewForumViewDate);
-        ImageView imageViewTrash = itemView.findViewById(R.id.imageViewTrashDelete);
+        CardView imageViewTrash = itemView.findViewById(R.id.imageViewTrashDelete);
 
         public UserViewHolder(@NonNull View itemView) {
             super(itemView);

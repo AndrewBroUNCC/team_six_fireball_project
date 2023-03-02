@@ -5,6 +5,7 @@ import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -34,6 +35,7 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
     RecyclerView recyclerView;
     RecycleViewCommentAdapter adapter;
     String commentTitle =  "", forumID;
+    CardView homeButton;
     ArrayList<Comment> commentsList = new ArrayList<>();
     TextView textViewTitle;
     ICommentFragment mCommentFragment;
@@ -74,6 +76,7 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
         //get forumID
         forumID = mCommentFragment.getForumID();
         getActivity().setTitle("Comment Page");
+        homeButton = view.findViewById(R.id.viewCommentFragHomeButton);
 
         recyclerView = view.findViewById(R.id.recycleViewComments);
         layoutManager = new LinearLayoutManager(getContext());
@@ -88,6 +91,13 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
                         .replace(R.id.fragment_container, new CreateCommentFragment())
                         .addToBackStack(null)
                         .commit();
+            }
+        });
+
+        homeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mCommentFragment.commentToHome();
             }
         });
 
@@ -170,5 +180,6 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
 
     interface ICommentFragment{
         String  getForumID();
+        void commentToHome();
     }
 }

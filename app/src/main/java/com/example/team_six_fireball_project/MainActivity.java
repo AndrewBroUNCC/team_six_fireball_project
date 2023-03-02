@@ -86,8 +86,6 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.I
         }
     }
 
-    
-    
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         //running on a new thread to increase app speed
@@ -98,21 +96,17 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.I
 
     @Override
     public void saveCommentArrayToMain(String tempForumID) {
-        FirebaseFirestore dataBase = FirebaseFirestore.getInstance();
-        ArrayList<String> idTopic = new ArrayList<>();
-        id = tempForumID;
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new CommentFragment())
-                .addToBackStack(null)
-                .commit();
+        toCommentFrag(tempForumID);
     }
-
-
 
     @Override
     public String getForumID() {
         return this.id;
+    }
+
+    @Override
+    public void commentToHome() {
+        logIn();
     }
 
     @Override
@@ -147,7 +141,9 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.I
     }
 
     public void logIn(){
-        name.setText(mAuth.getCurrentUser().getDisplayName());
+        if (mAuth.getCurrentUser() != null) {
+            name.setText(mAuth.getCurrentUser().getDisplayName());
+        }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MainFragment())
                 .addToBackStack(null)
@@ -162,6 +158,20 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.I
     @Override
     public void loginSignIn() {
         logIn();
+    }
+
+    @Override
+    public void saveProfileArrayToMain(String tempForumID) {
+        toCommentFrag(tempForumID);
+    }
+
+    public void toCommentFrag(String tempForumId){
+        id = tempForumId;
+
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new CommentFragment())
+                .addToBackStack(null)
+                .commit();
     }
 
     @Override

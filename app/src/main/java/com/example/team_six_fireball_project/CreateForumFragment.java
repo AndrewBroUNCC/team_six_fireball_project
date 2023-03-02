@@ -89,26 +89,54 @@ public class CreateForumFragment extends Fragment {
 
             if (editTextForumTitle.getText().toString().isEmpty()){
                 //Toast.makeText(getActivity(), getString(R.string.title_message_filler), Toast.LENGTH_SHORT).show();
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("The Title Field is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Error")
+                                .setMessage("The Title Field is Empty")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        }).show();
+                                    }
+                                }).show();
+                    }
+                });
+
+            } else if (editTextForumTitle.getText().toString().length() > 22) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Error")
+                                .setMessage("The Title Field must be under 22 chars")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                                    }
+                                }).show();
+                    }
+                });
+
             } else if (editTextForumDescription.getText().toString().isEmpty()){
                 //Toast.makeText(getActivity(), getString(R.string.description_filler_2), Toast.LENGTH_SHORT).show();
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("The Description Field is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new AlertDialog.Builder(getActivity())
+                                .setTitle("Error")
+                                .setMessage("The Description Field is Empty")
+                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialogInterface, int i) {
 
-                            }
-                        }).show();
+                                    }
+                                }).show();
+                    }
+                });
+
             } else {
                 ///////////////////////////////////////////////////////CURRENT DATE GETTER////////////////////////////IMPORTANT DATE
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");

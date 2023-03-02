@@ -8,6 +8,19 @@
     tools:context=".ProfileFragment"
     tools:visibility="visible">
 
+    <ImageView
+        android:id="@+id/imageProfileView"
+        android:layout_width="156dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/website_homepage_title"
+        android:scaleX="1"
+        android:scaleY="1"
+        android:src="@drawable/fire_born_blue_solo"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
 
     <TextView
         android:id="@+id/textView21"
@@ -15,36 +28,15 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Join Date:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/textView20"
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
-
-    <View
-        android:id="@+id/imageView"
-        android:layout_width="414dp"
-        android:layout_height="154dp"
-        android:layout_marginBottom="40dp"
-        android:background="@drawable/side_nav_bar"
-        app:layout_constraintBottom_toBottomOf="@+id/viewProfileFragHomeButton"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <View
-        android:id="@+id/imageView2"
-        android:layout_width="wrap_content"
-        android:layout_height="0dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/side_nav_bar"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/viewBlackLineBottom" />
 
     <androidx.cardview.widget.CardView
         android:id="@+id/viewProfileFragHomeButton"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:layout_marginTop="120dp"
+        android:layout_marginTop="140dp"
         android:backgroundTint="#D2DCE1"
         android:elevation="12dp"
         android:innerRadius="0dp"
@@ -88,7 +80,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="1000"
+            android:text="0"
             android:textAlignment="center"
             android:textColor="@color/black"
             android:textSize="24sp"
@@ -99,14 +91,13 @@
         android:id="@+id/view2"
         android:layout_width="130dp"
         android:layout_height="130dp"
-        android:layout_marginTop="100dp"
+        android:layout_marginTop="60dp"
         android:backgroundTint="#D2DCE1"
         android:elevation="12dp"
         android:innerRadius="0dp"
         android:shape="ring"
         android:thicknessRatio="1.9"
         app:cardCornerRadius="70dp"
-        app:layout_constraintBottom_toBottomOf="@+id/imageView"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
@@ -128,54 +119,13 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="4dp"
         android:text="# of Topics"
+        android:textColor="@color/black"
         android:textStyle="bold|italic"
         app:layout_constraintEnd_toEndOf="@+id/view3"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/view3"
         app:layout_constraintTop_toBottomOf="@+id/view3" />
 
-    <TextView
-        android:id="@+id/textView12"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="4dp"
-        android:elegantTextHeight="false"
-        android:freezesText="false"
-        android:letterSpacing=".3"
-        android:text="Profile"
-        android:textAlignment="center"
-        android:textAllCaps="false"
-        android:textIsSelectable="false"
-        android:textSize="16sp"
-        android:textStyle="bold|italic"
-        app:layout_constraintEnd_toEndOf="@+id/view2"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toBottomOf="@+id/view2" />
-
-    <View
-        android:id="@+id/view10"
-        android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.064" />
-
-    <View
-        android:id="@+id/view12"
-        android:layout_width="0dp"
-        android:layout_height="4dp"
-        android:layout_marginTop="45dp"
-        android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.126" />
 
     <View
         android:id="@+id/viewBlackLineTop"
@@ -213,25 +163,13 @@
         app:layout_constraintEnd_toEndOf="@+id/recyclerViewProfile"
         app:layout_constraintTop_toTopOf="@+id/recyclerViewProfile" />
 
-    <View
-        android:id="@+id/view11"
-        android:layout_width="0dp"
-        android:layout_height="2dp"
-        android:layout_marginTop="16dp"
-        android:background="#FFFFFF"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/view2"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.067" />
-
     <TextView
         android:id="@+id/textView14"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:text="Information:"
+        android:textColor="@color/black"
         android:textStyle="bold|italic"
         app:layout_constraintStart_toStartOf="@+id/textView11"
         app:layout_constraintTop_toBottomOf="@+id/textView11" />
@@ -242,6 +180,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="4dp"
         android:text="My Topics:"
+        android:textColor="@color/black"
         android:textStyle="bold|italic"
         app:layout_constraintBottom_toTopOf="@+id/recyclerViewProfile"
         app:layout_constraintStart_toStartOf="@+id/textView14" />
@@ -249,12 +188,10 @@
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerViewProfile"
         android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_height="300dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="32dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="45dp"
-        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/textViewProfileFragJoinDate" />
@@ -263,10 +200,10 @@
         android:id="@+id/buttonProfileFragUpdate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:backgroundTint="#D7BA4D"
+        android:backgroundTint="@color/yellow_button_header"
         android:text="Update"
         android:textAllCaps="false"
-        android:textColor="#2454C8"
+        android:textColor="@color/blue_button_header_text"
         android:textStyle="bold|italic"
         app:cornerRadius="90dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView14"
@@ -281,6 +218,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:text="Name:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/textView14"
         app:layout_constraintTop_toBottomOf="@+id/textView14" />
 
@@ -290,6 +228,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Email:"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/textView19"
         app:layout_constraintTop_toBottomOf="@+id/textView19" />
 
@@ -299,6 +238,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:text="User's Name"
+        android:textColor="@color/black"
         app:layout_constraintStart_toEndOf="@+id/textView21"
         app:layout_constraintTop_toTopOf="@+id/textView19" />
 
@@ -307,6 +247,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="UserEmail@gmail.com"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/textViewProfileFragName"
         app:layout_constraintTop_toTopOf="@+id/textView20" />
 
@@ -315,6 +256,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="yy/mm/dd   hh/mm/ss"
+        android:textColor="@color/black"
         app:layout_constraintStart_toStartOf="@+id/textViewProfileFragEmail"
         app:layout_constraintTop_toTopOf="@+id/textView21" />
 

@@ -25,7 +25,6 @@ public class MainFragment extends Fragment {
     private static final String TAG = "MainFragment";
     int alert;
     FirebaseAuth mAuth;
-    TextView textViewLoginShow, textViewLogout;
     IMainFragment mMainFragment;
 
     public MainFragment() {
@@ -116,26 +115,6 @@ public class MainFragment extends Fragment {
                     .show();
         }
         mAuth = FirebaseAuth.getInstance();
-        textViewLoginShow = view.findViewById(R.id.textViewMainFragmentLogin);
-        textViewLogout = view.findViewById(R.id.textViewMainFragLogOut);
-
-
-            if (mAuth.getCurrentUser() != null) {
-                textViewLoginShow.setText(mAuth.getCurrentUser().getEmail() + " is Logged in");
-            }
-
-        textViewLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                //sign out
-                mMainFragment.mainSignOut();
-
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new MainFragment())
-                        .commit();
-            }
-        });
 
         return view;
     }

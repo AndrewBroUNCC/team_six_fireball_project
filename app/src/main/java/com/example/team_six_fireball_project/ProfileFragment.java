@@ -89,7 +89,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         nameHolder = view.findViewById(R.id.textViewProfileFragName);
         emailHolder = view.findViewById(R.id.textViewProfileFragEmail);
         dateHolder = view.findViewById(R.id.textViewProfileFragJoinDate);
-        getActivity().setTitle("Profile Page");
+        getActivity().setTitle("Profile");
 
         recyclerView = view.findViewById(R.id.recyclerViewProfile);
         layoutManager = new LinearLayoutManager(getContext());
@@ -129,6 +129,11 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
 
                 });
         adapter.notifyDataSetChanged();
+    }
+
+    @Override
+    public void openProfileSectionOfTopic(String tempForumID) {
+        mProfileFragment.saveProfileArrayToMain(tempForumID);
     }
 
     class ProfileRunnable implements Runnable{
@@ -224,6 +229,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         }
     }
     interface IProfileFragment {
+        void saveProfileArrayToMain(String tempForumID);
         void profileToHome();
     }
 }

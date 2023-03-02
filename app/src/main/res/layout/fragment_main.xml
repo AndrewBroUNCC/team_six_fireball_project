@@ -7,34 +7,41 @@
     android:layout_height="match_parent"
     tools:context=".MainFragment">
 
-    <TextView
-        android:id="@+id/textViewMainFragmentTitle"
+    <View
+        android:id="@+id/viewLine"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
-        android:text="FireBorn Home Page"
-        android:textSize="34sp"
+        android:layout_height="1dp"
+        android:layout_marginTop="154dp"
+        android:background="#000000"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <TextView
-        android:id="@+id/textViewMainFragmentLogin"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="No one is logged in"
-        app:layout_constraintStart_toStartOf="@+id/textViewMainFragmentTitle"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMainFragmentTitle" />
 
-    <TextView
-        android:id="@+id/textViewMainFragLogOut"
+    <View
+        android:id="@+id/viewLine2"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="32dp"
-        android:text="LogOut"
-        app:layout_constraintStart_toStartOf="@+id/textViewMainFragmentLogin"
-        app:layout_constraintTop_toBottomOf="@+id/textViewMainFragmentLogin" />
+        android:layout_height="1dp"
+        android:layout_marginBottom="24dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="303dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="34dp"
+        android:layout_marginBottom="8dp"
+        android:contentDescription="@string/website_homepage_title"
+        android:scaleX="1.0"
+        android:scaleY="1.0"
+        android:src="@drawable/fire_born_blue_solo"
+        app:layout_constraintBottom_toTopOf="@+id/viewLine"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

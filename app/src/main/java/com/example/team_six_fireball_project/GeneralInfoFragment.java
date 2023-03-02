@@ -14,11 +14,9 @@ public class GeneralInfoFragment extends Fragment {
 
 
     public GeneralInfoFragment() {
-        // Required empty public constructor
     }
 
 
-    // TODO: Rename and change types and number of parameters
     public static GeneralInfoFragment newInstance() {
         GeneralInfoFragment fragment = new GeneralInfoFragment();
         Bundle args = new Bundle();
@@ -37,6 +35,9 @@ public class GeneralInfoFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_general_info, container, false);
+        View view = inflater.inflate(R.layout.fragment_general_info, container, false);
+        getActivity().setTitle("Information");
+
+        return view;
     }
 }

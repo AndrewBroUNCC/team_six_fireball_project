@@ -48,6 +48,12 @@ public class RecycleViewProfileAdapter extends RecyclerView.Adapter<RecycleViewP
                 mRecycleViewProfileAdapter.profileDeleteTopic(forum.getForumID());
             }
         });
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecycleViewProfileAdapter.openProfileSectionOfTopic(forum.getForumID());
+            }
+        });
     }
 
     @Override
@@ -70,5 +76,6 @@ public class RecycleViewProfileAdapter extends RecyclerView.Adapter<RecycleViewP
     interface IRecycleViewProfileAdapter{
         //this is for deleting or passing info
         void profileDeleteTopic(String forumId);
+        void openProfileSectionOfTopic(String forumId);
     }
 }
