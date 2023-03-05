@@ -2,17 +2,23 @@ package com.example.team_six_fireball_project;
 //Andrew Brown
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.textclassifier.TextLinks;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -21,7 +27,10 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -33,6 +42,7 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -46,6 +56,7 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
+    //TODO: fix toast on login fragment
     //TODO:change what the back button does
     //TODO: sort method on map page.
     //TODO:update profile (?popup or new page?)
@@ -55,7 +66,13 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
 
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
-
+    //popup update window builder (updateProfileDialog)
+    private AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
+    private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave;
+    private TextView updatePopUpCancel;
+    private EditText updatePopUpGetName;
+    //
     ArrayList<FireBall> fireBallList = new ArrayList<>();
 
     NavigationView navigationView;
@@ -100,6 +117,125 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+    }
+
+    public void updateProfileDialog(){
+        FirebaseAuth mAuth2 = FirebaseAuth.getInstance();
+
+        dialogBuilder = new AlertDialog.Builder(this);
+        final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
+
+        updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
+        buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
+        buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
+        updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+
+        dialogBuilder.setView(updatePopUp);
+        dialog = dialogBuilder.create();
+        dialog.show();
+
+        if(mAuth2.getCurrentUser() != null) {
+            updatePopUpGetName.setText(mAuth2.getCurrentUser().getDisplayName());
+        }
+
+        buttonUpdatePopUpNameSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //update name in auth and db
+                updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+                FirebaseUser user = mAuth2.getCurrentUser();
+                String updateName = updatePopUpGetName.getText().toString();
+                String userId = mAuth2.getCurrentUser().getUid();
+                if (!updateName.isEmpty()) {
+                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                            .setDisplayName(updateName)
+                            .build();
+                    user.updateProfile(profileUpdates)
+                            .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    mAuth2.updateCurrentUser(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            Log.d(TAG, "onComplete: "+userId);
+                                            updateUserNameInDB(updateName, userId);
+                                        }
+                                    });
+                                    //Log.d(TAG, "onComplete: User has been registered successfully");
+                                }
+                            });
+                } else {
+                            //how to build an Alert Dialog
+                            new AlertDialog.Builder(updatePopUp.getContext())
+                                    .setTitle("Error")
+                                    .setMessage("Name is Empty")
+                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                        @Override
+                                        public void onClick(DialogInterface dialogInterface, int i) {
+                                        }
+                                    }).show();
+                }
+            }
+        });
+        buttonUpdatePopUpPictureSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //handle picture pop up and saving
+            }
+        });
+        updatePopUpCancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                dialog.dismiss();
+            }
+        });
+    }
+
+    HashMap<String, Object> userUpdate;
+    QueryDocumentSnapshot docId;
+    public void updateUserNameInDB(String updateName, String userId){
+
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+
+        db.collection("userList")
+                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot value) {
+                        for (QueryDocumentSnapshot document: value) {
+                            User user = document.toObject(User.class);
+                            if(user.getUserID().compareTo(userId.toString())==0){
+                                docId = document;
+
+                                userUpdate = new HashMap<>();
+                                userUpdate.put("email", user.getEmail());
+                                userUpdate.put("joinDate", user.getJoinDate());
+                                userUpdate.put("name", updateName);
+                                userUpdate.put("userID", user.getUserID());
+
+                                Log.d(TAG, "onEvent: test" + document.getId());
+                                break;
+                            }
+                        }
+                    }
+                }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                    @Override
+                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                        db.collection("userList").document(docId.getId()).update(userUpdate)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        if (mAuth.getCurrentUser() != null) {
+                                            name.setText(mAuth.getCurrentUser().getDisplayName());
+                                        }
+                                        dialog.dismiss();
+                                        getSupportFragmentManager().beginTransaction()
+                                                .replace(R.id.fragment_container, new ProfileFragment())
+                                                .commit();
+                                    }
+                                });
+                    }
+                });
     }
 
     @Override
@@ -270,6 +406,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     @Override
     public void profileToHome() {
         logIn();
+    }
+
+    @Override
+    public void openUpdatePopUp() {
+        updateProfileDialog();
     }
 
     class NavRunnable implements Runnable{

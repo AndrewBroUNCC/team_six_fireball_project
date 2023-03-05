@@ -16,6 +16,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,6 +46,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
     //
     IProfileFragment mProfileFragment;
     CardView homeButton;
+    Button updateButton;
     TextView nameHolder, emailHolder, dateHolder, topicCount;
     ArrayList<Forum> forumList = new ArrayList<>();
 
@@ -84,6 +86,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         mAuth = FirebaseAuth.getInstance();
+        updateButton = view.findViewById(R.id.buttonProfileFragUpdate);
         homeButton = view.findViewById(R.id.viewProfileFragHomeButton);
         topicCount = view.findViewById(R.id.textViewProfileTopicNumber);
         nameHolder = view.findViewById(R.id.textViewProfileFragName);
@@ -148,6 +151,13 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
                 }
             });
             getData();
+
+            updateButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mProfileFragment.openUpdatePopUp();
+                }
+            });
         }
         
         private void getData() {
@@ -228,8 +238,10 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
                     });
         }
     }
+
     interface IProfileFragment {
         void saveProfileArrayToMain(String tempForumID);
         void profileToHome();
+        void openUpdatePopUp();
     }
 }

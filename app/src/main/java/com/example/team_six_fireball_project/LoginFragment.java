@@ -101,7 +101,7 @@ public class LoginFragment extends Fragment {
         public void run() {
             String email = editTextEmail.getText().toString();
             String password = editTextPassword.getText().toString();
-
+            //TODO: fix toast on login fragment
             if (email.isEmpty()) {
                 Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
             } else if (password.isEmpty()) {
