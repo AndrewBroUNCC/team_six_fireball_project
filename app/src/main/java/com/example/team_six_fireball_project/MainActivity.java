@@ -12,6 +12,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.textclassifier.TextLinks;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -24,20 +25,36 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-//https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-public class MainActivity extends AppCompatActivity implements ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
+//https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
+// OKHttpClient information: https://square.github.io/okhttp/
+
+public class MainActivity extends AppCompatActivity implements MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
     //TODO:change what the back button does
+    private static final String TAG = "demo";
+    private final OkHttpClient client = new OkHttpClient();
+
+    ArrayList<FireBall> fireBallList = new ArrayList<>();
+
     NavigationView navigationView;
     DrawerLayout drawer;
     String id;
     TextView name;
-    private static final String TAG = "MainActivity";
     FirebaseAuth mAuth;
 
     @Override
@@ -70,11 +87,80 @@ public class MainActivity extends AppCompatActivity implements ProfileFragment.I
             name.setText("Guest");
         }
 
+        getAllFireBallData();
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+    }
+
+    @Override
+    public ArrayList<FireBall> getFireBallList() {
+        return fireBallList;
+    }
+
+    class FireBallRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            Request request = new Request.Builder()
+                    .url("https://ssd-api.jpl.nasa.gov/fireball.api")
+                    .build();
+            client.newCall(request).enqueue(new Callback() {
+                @Override
+                public void onFailure(@NonNull Call call, @NonNull IOException e) {
+                    Log.d(TAG, "onFailure: "+ e.getMessage());
+                }
+
+                @Override
+                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                    if (response.isSuccessful()){
+                        try {
+                            JSONObject jsonObject = new JSONObject(response.body().string());
+                            //how to see all data in api for meteor
+                            //Log.d(TAG, "onResponse: "+ jsonObject.get("data"));
+                            JSONArray jsonArray = jsonObject.getJSONArray("data");
+                            for (int i = 0; i < jsonArray.length(); i++) {
+                                JSONArray object = jsonArray.getJSONArray(i);
+                                //Log.d(TAG, "onResponse: "+object.get(0)); //date
+                                String date, energy, impactE, lat, latDir, lon, lonDir, alt, vel;
+                                if (object.isNull(0)){ date= "null"; }
+                                else{ date= (String) object.get(0);}
+                                if (object.isNull(1)){ energy= "null"; }
+                                else{ energy= (String) object.get(1);}
+                                if (object.isNull(2)){ impactE= "null"; }
+                                else{ impactE= (String) object.get(2);}
+                                if (object.isNull(3)){ lat= "null"; }
+                                else{ lat= (String) object.get(3);}
+                                if (object.isNull(4)){ latDir= "null"; }
+                                else{ latDir= (String) object.get(4);}
+                                if (object.isNull(5)){ lon= "null"; }
+                                else{ lon= (String) object.get(5);}
+                                if (object.isNull(6)){ lonDir= "null"; }
+                                else{ lonDir= (String) object.get(6);}
+                                if (object.isNull(7)){ alt= "null"; }
+                                else{ alt= (String) object.get(7);}
+                                if (object.isNull(8)){ vel= "null"; }
+                                else{ vel= (String) object.get(8);}
+
+                                FireBall fireBall = new FireBall(date, energy, impactE, lat, latDir, lon, lonDir, alt, vel);
+                                //Working: Log.d(TAG, "onResponse: "+ fireBall.toString());
+                                fireBallList.add(fireBall);
+                            }
+                            //947 Log.d(TAG, "onResponse: "+fireBallList.size());
+                        } catch (Exception e){
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public void getAllFireBallData(){
+        FireBallRunnable fireBallRunnable = new FireBallRunnable();
+        new Thread(fireBallRunnable).start();
     }
 
     @Override

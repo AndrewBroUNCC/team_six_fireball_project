@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecDate"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="16dp"
+        android:gravity="center"
+        android:text="Date"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecLat"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Lat: "
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecLon"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="Lon:"
+        app:layout_constraintStart_toStartOf="@+id/textViewMapsFragRecLat"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMapsFragRecLat" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecEnergy"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Energy: "
+        app:layout_constraintStart_toEndOf="@+id/textViewMapsFragRecLat"
+        app:layout_constraintTop_toTopOf="@+id/textViewMapsFragRecLat" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecImpactE"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="8dp"
+        android:text="Impact-e:"
+        app:layout_constraintStart_toEndOf="@+id/textViewMapsFragRecLon"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMapsFragRecLat" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecLatDir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="LatDir:"
+        app:layout_constraintStart_toStartOf="@+id/textViewMapsFragRecLon"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMapsFragRecLon" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecLonDir"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="lonDir:"
+        app:layout_constraintStart_toEndOf="@+id/textViewMapsFragRecLatDir"
+        app:layout_constraintTop_toTopOf="@+id/textViewMapsFragRecLatDir" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecAlt"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Alt:"
+        app:layout_constraintStart_toEndOf="@+id/textViewMapsFragRecImpactE"
+        app:layout_constraintTop_toTopOf="@+id/textViewMapsFragRecImpactE" />
+
+    <TextView
+        android:id="@+id/textViewMapsFragRecVel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:text="Vel:"
+        app:layout_constraintStart_toEndOf="@+id/textViewMapsFragRecImpactE"
+        app:layout_constraintTop_toTopOf="@+id/textViewMapsFragRecLonDir" />
+
+    <View
+        android:id="@+id/view"
+        android:layout_width="wrap_content"
+        android:layout_height="2dp"
+        android:layout_marginTop="4dp"
+        android:background="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/textViewMapsFragRecLonDir" />
+</androidx.constraintlayout.widget.ConstraintLayout>
