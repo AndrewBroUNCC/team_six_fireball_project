@@ -42,10 +42,17 @@ import okhttp3.Response;
 
 //https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
 // OKHttpClient information: https://square.github.io/okhttp/
+//creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
 
 public class MainActivity extends AppCompatActivity implements MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
     //TODO:change what the back button does
+    //TODO: sort method on map page.
+    //TODO:update profile (?popup or new page?)
+    //TODO:visual page
+    //TODO:Home page
+    //TODO:General page
+
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
 
@@ -290,7 +297,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                                 .commit();
                     } else {
                         getSupportFragmentManager().beginTransaction()
-                                .replace(R.id.fragment_container, new MainFragment(2))
+                                .replace(R.id.fragment_container, new MainFragment(3))
                                 .addToBackStack(null)
                                 .commit();
                     }

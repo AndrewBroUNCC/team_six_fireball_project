@@ -8,8 +8,9 @@
 
     <!--drop down list names-->
     <string-array name="FireBall_Sort">
-        <item>test sort one</item>
-        <item>test sort two</item>
-        <item>test sort three</item>
+        <item>Show All Descending (Newest First)</item>
+        <item>Show All Ascending (Oldest First)</item>
+        <item>Show Past Six Months</item>
+        <item>Show Past Twelve Months</item>
     </string-array>
 </resources>

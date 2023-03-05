@@ -113,6 +113,29 @@ public class MainFragment extends Fragment {
                         }
                     })
                     .show();
+        } else if (alert ==3){
+            new AlertDialog.Builder(getActivity())
+                    .setTitle("Must be logged in")
+                    .setMessage("Would you like to go to login screen?")
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    })
+                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+                            //sign out
+                            mMainFragment.mainSignOut();
+
+                            getParentFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new LoginFragment())
+                                    .addToBackStack(null)
+                                    .commit();
+                        }
+                    })
+                    .show();
         }
         mAuth = FirebaseAuth.getInstance();
 
