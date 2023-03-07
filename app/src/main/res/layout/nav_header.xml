@@ -28,8 +28,7 @@
         <ImageView
             android:id="@+id/imageNavPicture"
             android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:src="@drawable/meteor_icon"></ImageView>
+            android:layout_height="80dp"></ImageView>
     </androidx.cardview.widget.CardView>
 
     <!--    <ImageView-->
