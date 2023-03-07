@@ -67,7 +67,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     //popup update window builder (updateProfileDialog)
     private AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
-    private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave;
+    private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave, buttonPopUpUpdate;
     private TextView updatePopUpCancel;
     private EditText updatePopUpGetName, editTextPopUpUrl;
     private ImageView profilePic;
@@ -150,6 +150,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
         popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
         editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
+        buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
 
         dialogBuilder.setView(updatePopUp);
         dialog = dialogBuilder.create();
@@ -250,6 +251,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 dialog.dismiss();
+            }
+        });
+        buttonPopUpUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                String urlTemp = editTextPopUpUrl.getText().toString();
+                Picasso.get()
+                        .load(urlTemp)
+                        .fit()
+                        .error(R.drawable.meteor_icon)
+                        .into(popUpPic);
             }
         });
     }
