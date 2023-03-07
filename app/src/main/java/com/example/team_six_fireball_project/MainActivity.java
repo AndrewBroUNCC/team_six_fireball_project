@@ -1,6 +1,12 @@
 package com.example.team_six_fireball_project;
 //Andrew Brown
 
+import static java.security.AccessController.getContext;
+
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
@@ -8,10 +14,17 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import android.app.Activity;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -19,9 +32,11 @@ import android.view.View;
 import android.view.textclassifier.TextLinks;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
@@ -33,12 +48,23 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.google.rpc.context.AttributeContext;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.security.Permission;
+import java.security.SecurityPermission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -54,15 +80,14 @@ import okhttp3.Response;
 // OKHttpClient information: https://square.github.io/okhttp/
 //creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
 
-public class MainActivity extends AppCompatActivity implements MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO: fix toast on login fragment
-    //TODO:change what the back button does
-    //TODO: sort method on map page.
-    //TODO:update profile (?popup or new page?)
-    //TODO:visual page
-    //TODO:Home page
-    //TODO:General page
+    //TODO:change what the back button does (makes ure back doesnt mess any screens up) (med)
+    //TODO: sort method on map page. (implementation last) (med)
+    //TODO: register user layout needs to be done (easy)
+    //TODO:visual page. (histogram? piechart?) (hard)
+    //TODO:Home page (Design) (easy)
+    //TODO:General page (more stuff) (easy)
 
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
@@ -72,13 +97,18 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave;
     private TextView updatePopUpCancel;
     private EditText updatePopUpGetName;
-    //
+    private ImageView profilePic;
+    private ImageView popUpPic;
+    private String url;
+    Uri uriHolder;
+
     ArrayList<FireBall> fireBallList = new ArrayList<>();
 
     NavigationView navigationView;
     DrawerLayout drawer;
     String id;
     TextView name;
+    ImageView navPic;
     FirebaseAuth mAuth;
 
     @Override
@@ -87,6 +117,16 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
         setContentView(R.layout.activity_main);
         //this is to keep night mode off
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
+
+        // Register the permissions callback, which handles the user's response to the
+        // system permissions dialog. Save the return value, an instance of
+        // ActivityResultLauncher, as an instance variable.
+
+        //HOW-TO request permissions
+//        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
+//        int permsRequestCode = 200;
+//        requestPermissions(perms, permsRequestCode);
+
 
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -104,12 +144,17 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
         //how to update the navigation bar
         View headerView = navigationView.getHeaderView(0);
         name = headerView.findViewById(R.id.textViewNavAccountType);
+        navPic = headerView.findViewById(R.id.imageNavPicture);
+
 
         if (mAuth.getCurrentUser() != null){
             name.setText(mAuth.getCurrentUser().getDisplayName());
+            setNavPic();
         } else {
             name.setText("Guest");
+            navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
         }
+
 
         getAllFireBallData();
 
@@ -120,32 +165,44 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     }
 
     public void updateProfileDialog(){
-        FirebaseAuth mAuth2 = FirebaseAuth.getInstance();
 
         dialogBuilder = new AlertDialog.Builder(this);
         final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
 
+        EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
         updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
         buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
         buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
         updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+        popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
 
         dialogBuilder.setView(updatePopUp);
         dialog = dialogBuilder.create();
         dialog.show();
 
-        if(mAuth2.getCurrentUser() != null) {
-            updatePopUpGetName.setText(mAuth2.getCurrentUser().getDisplayName());
+        if(mAuth.getCurrentUser() != null) {
+            updatePopUpGetName.setText(mAuth.getCurrentUser().getDisplayName());
+            setPopUpPic();
         }
+
+
+//        Picasso.get()
+//                .load(mAuth.getCurrentUser().getPhotoUrl())
+//                .resize(50, 50)
+//                .centerCrop()
+//                .into(profilePic);
+
+        profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
+
 
         buttonUpdatePopUpNameSave.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 //update name in auth and db
                 updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
-                FirebaseUser user = mAuth2.getCurrentUser();
+                FirebaseUser user = mAuth.getCurrentUser();
                 String updateName = updatePopUpGetName.getText().toString();
-                String userId = mAuth2.getCurrentUser().getUid();
+                String userId = mAuth.getCurrentUser().getUid();
                 if (!updateName.isEmpty()) {
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(updateName)
@@ -154,10 +211,10 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                             .addOnCompleteListener(new OnCompleteListener<Void>() {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
-                                    mAuth2.updateCurrentUser(user).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    mAuth.updateCurrentUser(user).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            Log.d(TAG, "onComplete: "+userId);
+                                            //Log.d(TAG, "onComplete: "+userId);
                                             updateUserNameInDB(updateName, userId);
                                         }
                                     });
@@ -181,6 +238,8 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
             @Override
             public void onClick(View view) {
                 //handle picture pop up and saving
+                uploadPicture(updatePopUpGetName.getText().toString());
+
             }
         });
         updatePopUpCancel.setOnClickListener(new View.OnClickListener() {
@@ -189,6 +248,33 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                 dialog.dismiss();
             }
         });
+    }
+
+    private void setPopUpPic() {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("userList").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            User user = document.toObject(User.class);
+                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
+                                url = user.getUrl();
+
+                                break;
+                            }
+                        }
+                        if(url == null){
+                            popUpPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+                        } else {
+                            Picasso.get()
+                                    .load(url)
+                                    .fit()
+                                    .error(R.drawable.meteor_icon)
+                                    .into(popUpPic);
+                        }
+                    }
+                });
     }
 
     HashMap<String, Object> userUpdate;
@@ -213,7 +299,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                                 userUpdate.put("name", updateName);
                                 userUpdate.put("userID", user.getUserID());
 
-                                Log.d(TAG, "onEvent: test" + document.getId());
+                                //Log.d(TAG, "onEvent: test" + document.getId());
                                 break;
                             }
                         }
@@ -234,6 +320,94 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
                                                 .commit();
                                     }
                                 });
+                    }
+                });
+    }
+
+    public void setProfilePic(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("userList").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            User user = document.toObject(User.class);
+                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
+                                url = user.getUrl();
+
+                                break;
+                            }
+                        }
+                        profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
+                        if (url == null){
+                            profilePic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+                        } else {
+                            Picasso.get()
+                                    .load(url)
+                                    .fit()
+                                    .error(R.drawable.meteor_icon)
+                                    .into(profilePic);
+                        }
+                    }
+                });
+    }
+
+    public void setNavPic(){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        db.collection("userList").get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            User user = document.toObject(User.class);
+                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
+                                url = user.getUrl();
+
+                                break;
+                            }
+                        }
+                        if (url == null || url.isEmpty() || url == ""){
+                            navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+                        } else {
+                            Picasso.get()
+                                    .load(url)
+                                    .fit()
+                                    .error(R.drawable.meteor_icon)
+                                    .into(navPic);
+                        }
+                    }
+                });
+    }
+
+    private void uploadPicture(String url){
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        db.collection("userList")
+                .get()
+                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                    @Override
+                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                            User user = document.toObject(User.class);
+                            if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid())==0){
+                                HashMap<String, Object> userUpdate = new HashMap<>();
+                                userUpdate.put("email", user.getEmail());
+                                userUpdate.put("joinDate", user.getJoinDate());
+                                userUpdate.put("name", user.getName());
+                                userUpdate.put("url", url);
+                                userUpdate.put("userID", user.getUserID());
+
+                                db.collection("userList").document(document.getId()).update(userUpdate)
+                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    @Override
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        dialog.dismiss();
+                                        setProfilePic();
+                                    }
+                                });
+
+                            }
+                        }
                     }
                 });
     }
@@ -363,6 +537,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     public void logOut(){
         mAuth.signOut();
         name.setText("Guest");
+        navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MainFragment())
                 .addToBackStack(null)
@@ -372,6 +547,7 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     public void logIn(){
         if (mAuth.getCurrentUser() != null) {
             name.setText(mAuth.getCurrentUser().getDisplayName());
+            setNavPic();
         }
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MainFragment())
@@ -411,6 +587,11 @@ public class MainActivity extends AppCompatActivity implements MapsFragment.IMap
     @Override
     public void openUpdatePopUp() {
         updateProfileDialog();
+    }
+
+    @Override
+    public void updateProfilePic() {
+        setProfilePic();
     }
 
     class NavRunnable implements Runnable{

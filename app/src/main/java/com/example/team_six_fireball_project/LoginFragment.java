@@ -1,9 +1,11 @@
 package com.example.team_six_fireball_project;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -101,11 +103,28 @@ public class LoginFragment extends Fragment {
         public void run() {
             String email = editTextEmail.getText().toString();
             String password = editTextPassword.getText().toString();
-            //TODO: fix toast on login fragment
             if (email.isEmpty()) {
-                Toast.makeText(getContext(), "Email is Empty", Toast.LENGTH_SHORT).show();
+                //how to build an Alert Dialog
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Error")
+                        .setMessage("Email is Empty")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).show();
             } else if (password.isEmpty()) {
-                Toast.makeText(getContext(), "Password is Empty", Toast.LENGTH_SHORT).show();
+                //how to build an Alert Dialog
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("Error")
+                        .setMessage("Password is Empty")
+                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialogInterface, int i) {
+
+                            }
+                        }).show();
             } else {
                 //calls firebase instance
                 mAuth = FirebaseAuth.getInstance();

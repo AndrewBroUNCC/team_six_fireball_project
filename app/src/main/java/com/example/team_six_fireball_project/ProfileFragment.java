@@ -1,8 +1,11 @@
 package com.example.team_six_fireball_project;
 
-import android.annotation.SuppressLint;
-import android.app.Activity;
+import static android.app.Activity.RESULT_OK;
+import static android.content.Intent.ACTION_OPEN_DOCUMENT;
+
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -17,18 +20,24 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthCredential;
+import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.OAuthCredential;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -45,6 +54,8 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
     RecycleViewProfileAdapter adapter;
     //
     IProfileFragment mProfileFragment;
+
+    ImageView profilePic;
     CardView homeButton;
     Button updateButton;
     TextView nameHolder, emailHolder, dateHolder, topicCount;
@@ -85,27 +96,49 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        getActivity().setTitle("Profile");
+
         mAuth = FirebaseAuth.getInstance();
+        profilePic = view.findViewById(R.id.imageViewProfileFragProfileImage);
         updateButton = view.findViewById(R.id.buttonProfileFragUpdate);
         homeButton = view.findViewById(R.id.viewProfileFragHomeButton);
         topicCount = view.findViewById(R.id.textViewProfileTopicNumber);
         nameHolder = view.findViewById(R.id.textViewProfileFragName);
         emailHolder = view.findViewById(R.id.textViewProfileFragEmail);
         dateHolder = view.findViewById(R.id.textViewProfileFragJoinDate);
-        getActivity().setTitle("Profile");
 
+        //recycleView stuff
         recyclerView = view.findViewById(R.id.recyclerViewProfile);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new RecycleViewProfileAdapter(forumList, this);
         recyclerView.setAdapter(adapter);
+        //
+
+        mProfileFragment.updateProfilePic();
+
+
+        //D/Demo: Url Path: /document/image:31
+        //Log.d(TAG, "Url Path: "+ mAuth.getCurrentUser().getPhotoUrl().getPath());
 
         //run in a thread to increase speed
         ProfileRunnable profileRunnable = new ProfileRunnable();
         new Thread(profileRunnable).start();
 
+        Uri uri = mAuth.getCurrentUser().getPhotoUrl();
+
+        Intent intent = new Intent();
+        intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
+        intent.setData(uri);
+        intent.addFlags(Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION);
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+
+
+        //profilePic.setImageURI(intent.getData());
+
         return view;
     }
+
 
     @Override
     public void profileDeleteTopic(String forumId) {
@@ -243,5 +276,6 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         void saveProfileArrayToMain(String tempForumID);
         void profileToHome();
         void openUpdatePopUp();
+        void updateProfilePic();
     }
 }
