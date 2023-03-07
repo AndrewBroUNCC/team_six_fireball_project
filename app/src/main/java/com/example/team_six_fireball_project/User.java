@@ -1,25 +1,27 @@
 package com.example.team_six_fireball_project;
 
 public class User {
-    String email, joinDate, name, url, userID;
+    String email, joinDate, name, uri, userID;
 
-    public User(String email, String joinDate, String name,String url, String userID) {
+
+
+    public User(String email, String joinDate, String name, String uri, String userID) {
         this.email =email;
         this.joinDate = joinDate;
         this.name = name;
-        this.url = url;
+        this.uri = uri;
         this.userID = userID;
     }
 
     public User() {
     }
 
-    public String getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public String getName() {
@@ -60,7 +62,7 @@ public class User {
                 "email='" + email + '\'' +
                 ", joinDate='" + joinDate + '\'' +
                 ", name='" + name + '\'' +
-                ", url='" + url + '\'' +
+                ", uri='" + uri + '\'' +
                 ", userID='" + userID + '\'' +
                 '}';
     }

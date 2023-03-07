@@ -1,70 +1,43 @@
 package com.example.team_six_fireball_project;
 //Andrew Brown
 
-import static java.security.AccessController.getContext;
-
-import androidx.activity.result.ActivityResult;
-import androidx.activity.result.ActivityResultCallback;
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.app.Activity;
 import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.textclassifier.TextLinks;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.storage.FirebaseStorage;
-import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
-import com.google.rpc.context.AttributeContext;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URL;
-import java.net.URLEncoder;
-import java.security.Permission;
-import java.security.SecurityPermission;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -96,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private AlertDialog dialog;
     private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave;
     private TextView updatePopUpCancel;
-    private EditText updatePopUpGetName;
+    private EditText updatePopUpGetName, editTextPopUpUrl;
     private ImageView profilePic;
     private ImageView popUpPic;
     private String url;
@@ -126,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 //        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
 //        int permsRequestCode = 200;
 //        requestPermissions(perms, permsRequestCode);
+
 
 
         mAuth = FirebaseAuth.getInstance();
@@ -164,17 +138,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         toggle.syncState();
     }
 
-    public void updateProfileDialog(){
+    public void updateProfileDialog(View profileView){
 
         dialogBuilder = new AlertDialog.Builder(this);
         final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
 
-        EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
+        //EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
         updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
         buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
         buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
         updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
         popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
+        editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
 
         dialogBuilder.setView(updatePopUp);
         dialog = dialogBuilder.create();
@@ -238,8 +213,37 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 //handle picture pop up and saving
-                uploadPicture(updatePopUpGetName.getText().toString());
+                String urlTemp = editTextPopUpUrl.getText().toString();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
 
+                db.collection("userList")
+                        .get()
+                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                            @Override
+                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                                    User user = document.toObject(User.class);
+                                    if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid())==0){
+                                        HashMap<String, Object> userUpdate = new HashMap<>();
+                                        userUpdate.put("email", user.getEmail());
+                                        userUpdate.put("joinDate", user.getJoinDate());
+                                        userUpdate.put("name", user.getName());
+                                        userUpdate.put("uri", urlTemp);
+                                        userUpdate.put("userID", user.getUserID());
+
+                                        db.collection("userList").document(document.getId()).update(userUpdate)
+                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        dialog.dismiss();
+                                                        setProfilePic(view);
+                                                    }
+                                                });
+
+                                    }
+                                }
+                            }
+                        });
             }
         });
         updatePopUpCancel.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +263,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         for (QueryDocumentSnapshot document: queryDocumentSnapshots){
                             User user = document.toObject(User.class);
                             if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
-                                url = user.getUrl();
+                                url = user.getUri();
 
                                 break;
                             }
@@ -297,6 +301,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                                 userUpdate.put("email", user.getEmail());
                                 userUpdate.put("joinDate", user.getJoinDate());
                                 userUpdate.put("name", updateName);
+                                userUpdate.put("uri", user.getUri());
                                 userUpdate.put("userID", user.getUserID());
 
                                 //Log.d(TAG, "onEvent: test" + document.getId());
@@ -324,7 +329,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 });
     }
 
-    public void setProfilePic(){
+    public void setProfilePic(View view){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("userList").get()
                 .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
@@ -333,7 +338,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         for (QueryDocumentSnapshot document: queryDocumentSnapshots){
                             User user = document.toObject(User.class);
                             if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
-                                url = user.getUrl();
+                                url = user.getUri();
 
                                 break;
                             }
@@ -347,6 +352,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                                     .fit()
                                     .error(R.drawable.meteor_icon)
                                     .into(profilePic);
+                            setNavPic();
                         }
                     }
                 });
@@ -361,7 +367,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                         for (QueryDocumentSnapshot document: queryDocumentSnapshots){
                             User user = document.toObject(User.class);
                             if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
-                                url = user.getUrl();
+                                url = user.getUri();
 
                                 break;
                             }
@@ -374,39 +380,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                                     .fit()
                                     .error(R.drawable.meteor_icon)
                                     .into(navPic);
-                        }
-                    }
-                });
-    }
-
-    private void uploadPicture(String url){
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-        db.collection("userList")
-                .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
-                            User user = document.toObject(User.class);
-                            if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid())==0){
-                                HashMap<String, Object> userUpdate = new HashMap<>();
-                                userUpdate.put("email", user.getEmail());
-                                userUpdate.put("joinDate", user.getJoinDate());
-                                userUpdate.put("name", user.getName());
-                                userUpdate.put("url", url);
-                                userUpdate.put("userID", user.getUserID());
-
-                                db.collection("userList").document(document.getId()).update(userUpdate)
-                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        dialog.dismiss();
-                                        setProfilePic();
-                                    }
-                                });
-
-                            }
                         }
                     }
                 });
@@ -585,13 +558,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     }
 
     @Override
-    public void openUpdatePopUp() {
-        updateProfileDialog();
+    public void openUpdatePopUp(View view) {
+        updateProfileDialog(view);
     }
 
     @Override
-    public void updateProfilePic() {
-        setProfilePic();
+    public void updateProfilePic(View view) {
+        setProfilePic(view);
     }
 
     class NavRunnable implements Runnable{

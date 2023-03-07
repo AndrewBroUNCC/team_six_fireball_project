@@ -115,7 +115,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         recyclerView.setAdapter(adapter);
         //
 
-        mProfileFragment.updateProfilePic();
+        mProfileFragment.updateProfilePic(view);
 
 
         //D/Demo: Url Path: /document/image:31
@@ -188,7 +188,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
             updateButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    mProfileFragment.openUpdatePopUp();
+                    mProfileFragment.openUpdatePopUp(view);
                 }
             });
         }
@@ -275,7 +275,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
     interface IProfileFragment {
         void saveProfileArrayToMain(String tempForumID);
         void profileToHome();
-        void openUpdatePopUp();
-        void updateProfilePic();
+        void openUpdatePopUp(View view);
+        void updateProfilePic(View view);
     }
 }

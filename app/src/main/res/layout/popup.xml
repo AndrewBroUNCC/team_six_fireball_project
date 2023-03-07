@@ -50,8 +50,9 @@
         android:textStyle="bold|italic"
         app:cornerRadius="90dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.396"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextPopUpUrl" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextPopUpUrlSave" />
 
     <Button
         android:id="@+id/buttonUpdatePopUpUpdateName"
@@ -94,7 +95,7 @@
         app:layout_constraintTop_toBottomOf="@+id/buttonUpdatePopUpUpdatePicture" />
 
     <EditText
-        android:id="@+id/editTextPopUpUrl"
+        android:id="@+id/editTextPopUpUrlSave"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
