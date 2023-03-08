@@ -11,7 +11,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/view7"
         android:layout_width="0dp"
-        android:layout_height="75dp"
+        android:layout_height="90dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -37,7 +37,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/view6"
         android:layout_width="0dp"
-        android:layout_height="75dp"
+        android:layout_height="90dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -63,7 +63,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/view5"
         android:layout_width="0dp"
-        android:layout_height="75dp"
+        android:layout_height="90dp"
         android:layout_marginTop="32dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
@@ -196,7 +196,7 @@
         android:id="@+id/textView13"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="45dp"
+        android:layout_marginTop="60dp"
         android:fontFamily="@font/bellota_light"
         android:text="~ Contact Us ~"
         android:textSize="16sp"

@@ -55,9 +55,11 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
+    //TODO: app crashes on blank entry. (popup profile page) (easy) Important!
+
     //TODO:change what the back button does (DONE. Need to test more to make sure)
     //TODO: sort method on map page. (implementation last) (med)
-    //TODO:visual page. (histogram? piechart?) (hard)
+    //TODO:visual page. (histogram? pie chart?) (hard)
     //TODO:Home page (Design) (easy)
     //TODO:General page (more stuff) (easy)
 
