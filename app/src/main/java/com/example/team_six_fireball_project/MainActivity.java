@@ -55,9 +55,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO:change what the back button does (makes ure back doesnt mess any screens up) (med)
+    //TODO:change what the back button does (DONE. Need to test more to make sure)
     //TODO: sort method on map page. (implementation last) (med)
-    //TODO: register user layout needs to be done (easy)
     //TODO:visual page. (histogram? piechart?) (hard)
     //TODO:Home page (Design) (easy)
     //TODO:General page (more stuff) (easy)
@@ -335,6 +334,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                                         dialog.dismiss();
                                         getSupportFragmentManager().beginTransaction()
                                                 .replace(R.id.fragment_container, new ProfileFragment())
+                                                .addToBackStack(null)
                                                 .commit();
                                     }
                                 });

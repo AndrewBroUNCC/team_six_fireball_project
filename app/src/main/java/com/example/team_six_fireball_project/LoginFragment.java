@@ -88,6 +88,7 @@ public class LoginFragment extends Fragment {
             public void onClick(View view) {
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new RegisterFragment())
+                        .addToBackStack(null)
                         .commit();
             }
         });

@@ -85,6 +85,7 @@ public class RegisterFragment extends Fragment {
             public void onClick(View view) {
                 getParentFragmentManager().beginTransaction()
                         .replace(R.id.fragment_container, new LoginFragment())
+                        .addToBackStack(null)
                         .commit();
             }
         });
@@ -183,6 +184,7 @@ public class RegisterFragment extends Fragment {
                                                             //Log.d(TAG, "onComplete: User has been registered successfully");
                                                             getActivity().getSupportFragmentManager().beginTransaction()
                                                                     .replace(R.id.fragment_container, new MainFragment())
+                                                                    .addToBackStack(null)
                                                                     .commit();
                                                         }
                                                     });

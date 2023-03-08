@@ -7,28 +7,56 @@
     android:layout_height="match_parent"
     tools:context=".RegisterFragment">
 
+    <View
+        android:id="@+id/viewLine"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginTop="154dp"
+        android:background="#000000"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <View
+        android:id="@+id/viewLine2"
+        android:layout_width="wrap_content"
+        android:layout_height="1dp"
+        android:layout_marginBottom="24dp"
+        android:background="#000000"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
     <TextView
         android:id="@+id/textViewRegPageTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="54dp"
-        android:text="Creating New Account"
-        android:textSize="34dp"
+        android:layout_marginBottom="32dp"
+        android:fontFamily="@font/bellota_light"
+        android:text="User Login"
+        android:textAllCaps="false"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold|italic"
+        app:layout_constraintBottom_toTopOf="@+id/viewLine"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <EditText
         android:id="@+id/editTextRegisterPgEmail"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
         android:layout_marginTop="24dp"
+        android:layout_marginEnd="24dp"
         android:ems="10"
         android:hint="Enter Email "
         android:inputType="textPersonName"
+        android:textColor="@color/black"
         android:textSize="24sp"
-        app:layout_constraintEnd_toEndOf="@+id/textViewRegPageTitle"
-        app:layout_constraintStart_toStartOf="@+id/textViewRegPageTitle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/editTextRegFragName" />
 
     <EditText
@@ -39,6 +67,7 @@
         android:ems="10"
         android:hint="Enter Password"
         android:inputType="textPersonName"
+        android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgEmail"
         app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgEmail"
@@ -49,9 +78,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="54dp"
-        android:height="60dp"
         android:text="Register"
+        android:backgroundTint="@color/yellow_button_header"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
         android:textSize="24sp"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
         app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgPassword"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgPassword"
@@ -62,9 +95,13 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
-        android:height="60dp"
         android:text="Cancel"
+        android:backgroundTint="@color/yellow_button_header"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
         android:textSize="24sp"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
         app:layout_constraintEnd_toEndOf="@+id/buttonRegisterPgRegister"
         app:layout_constraintStart_toStartOf="@+id/buttonRegisterPgRegister"
         app:layout_constraintTop_toBottomOf="@+id/buttonRegisterPgRegister" />
@@ -73,12 +110,13 @@
         android:id="@+id/editTextRegFragName"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="108dp"
+        android:layout_marginTop="32dp"
         android:ems="10"
         android:hint="Enter Name"
         android:inputType="textPersonName"
+        android:textColor="@color/black"
         android:textSize="24sp"
         app:layout_constraintEnd_toEndOf="@+id/editTextRegisterPgPassword"
         app:layout_constraintStart_toStartOf="@+id/editTextRegisterPgPassword"
-        app:layout_constraintTop_toBottomOf="@+id/textViewRegPageTitle" />
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 </androidx.constraintlayout.widget.ConstraintLayout>

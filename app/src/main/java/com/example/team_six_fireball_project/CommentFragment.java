@@ -109,7 +109,6 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
 
         //now runs in thread above
         //getData(textViewTitle);
-
         return view;
     }
 

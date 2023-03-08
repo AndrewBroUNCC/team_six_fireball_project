@@ -195,6 +195,7 @@ public class CreateForumFragment extends Fragment {
                                         public void onSuccess(DocumentReference documentReference) {
                                             getParentFragmentManager().beginTransaction()
                                                     .replace(R.id.fragment_container, new ForumsFragment())
+                                                    .addToBackStack(null)
                                                     .commit();
                                         }
                                     });

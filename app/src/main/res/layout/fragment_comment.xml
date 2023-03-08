@@ -95,6 +95,9 @@
         android:shape="ring"
         android:thicknessRatio="1.9"
         app:cardCornerRadius="70dp"
+
+        android:clickable="true"
+        android:foreground="?android:attr/selectableItemBackground"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints">
