@@ -12,7 +12,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
-        android:fontFamily="@font/bellota_light"
         android:text="Topic Title"
         android:textAllCaps="false"
         android:textColor="@color/white"

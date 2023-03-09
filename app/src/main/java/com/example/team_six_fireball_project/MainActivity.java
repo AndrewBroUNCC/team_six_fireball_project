@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     //TODO: sort method on map page. (implementation last) (med)
     //TODO:visual page. (histogram? pie chart?) (hard)
-    //TODO:Home page (Design) (easy)
+    //TODO:Home page (functionality) (easy)
     //TODO:General page (more stuff) (easy)
 
     private static final String TAG = "demo";
