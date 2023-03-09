@@ -71,6 +71,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private EditText updatePopUpGetName, editTextPopUpUrl;
     private ImageView profilePic, popUpPic;
     private String url;
+    
 
     ArrayList<FireBall> fireBallList = new ArrayList<>();
 
@@ -91,6 +92,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         //this is to keep night mode off
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
+
+
+        Log.d(TAG, "onCreate: Testing");
         //HOW-TO request permissions
 //        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
 //        int permsRequestCode = 200;

@@ -11,8 +11,7 @@ public class FireBall {
     String alt;
     String vel;
 
-    public FireBall() {
-    }
+    public FireBall() { }
 
     public FireBall(String date, String energy, String impactE, String lat, String latDir, String lon, String lonDir, String alt, String vel) {
         this.date = date;
