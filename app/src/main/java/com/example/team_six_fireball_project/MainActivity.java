@@ -56,7 +56,6 @@ import okhttp3.Response;
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
     //TODO:test back button
-
     //TODO: sort method on map page. (implementation last) (med)
     //TODO:visual page. (histogram? pie chart?) (hard)
     //TODO:Home page (functionality) (easy)
@@ -70,10 +69,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave, buttonPopUpUpdate;
     private TextView updatePopUpCancel;
     private EditText updatePopUpGetName, editTextPopUpUrl;
-    private ImageView profilePic;
-    private ImageView popUpPic;
+    private ImageView profilePic, popUpPic;
     private String url;
-    Uri uriHolder;
 
     ArrayList<FireBall> fireBallList = new ArrayList<>();
 
@@ -84,6 +81,9 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     ImageView navPic;
     FirebaseAuth mAuth;
 
+    HashMap<String, Object> userUpdate;
+    QueryDocumentSnapshot docId;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,16 +91,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         //this is to keep night mode off
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        // Register the permissions callback, which handles the user's response to the
-        // system permissions dialog. Save the return value, an instance of
-        // ActivityResultLauncher, as an instance variable.
-
         //HOW-TO request permissions
 //        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
 //        int permsRequestCode = 200;
 //        requestPermissions(perms, permsRequestCode);
-
-
 
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
@@ -319,8 +313,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 });
     }
 
-    HashMap<String, Object> userUpdate;
-    QueryDocumentSnapshot docId;
     public void updateUserNameInDB(String updateName, String userId){
 
         FirebaseFirestore db = FirebaseFirestore.getInstance();
