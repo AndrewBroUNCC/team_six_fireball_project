@@ -11,7 +11,7 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/view7"
         android:layout_width="0dp"
-        android:layout_height="90dp"
+        android:layout_height="70dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -25,6 +25,14 @@
         app:layout_constraintTop_toBottomOf="@+id/view6"
         tools:ignore="MissingConstraints">
 
+        <ImageView
+            android:id="@+id/imageViewGeneralInfoIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_info_blue" />
+
         <View
             android:id="@+id/viewLineCardViewMidTwo"
             android:layout_width="300dp"
@@ -32,12 +40,22 @@
             android:layout_gravity="end"
             android:layout_marginTop="2dp"
             android:background="#000000" />
+
+        <TextView
+            android:id="@+id/textview27"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="100dp"
+            android:text="General Information "
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view6"
         android:layout_width="0dp"
-        android:layout_height="90dp"
+        android:layout_height="70dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -51,20 +69,38 @@
         app:layout_constraintTop_toBottomOf="@+id/view5"
         tools:ignore="MissingConstraints">
 
+        <ImageView
+            android:id="@+id/imageViewGraphIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_graph_blue" />
+
         <View
             android:id="@+id/viewLineCardViewMidOne"
             android:layout_width="300dp"
             android:layout_height="1dp"
             android:layout_gravity="end"
-            android:layout_marginTop="1dp"
+            android:layout_marginTop="2dp"
             android:background="#000000" />
+
+        <TextView
+            android:id="@+id/textView26"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_vertical"
+            android:layout_marginLeft="100dp"
+            android:text="Visual Graphs"
+            android:textSize="20sp"
+            android:textStyle="bold" />
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view5"
         android:layout_width="0dp"
-        android:layout_height="90dp"
-        android:layout_marginTop="32dp"
+        android:layout_height="70dp"
+        android:layout_marginTop="50dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -76,7 +112,26 @@
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view2"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewMapIcon"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="20dp"
+            android:src="@drawable/ic_map_blue" />
+
+        <TextView
+            android:id="@+id/textView25"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:layout_marginLeft="100dp"
+            android:text="FireBall Interactive Map"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+    </androidx.cardview.widget.CardView>
 
     <View
         android:id="@+id/viewLine"
@@ -121,8 +176,8 @@
     <androidx.cardview.widget.CardView
         android:id="@+id/view2"
         android:layout_width="120dp"
-        android:layout_height="150dp"
-        android:layout_marginTop="40dp"
+        android:layout_height="140dp"
+        android:layout_marginTop="90dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:foreground="?android:attr/selectableItemBackground"
@@ -135,12 +190,42 @@
         app:layout_constraintEnd_toStartOf="@+id/view3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/viewLine"
-        tools:ignore="MissingConstraints"></androidx.cardview.widget.CardView>
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewForumIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_chat_blue" />
+
+        <TextView
+            android:id="@+id/textView18"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="62dp"
+            android:text="Forum"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginRight="8dp"
+            android:gravity="left"
+            android:text="Post or Join a Topic"
+            android:textSize="16sp" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view3"
         android:layout_width="120dp"
-        android:layout_height="150dp"
+        android:layout_height="140dp"
         android:layout_marginStart="1dp"
         android:layout_marginEnd="1dp"
         android:backgroundTint="#D2DCE1"
@@ -156,12 +241,42 @@
         app:layout_constraintEnd_toStartOf="@+id/view4"
         app:layout_constraintStart_toEndOf="@+id/view2"
         app:layout_constraintTop_toTopOf="@+id/view2"
-        tools:ignore="MissingConstraints"></androidx.cardview.widget.CardView>
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewProfileIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/icon_person_blue" />
+
+        <TextView
+            android:id="@+id/textView19"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="62dp"
+            android:text="Profile"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginRight="8dp"
+            android:gravity="left"
+            android:text="A Personal Profile"
+            android:textSize="16sp" />
+    </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
         android:id="@+id/view4"
         android:layout_width="120dp"
-        android:layout_height="150dp"
+        android:layout_height="140dp"
         android:backgroundTint="#D2DCE1"
         android:clickable="true"
         android:elevation="12dp"
@@ -175,7 +290,37 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/view3"
         app:layout_constraintTop_toTopOf="@+id/view2"
-        tools:ignore="MissingConstraints" />
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewLoginIcon"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="12dp"
+            android:src="@drawable/ic_login_blue" />
+
+        <TextView
+            android:id="@+id/textView20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="62dp"
+            android:text="Login"
+            android:textSize="20sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/textView24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="90dp"
+            android:layout_marginRight="8dp"
+            android:gravity="left"
+            android:text="Login here or Register"
+            android:textSize="16sp" />
+    </androidx.cardview.widget.CardView>
 
     <ImageView
         android:id="@+id/imageView"
@@ -204,5 +349,18 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/view7" />
+
+    <TextView
+        android:id="@+id/textView16"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:maxLines="1"
+        android:text="Welcome, Guest!"
+        android:textSize="20sp"
+        android:textStyle="italic"
+        app:layout_constraintBottom_toTopOf="@+id/view2"
+        app:layout_constraintEnd_toEndOf="@+id/view4"
+        app:layout_constraintStart_toStartOf="@+id/view2"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

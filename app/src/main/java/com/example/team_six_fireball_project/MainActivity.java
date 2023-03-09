@@ -55,9 +55,8 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO: app crashes on blank entry. (popup profile page) (easy) Important!
+    //TODO:test back button
 
-    //TODO:change what the back button does (DONE. Need to test more to make sure)
     //TODO: sort method on map page. (implementation last) (med)
     //TODO:visual page. (histogram? pie chart?) (hard)
     //TODO:Home page (Design) (easy)
@@ -215,37 +214,49 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 //handle picture pop up and saving
-                String urlTemp = editTextPopUpUrl.getText().toString();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                    new AlertDialog.Builder(updatePopUp.getContext())
+                            .setTitle("Invalid Input")
+                            .setMessage("Url is empty")
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
 
-                db.collection("userList")
-                        .get()
-                        .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                            @Override
-                            public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                for (QueryDocumentSnapshot document: queryDocumentSnapshots){
-                                    User user = document.toObject(User.class);
-                                    if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid())==0){
-                                        HashMap<String, Object> userUpdate = new HashMap<>();
-                                        userUpdate.put("email", user.getEmail());
-                                        userUpdate.put("joinDate", user.getJoinDate());
-                                        userUpdate.put("name", user.getName());
-                                        userUpdate.put("uri", urlTemp);
-                                        userUpdate.put("userID", user.getUserID());
+                                }
+                            }).show();
+                } else {
+                    String urlTemp = editTextPopUpUrl.getText().toString();
+                    FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                                        db.collection("userList").document(document.getId()).update(userUpdate)
-                                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        dialog.dismiss();
-                                                        setProfilePic(view);
-                                                    }
-                                                });
+                    db.collection("userList")
+                            .get()
+                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
+                                @Override
+                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
+                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                        User user = document.toObject(User.class);
+                                        if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid()) == 0) {
+                                            HashMap<String, Object> userUpdate = new HashMap<>();
+                                            userUpdate.put("email", user.getEmail());
+                                            userUpdate.put("joinDate", user.getJoinDate());
+                                            userUpdate.put("name", user.getName());
+                                            userUpdate.put("uri", urlTemp);
+                                            userUpdate.put("userID", user.getUserID());
 
+                                            db.collection("userList").document(document.getId()).update(userUpdate)
+                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task<Void> task) {
+                                                            dialog.dismiss();
+                                                            setProfilePic(view);
+                                                        }
+                                                    });
+
+                                        }
                                     }
                                 }
-                            }
-                        });
+                            });
+                }
             }
         });
         updatePopUpCancel.setOnClickListener(new View.OnClickListener() {
@@ -258,12 +269,25 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
 
-                String urlTemp = editTextPopUpUrl.getText().toString();
-                Picasso.get()
-                        .load(urlTemp)
-                        .fit()
-                        .error(R.drawable.meteor_icon)
-                        .into(popUpPic);
+                if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                    new AlertDialog.Builder(updatePopUp.getContext())
+                            .setTitle("Invalid Input")
+                            .setMessage("Url is empty")
+                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                                @Override
+                                public void onClick(DialogInterface dialogInterface, int i) {
+
+                                }
+                            }).show();
+                } else {
+                    String urlTemp = editTextPopUpUrl.getText().toString();
+                    Picasso.get()
+                            .load(urlTemp)
+                            .fit()
+                            .placeholder(R.drawable.meteor_icon)
+                            .error(R.drawable.meteor_icon)
+                            .into(popUpPic);
+                }
             }
         });
     }
