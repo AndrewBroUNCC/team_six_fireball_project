@@ -57,10 +57,11 @@ import okhttp3.Response;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO: sort method on map page. (implementation last) (med)
-    //TODO:visual page. (histogram? pie chart?) (hard)
+    //TODO: map markers. (add impact sort) (implementation last) (easy)
+    //TODO:visual page. (histogram? pie chart?) (hard) -Anders, Drew
     //TODO:Home page (functionality) (easy) -JuiceMan
-    //TODO:General page (more stuff) (easy)
+    //TODO:General page (more stuff) (easy) -Justin L
+    //TODO: contact page (easy) -patrick
 
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
@@ -420,8 +421,12 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     public ArrayList<FireBall> getFireBallList() {
+        return fireBallList;
+    }
 
-        getAllFireBallData();
+    @Override
+    public ArrayList<FireBall> getResetFireBallList() {
+        getFireBallList();
         return fireBallList;
     }
 
@@ -455,6 +460,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
         @Override
         public void run() {
+
+            fireBallList.clear();
             Request request = new Request.Builder()
                     .url("https://ssd-api.jpl.nasa.gov/fireball.api")
                     .build();
