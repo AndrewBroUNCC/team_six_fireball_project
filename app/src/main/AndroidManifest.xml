@@ -12,8 +12,8 @@
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
-        android:icon="@drawable/fire_born_blue_solo"
-        android:label="FireBorn: Meteors"
+        android:icon="@drawable/meteor_icon"
+        android:label="FireBorn"
         android:supportsRtl="true"
         android:theme="@style/Theme.Team_six_fireball_project"
         tools:targetApi="31">

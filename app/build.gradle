@@ -5,6 +5,7 @@ plugins {
 
 }
 
+
 android {
     namespace 'com.example.team_six_fireball_project'
     compileSdk 33
@@ -35,6 +36,9 @@ android {
 }
 
 dependencies {
+
+    //chart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 
     implementation 'androidx.navigation:navigation-fragment:2.5.3'
     implementation 'androidx.navigation:navigation-ui:2.5.3'
