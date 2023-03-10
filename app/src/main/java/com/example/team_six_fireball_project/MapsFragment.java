@@ -12,6 +12,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 
@@ -24,9 +25,14 @@ import com.google.android.gms.maps.model.MarkerOptions;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Comparator;
+import java.util.Date;
 import java.util.List;
 
-public class MapsFragment extends Fragment implements RecycleViewMapsAdapter.IRecycleViewMapsAdapter {
+import javax.security.auth.callback.Callback;
+
+public class MapsFragment extends Fragment implements AdapterView.OnItemClickListener, RecycleViewMapsAdapter.IRecycleViewMapsAdapter {
 
     private static final String TAG = "demo";
     IMapsFragment mMapsFragment;
@@ -64,9 +70,7 @@ public class MapsFragment extends Fragment implements RecycleViewMapsAdapter.IRe
 
     @Nullable
     @Override
-    public View onCreateView( LayoutInflater inflater,
-                              ViewGroup container,
-                              Bundle savedInstanceState) {
+    public View onCreateView( LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
 
 
@@ -74,9 +78,20 @@ public class MapsFragment extends Fragment implements RecycleViewMapsAdapter.IRe
         autoCompleteTextView = view.findViewById(R.id.autoCompleteTextView);
         //Fireball array was mad in the strings.xml file, in the value folder
         fireballSort = view.getResources().getStringArray(R.array.FireBall_Sort);
-        ArrayAdapter arrayAdapter = new ArrayAdapter(requireContext(), R.layout.drop_down_menu_items, fireballSort);
+        ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.drop_down_menu_items, fireballSort);
         autoCompleteTextView.setAdapter(arrayAdapter);
 
+        //how to get what is clicked
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                // Log.d(TAG, "onItemClick: get string: "+adapterView.getItemAtPosition(i));
+                // Log.d(TAG, "onItemClick: get position: "+ i);
+                sortByStatus(position);
+            }
+        });
+
+        Log.d(TAG, "onCreateView: "+arrayAdapter.getItemViewType(0));
 
         fireBallList = mMapsFragment.getFireBallList();
         recyclerView = view.findViewById(R.id.recycleViewMapsFrag);
@@ -85,7 +100,87 @@ public class MapsFragment extends Fragment implements RecycleViewMapsAdapter.IRe
         adapter = new RecycleViewMapsAdapter(fireBallList, this);
         recyclerView.setAdapter(adapter);
         //Log.d(TAG, "onCreateView: " + fireBallList);
+
+
+
         return view;
+    }
+
+    public void sortByStatus(int status){
+        if (status == 0){
+            //newest first
+            fireBallList.sort(new Comparator<FireBall>() {
+                @Override
+                public int compare(FireBall fireBall, FireBall t1) {
+                    return fireBall.getDate().compareTo(t1.getDate()) *-1;
+                }
+            });
+         } else if(status == 1){
+            //oldest first
+            fireBallList.sort(new Comparator<FireBall>() {
+                @Override
+                public int compare(FireBall fireBall, FireBall t1) {
+                    return fireBall.getDate().compareTo(t1.getDate()) * 1;
+                }
+            });
+        } else if (status ==2){
+            sortSixMonths();
+        }else if (status == 3){
+            sortTwelveMonths();
+        }
+
+        adapter.notifyDataSetChanged();
+        fireBallList = mMapsFragment.getFireBallList();
+        Log.d(TAG, "sortByStatus: HERE I AM"+fireBallList.size());
+    }
+
+    public void sortTwelveMonths(){
+        String date = mMapsFragment.getTwelveMonthsAgoDateMapsFrag();
+        ArrayList<FireBall> temp = new ArrayList<>();
+        //Log.d(TAG, "sortTwo: date: "+ date);
+        //Log.d(TAG, "sortTwo: date2: "+fireBallList.get(0).getDate());
+        //past 6 months
+        for (FireBall fireBall: fireBallList) {
+            if (fireBall.getDate().compareTo(date) >= 0){
+                temp.add(fireBall);
+                //Log.d(TAG, "sortByStatus: fireball" + fireBall.getDate());
+            }
+        }
+
+        fireBallList.clear();
+        for (FireBall fireBallTemp:temp) {
+            fireBallList.add(fireBallTemp);
+        }
+        fireBallList.sort(new Comparator<FireBall>() {
+            @Override
+            public int compare(FireBall fireBall, FireBall t1) {
+                return fireBall.getDate().compareTo(t1.getDate())*-1;
+            }
+        });
+    }
+    public void sortSixMonths(){
+        String date = mMapsFragment.getSixMonthsAgoDateMapsFrag();
+        ArrayList<FireBall> temp = new ArrayList<>();
+        //Log.d(TAG, "sortTwo: date: "+ date);
+        //Log.d(TAG, "sortTwo: date2: "+fireBallList.get(0).getDate());
+        //past 6 months
+        for (FireBall fireBall: fireBallList) {
+            if (fireBall.getDate().compareTo(date) >= 0){
+                temp.add(fireBall);
+                //Log.d(TAG, "sortByStatus: fireball" + fireBall.getDate());
+            }
+        }
+
+        fireBallList.clear();
+        for (FireBall fireBallTemp:temp) {
+            fireBallList.add(fireBallTemp);
+        }
+        fireBallList.sort(new Comparator<FireBall>() {
+            @Override
+            public int compare(FireBall fireBall, FireBall t1) {
+                return fireBall.getDate().compareTo(t1.getDate())*-1;
+            }
+        });
     }
 
     //need this for interface to work
@@ -113,7 +208,15 @@ public class MapsFragment extends Fragment implements RecycleViewMapsAdapter.IRe
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+        //Log.d(TAG, "onItemSelected: test 1 " + adapterView.getSelectedItem());
+        //Log.d(TAG, "onItemSelected: test 2 "+adapterView.getItemAtPosition(i));
+    }
+
     interface IMapsFragment{
         ArrayList<FireBall> getFireBallList();
+        String getSixMonthsAgoDateMapsFrag();
+        String getTwelveMonthsAgoDateMapsFrag();
     }
 }
