@@ -6,13 +6,13 @@ import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.app.AppCompatDelegate;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.app.ActivityCompat;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.DialogInterface;
-import android.net.Uri;
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -22,16 +22,12 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 import com.squareup.picasso.Picasso;
 
 import org.json.JSONArray;
@@ -43,6 +39,8 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Locale;
+import java.util.Objects;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -55,10 +53,10 @@ import okhttp3.Response;
 // OKHttpClient information: https://square.github.io/okhttp/
 //creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
 
-public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO: map markers. (add impact sort) (implementation last) (easy)
-    //TODO:visual page. (histogram? pie chart?) (hard) -Anders, Drew
+    //TODO: map markers. (implementation last) (easy) -Drew
+    //TODO:visual page. (implement data) (med) -Drew, (DashBoard) -Anders (unknown difficulty)
     //TODO:Home page (functionality) (easy) -JuiceMan
     //TODO:General page (more stuff) (easy) -Justin L
     //TODO: contact page (easy) -patrick
@@ -66,10 +64,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
     //popup update window builder (updateProfileDialog)
-    private AlertDialog.Builder dialogBuilder;
+    public AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
-    private Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave, buttonPopUpUpdate;
-    private TextView updatePopUpCancel;
+    public Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave, buttonPopUpUpdate;
+    public TextView updatePopUpCancel;
     private EditText updatePopUpGetName, editTextPopUpUrl;
     private ImageView profilePic, popUpPic;
     private String url;
@@ -94,11 +92,11 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         //this is to keep night mode off
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-        //HOW-TO request permissions
-//        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
-//        int permsRequestCode = 200;
-//        requestPermissions(perms, permsRequestCode);
-
+/*       HOW-TO request permissions
+        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
+        int permsRequestCode = 200;
+        requestPermissions(perms, permsRequestCode);
+*/
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -122,8 +120,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             name.setText(mAuth.getCurrentUser().getDisplayName());
             setNavPic();
         } else {
-            name.setText("Guest");
-            navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+            name.setText(R.string.guest);
+            navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
         }
 
 
@@ -158,153 +156,111 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             setPopUpPic();
         }
 
-
-//        Picasso.get()
-//                .load(mAuth.getCurrentUser().getPhotoUrl())
-//                .resize(50, 50)
-//                .centerCrop()
-//                .into(profilePic);
-
         profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
 
 
-        buttonUpdatePopUpNameSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //update name in auth and db
-                updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
-                FirebaseUser user = mAuth.getCurrentUser();
-                String updateName = updatePopUpGetName.getText().toString();
-                String userId = mAuth.getCurrentUser().getUid();
-                if (!updateName.isEmpty()) {
-                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                            .setDisplayName(updateName)
-                            .build();
-                    user.updateProfile(profileUpdates)
-                            .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                @Override
-                                public void onComplete(@NonNull Task<Void> task) {
-                                    mAuth.updateCurrentUser(user).addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            //Log.d(TAG, "onComplete: "+userId);
-                                            updateUserNameInDB(updateName, userId);
-                                        }
-                                    });
-                                    //Log.d(TAG, "onComplete: User has been registered successfully");
-                                }
+        buttonUpdatePopUpNameSave.setOnClickListener(view -> {
+            //update name in auth and db
+            updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+            FirebaseUser user = mAuth.getCurrentUser();
+            String updateName = updatePopUpGetName.getText().toString();
+            String userId = mAuth.getCurrentUser().getUid();
+            if (!updateName.isEmpty()) {
+                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                        .setDisplayName(updateName)
+                        .build();
+                user.updateProfile(profileUpdates)
+                        .addOnCompleteListener(task -> {
+                            mAuth.updateCurrentUser(user).addOnCompleteListener(task1 -> {
+                                //Log.d(TAG, "onComplete: "+userId);
+                                updateUserNameInDB(updateName, userId);
                             });
-                } else {
-                            //how to build an Alert Dialog
-                            new AlertDialog.Builder(updatePopUp.getContext())
-                                    .setTitle("Error")
-                                    .setMessage("Name is Empty")
-                                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                        @Override
-                                        public void onClick(DialogInterface dialogInterface, int i) {
-                                        }
-                                    }).show();
-                }
+                            //Log.d(TAG, "onComplete: User has been registered successfully");
+                        });
+            } else {
+                        //how to build an Alert Dialog
+                        new AlertDialog.Builder(updatePopUp.getContext())
+                                .setTitle("Error")
+                                .setMessage("Name is Empty")
+                                .setPositiveButton("Ok", (dialogInterface, i) -> {
+                                }).show();
             }
         });
-        buttonUpdatePopUpPictureSave.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //handle picture pop up and saving
-                if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                    new AlertDialog.Builder(updatePopUp.getContext())
-                            .setTitle("Invalid Input")
-                            .setMessage("Url is empty")
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+        buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
+            //handle picture pop up and saving
+            if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                new AlertDialog.Builder(updatePopUp.getContext())
+                        .setTitle("Invalid Input")
+                        .setMessage("Url is empty")
+                        .setPositiveButton("Ok", (dialogInterface, i) -> {
+
+                        }).show();
+            } else {
+                String urlTemp = editTextPopUpUrl.getText().toString();
+                FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+                db.collection("userList")
+                        .get()
+                        .addOnSuccessListener(queryDocumentSnapshots -> {
+                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                User user = document.toObject(User.class);
+                                if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid()) == 0) {
+                                    HashMap<String, Object> userUpdate = new HashMap<>();
+                                    userUpdate.put("email", user.getEmail());
+                                    userUpdate.put("joinDate", user.getJoinDate());
+                                    userUpdate.put("name", user.getName());
+                                    userUpdate.put("uri", urlTemp);
+                                    userUpdate.put("userID", user.getUserID());
+
+                                    db.collection("userList").document(document.getId()).update(userUpdate)
+                                            .addOnCompleteListener(task -> {
+                                                dialog.dismiss();
+                                                setProfilePic(view);
+                                            });
 
                                 }
-                            }).show();
-                } else {
-                    String urlTemp = editTextPopUpUrl.getText().toString();
-                    FirebaseFirestore db = FirebaseFirestore.getInstance();
-
-                    db.collection("userList")
-                            .get()
-                            .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                                @Override
-                                public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                        User user = document.toObject(User.class);
-                                        if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid()) == 0) {
-                                            HashMap<String, Object> userUpdate = new HashMap<>();
-                                            userUpdate.put("email", user.getEmail());
-                                            userUpdate.put("joinDate", user.getJoinDate());
-                                            userUpdate.put("name", user.getName());
-                                            userUpdate.put("uri", urlTemp);
-                                            userUpdate.put("userID", user.getUserID());
-
-                                            db.collection("userList").document(document.getId()).update(userUpdate)
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            dialog.dismiss();
-                                                            setProfilePic(view);
-                                                        }
-                                                    });
-
-                                        }
-                                    }
-                                }
-                            });
-                }
+                            }
+                        });
             }
         });
-        updatePopUpCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                dialog.dismiss();
-            }
-        });
-        buttonPopUpUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        updatePopUpCancel.setOnClickListener(view -> dialog.dismiss());
+        buttonPopUpUpdate.setOnClickListener(view -> {
 
-                if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                    new AlertDialog.Builder(updatePopUp.getContext())
-                            .setTitle("Invalid Input")
-                            .setMessage("Url is empty")
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                }
-                            }).show();
-                } else {
-                    String urlTemp = editTextPopUpUrl.getText().toString();
-                    Picasso.get()
-                            .load(urlTemp)
-                            .fit()
-                            .placeholder(R.drawable.meteor_icon)
-                            .error(R.drawable.meteor_icon)
-                            .into(popUpPic);
-                }
+            if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                new AlertDialog.Builder(updatePopUp.getContext())
+                        .setTitle("Invalid Input")
+                        .setMessage("Url is empty")
+                        .setPositiveButton("Ok", (dialogInterface, i) -> {
+                        }).show();
+            } else {
+                String urlTemp = editTextPopUpUrl.getText().toString();
+                Picasso.get()
+                        .load(urlTemp)
+                        .fit()
+                        .placeholder(R.drawable.meteor_icon)
+                        .error(R.drawable.meteor_icon)
+                        .into(popUpPic);
             }
         });
     }
 
     private void setPopUpPic() {
-        FirebaseFirestore db = FirebaseFirestore.getInstance();
-        db.collection("userList").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+        try {
+
+
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            db.collection("userList").get()
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
                             User user = document.toObject(User.class);
-                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
+                            if (Objects.requireNonNull(mAuth.getCurrentUser()).getUid().compareTo(user.getUserID()) == 0) {
                                 url = user.getUri();
 
                                 break;
                             }
                         }
-                        if(url == null){
-                            popUpPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+                        if (url == null) {
+                            popUpPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
                         } else {
                             Picasso.get()
                                     .load(url)
@@ -312,8 +268,10 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                                     .error(R.drawable.meteor_icon)
                                     .into(popUpPic);
                         }
-                    }
-                });
+                    });
+        } catch (Exception e){
+            Log.d(TAG, "setPopUpPic: "+e.getMessage());
+        }
     }
 
     public void updateUserNameInDB(String updateName, String userId){
@@ -322,72 +280,58 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
 
         db.collection("userList")
-                .get().addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot value) {
-                        for (QueryDocumentSnapshot document: value) {
-                            User user = document.toObject(User.class);
-                            if(user.getUserID().compareTo(userId.toString())==0){
-                                docId = document;
+                .get().addOnSuccessListener(value -> {
+                    for (QueryDocumentSnapshot document: value) {
+                        User user = document.toObject(User.class);
+                        if(user.getUserID().compareTo(userId)==0){
+                            docId = document;
 
-                                userUpdate = new HashMap<>();
-                                userUpdate.put("email", user.getEmail());
-                                userUpdate.put("joinDate", user.getJoinDate());
-                                userUpdate.put("name", updateName);
-                                userUpdate.put("uri", user.getUri());
-                                userUpdate.put("userID", user.getUserID());
+                            userUpdate = new HashMap<>();
+                            userUpdate.put("email", user.getEmail());
+                            userUpdate.put("joinDate", user.getJoinDate());
+                            userUpdate.put("name", updateName);
+                            userUpdate.put("uri", user.getUri());
+                            userUpdate.put("userID", user.getUserID());
 
-                                //Log.d(TAG, "onEvent: test" + document.getId());
-                                break;
-                            }
+                            //Log.d(TAG, "onEvent: test" + document.getId());
+                            break;
                         }
                     }
-                }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        db.collection("userList").document(docId.getId()).update(userUpdate)
-                                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                    @Override
-                                    public void onComplete(@NonNull Task<Void> task) {
-                                        if (mAuth.getCurrentUser() != null) {
-                                            name.setText(mAuth.getCurrentUser().getDisplayName());
-                                        }
-                                        dialog.dismiss();
-                                        getSupportFragmentManager().beginTransaction()
-                                                .replace(R.id.fragment_container, new ProfileFragment())
-                                                .addToBackStack(null)
-                                                .commit();
-                                    }
-                                });
-                    }
-                });
+                }).addOnCompleteListener(task -> db.collection("userList").document(docId.getId()).update(userUpdate)
+                        .addOnCompleteListener(task1 -> {
+                            if (mAuth.getCurrentUser() != null) {
+                                name.setText(mAuth.getCurrentUser().getDisplayName());
+                            }
+                            dialog.dismiss();
+                            getSupportFragmentManager().beginTransaction()
+                                    .replace(R.id.fragment_container, new ProfileFragment())
+                                    .addToBackStack(null)
+                                    .commit();
+                        }));
     }
 
     public void setProfilePic(View view){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("userList").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
-                            User user = document.toObject(User.class);
-                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
-                                url = user.getUri();
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                        User user = document.toObject(User.class);
+                        if (Objects.requireNonNull(mAuth.getCurrentUser()).getUid().compareTo(user.getUserID())==0){
+                            url = user.getUri();
 
-                                break;
-                            }
+                            break;
                         }
-                        profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
-                        if (url == null){
-                            profilePic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
-                        } else {
-                            Picasso.get()
-                                    .load(url)
-                                    .fit()
-                                    .error(R.drawable.meteor_icon)
-                                    .into(profilePic);
-                            setNavPic();
-                        }
+                    }
+                    profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
+                    if (url == null){
+                        profilePic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
+                    } else {
+                        Picasso.get()
+                                .load(url)
+                                .fit()
+                                .error(R.drawable.meteor_icon)
+                                .into(profilePic);
+                        setNavPic();
                     }
                 });
     }
@@ -395,26 +339,22 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
     public void setNavPic(){
         FirebaseFirestore db = FirebaseFirestore.getInstance();
         db.collection("userList").get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                        for (QueryDocumentSnapshot document: queryDocumentSnapshots){
-                            User user = document.toObject(User.class);
-                            if (mAuth.getCurrentUser().getUid().compareTo(user.getUserID())==0){
-                                url = user.getUri();
-
-                                break;
-                            }
+                .addOnSuccessListener(queryDocumentSnapshots -> {
+                    for (QueryDocumentSnapshot document: queryDocumentSnapshots){
+                        User user = document.toObject(User.class);
+                        if (Objects.requireNonNull(mAuth.getCurrentUser()).getUid().compareTo(user.getUserID())==0){
+                            url = user.getUri();
+                            break;
                         }
-                        if (url == null || url.isEmpty() || url == ""){
-                            navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
-                        } else {
-                            Picasso.get()
-                                    .load(url)
-                                    .fit()
-                                    .error(R.drawable.meteor_icon)
-                                    .into(navPic);
-                        }
+                    }
+                    if (url == null || url.isEmpty()){
+                        navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
+                    } else {
+                        Picasso.get()
+                                .load(url)
+                                .fit()
+                                .error(R.drawable.meteor_icon)
+                                .into(navPic);
                     }
                 });
     }
@@ -426,7 +366,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     public ArrayList<FireBall> getResetFireBallList() {
-        getFireBallList();
         return fireBallList;
     }
 
@@ -440,20 +379,23 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         //Log.d(TAG, "getCurrentDateMapsFrag: cal: " + cal);
         //Note
         //cal.getTime();//return date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String createdDate = dateFormat.format(cal.getTime());
-        return createdDate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        return dateFormat.format(cal.getTime());
     }
 
     @Override
     public String getTwelveMonthsAgoDateMapsFrag() {
         Calendar cal = Calendar.getInstance();  //Get current date/month i.e 03 march, 2023
+//        cal.set(Calendar.DAY_OF_MONTH, 1); //set date, to make it the 1st
         cal.add(Calendar.MONTH, -12);   //Go to date, 12 months ago
-        //cal.set(Calendar.DAY_OF_MONTH, 1); //set date, to make it the 1st
-        //cal.getTime();//return date
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String createdDate = dateFormat.format(cal.getTime());
-        return createdDate;
+//        cal.getTime();//return date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US);
+        return dateFormat.format(cal.getTime());
+    }
+
+    @Override
+    public ArrayList<FireBall> getFireBallDataGraph() {
+        return fireBallList;
     }
 
     class FireBallRunnable implements Runnable{
@@ -472,7 +414,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                 }
 
                 @Override
-                public void onResponse(@NonNull Call call, @NonNull Response response) throws IOException {
+                public void onResponse(@NonNull Call call, @NonNull Response response) {
                     if (response.isSuccessful()){
                         try {
                             JSONObject jsonObject = new JSONObject(response.body().string());
@@ -560,9 +502,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     public String getCreateDate() {
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        String createdDate = dateFormat.format(new Date());
-        return createdDate;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss", Locale.US);
+        return dateFormat.format(new Date());
     }
 
     @Override
@@ -577,8 +518,8 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     public void logOut(){
         mAuth.signOut();
-        name.setText("Guest");
-        navPic.setImageDrawable(getDrawable(R.drawable.meteor_icon));
+        name.setText(R.string.guest);
+        navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MainFragment())
                 .addToBackStack(null)
@@ -642,6 +583,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             this.item = item;
         }
 
+        @SuppressLint("NonConstantResourceId")
         @Override
         public void run() {
 
@@ -690,19 +632,20 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
                             .addToBackStack(null)
                             .commit();
                     break;
+                case R.id.nav_graph:
+                    getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new GraphFragment())
+                            .addToBackStack(null)
+                            .commit();
+                    break;
                 case R.id.nav_forum:
                     if (mAuth.getCurrentUser() == null){
 
                         //HOW TO RUN ON MAIN THREAD
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                getSupportFragmentManager().beginTransaction()
-                                        .replace(R.id.fragment_container, new MainFragment(1))
-                                        .addToBackStack(null)
-                                        .commit();
-                            }
-                        });
+                        runOnUiThread(() -> getSupportFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new MainFragment(1))
+                                .addToBackStack(null)
+                                .commit());
 
                     } else {
                         getSupportFragmentManager().beginTransaction()

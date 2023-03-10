@@ -10,6 +10,8 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
+        //this is for the charts as well
+        maven { url 'https://jitpack.io' }
     }
 }
 rootProject.name = "team_six_fireball_project"

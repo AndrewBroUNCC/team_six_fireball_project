@@ -174,6 +174,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     public void sortTwelveMonths(){
+        fireBallList12.clear();
         String date = mMapsFragment.getTwelveMonthsAgoDateMapsFrag();
         //Log.d(TAG, "sortTwo: date: "+ date);
         //Log.d(TAG, "sortTwo: date2: "+fireBallList.get(0).getDate());
@@ -195,6 +196,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     public void sortSixMonths(){
+        fireBallList6.clear();
         String date = mMapsFragment.getSixMonthsAgoDateMapsFrag();
         ArrayList<FireBall> temp = new ArrayList<>();
         //Log.d(TAG, "sortTwo: date: "+ date);
