@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -49,16 +50,16 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
+//https://www.youtube.com/watch?v=EBhmRaa8nhE drop down menu guide.
 //https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
 // OKHttpClient information: https://square.github.io/okhttp/
 //creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO:test back button
     //TODO: sort method on map page. (implementation last) (med)
     //TODO:visual page. (histogram? pie chart?) (hard)
-    //TODO:Home page (functionality) (easy)
+    //TODO:Home page (functionality) (easy) -JuiceMan
     //TODO:General page (more stuff) (easy)
 
     private static final String TAG = "demo";
@@ -92,9 +93,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         //this is to keep night mode off
         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO);
 
-
-
-        Log.d(TAG, "onCreate: Testing");
         //HOW-TO request permissions
 //        String[] perms = {"android.permission.READ_MEDIA_IMAGES","android.permission.MANAGE_EXTERNAL_STORAGE","android.permission.READ_MEDIA_IMAGES","android.permission.FINE_LOCATION", "android.permission.CAMERA", "android.permission.READ_EXTERNAL_STORAGE", "android.permission.INTERNET"};
 //        int permsRequestCode = 200;
@@ -422,7 +420,35 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     @Override
     public ArrayList<FireBall> getFireBallList() {
+
+        getAllFireBallData();
         return fireBallList;
+    }
+
+    @Override
+    public String getSixMonthsAgoDateMapsFrag() {
+        Calendar cal = Calendar.getInstance();  //Get current date/month i.e 03 march, 2023
+        //Log.d(TAG, "getCurrentDateMapsFrag: cal: " + cal);
+        cal.add(Calendar.MONTH, -6);   //Go to date, 6 months ago 27 July, 2011
+        //Log.d(TAG, "getCurrentDateMapsFrag: cal: " + cal);
+        //cal.set(Calendar.DAY_OF_MONTH, 1); //set date, to make it 1 July, 2011
+        //Log.d(TAG, "getCurrentDateMapsFrag: cal: " + cal);
+        //Note
+        //cal.getTime();//return date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdDate = dateFormat.format(cal.getTime());
+        return createdDate;
+    }
+
+    @Override
+    public String getTwelveMonthsAgoDateMapsFrag() {
+        Calendar cal = Calendar.getInstance();  //Get current date/month i.e 03 march, 2023
+        cal.add(Calendar.MONTH, -12);   //Go to date, 12 months ago
+        //cal.set(Calendar.DAY_OF_MONTH, 1); //set date, to make it the 1st
+        //cal.getTime();//return date
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        String createdDate = dateFormat.format(cal.getTime());
+        return createdDate;
     }
 
     class FireBallRunnable implements Runnable{

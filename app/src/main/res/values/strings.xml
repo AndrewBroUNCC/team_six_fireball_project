@@ -6,9 +6,10 @@
     <string name="nav_account_display">Guest</string>
     <string name="website_homepage_title">website homepage title</string>
 
+
     <!--drop down list names-->
     <string-array name="FireBall_Sort">
-        <item>Show All Descending (Newest First)</item>
+       <item>Show All Descending (Newest First)</item>
         <item>Show All Ascending (Oldest First)</item>
         <item>Show Past Six Months</item>
         <item>Show Past Twelve Months</item>
