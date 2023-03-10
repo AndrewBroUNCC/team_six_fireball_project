@@ -23,6 +23,10 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -30,10 +34,15 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
-import javax.security.auth.callback.Callback;
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
 public class MapsFragment extends Fragment implements AdapterView.OnItemClickListener, RecycleViewMapsAdapter.IRecycleViewMapsAdapter {
 
+    private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
     IMapsFragment mMapsFragment;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
@@ -51,8 +60,11 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     AutoCompleteTextView autoCompleteTextView;
     LinearLayoutManager layoutManager;
     RecyclerView recyclerView;
-    RecycleViewMapsAdapter adapter;
+    RecycleViewMapsAdapter adapter, adapter12, adapter6;
     ArrayList<FireBall> fireBallList = new ArrayList<>();
+    ArrayList<FireBall> fireBallList6 = new ArrayList<>();
+    ArrayList<FireBall> fireBallList12 = new ArrayList<>();
+    int size;
 
     public static MapsFragment newInstance() {
         MapsFragment fragment = new MapsFragment();
@@ -81,32 +93,37 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.drop_down_menu_items, fireballSort);
         autoCompleteTextView.setAdapter(arrayAdapter);
 
+
+
+        Log.d(TAG, "onCreateView: "+arrayAdapter.getItemViewType(0));
+
+        fireBallList = mMapsFragment.getFireBallList();
+        size = fireBallList.size();
+
+        recyclerView = view.findViewById(R.id.recycleViewMapsFrag);
+        layoutManager = new LinearLayoutManager(getContext());
+        recyclerView.setLayoutManager(layoutManager);
+        adapter = new RecycleViewMapsAdapter(fireBallList, this);
+        adapter12 = new RecycleViewMapsAdapter(fireBallList12, this);
+        adapter6 = new RecycleViewMapsAdapter(fireBallList6, this);
+        recyclerView.setAdapter(adapter);
+        //Log.d(TAG, "onCreateView: " + fireBallList);
+
         //how to get what is clicked
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
                 // Log.d(TAG, "onItemClick: get string: "+adapterView.getItemAtPosition(i));
                 // Log.d(TAG, "onItemClick: get position: "+ i);
-                sortByStatus(position);
+                sortByStatus(recyclerView, position);
             }
         });
-
-        Log.d(TAG, "onCreateView: "+arrayAdapter.getItemViewType(0));
-
-        fireBallList = mMapsFragment.getFireBallList();
-        recyclerView = view.findViewById(R.id.recycleViewMapsFrag);
-        layoutManager = new LinearLayoutManager(getContext());
-        recyclerView.setLayoutManager(layoutManager);
-        adapter = new RecycleViewMapsAdapter(fireBallList, this);
-        recyclerView.setAdapter(adapter);
-        //Log.d(TAG, "onCreateView: " + fireBallList);
-
 
 
         return view;
     }
 
-    public void sortByStatus(int status){
+    public void sortByStatus(RecyclerView recyclerView2, int status){
         if (status == 0){
             //newest first
             fireBallList.sort(new Comparator<FireBall>() {
@@ -115,7 +132,8 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                     return fireBall.getDate().compareTo(t1.getDate()) *-1;
                 }
             });
-         } else if(status == 1){
+            recyclerView.setAdapter(adapter);
+        } else if(status == 1){
             //oldest first
             fireBallList.sort(new Comparator<FireBall>() {
                 @Override
@@ -123,41 +141,59 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                     return fireBall.getDate().compareTo(t1.getDate()) * 1;
                 }
             });
+            recyclerView.setAdapter(adapter);
         } else if (status ==2){
             sortSixMonths();
         }else if (status == 3){
             sortTwelveMonths();
-        }
+        }else if(status ==4){
+            fireBallList.sort(new Comparator<FireBall>() {
+                @Override
+                public int compare(FireBall fireBall, FireBall t1) {
 
+                    Double f1 = Double.parseDouble(fireBall.getImpactE());
+                    Double f2 = Double.parseDouble(t1.getImpactE());
+                    //Log.d(TAG, "compare: f1 "+ f1+ " f2 "+ f2);
+                    if(f1>f2){
+                        return -1;
+                    } else if (f1<f2) {
+                        return 1;
+                    } else {
+                        return 0;
+                    }
+                }
+
+            });
+            recyclerView.setAdapter(adapter);
+        }
+        Log.d(TAG, "sortByStatus: fb1 "+fireBallList.size());
+        Log.d(TAG, "sortByStatus: fb6 "+fireBallList6.size());
+        Log.d(TAG, "sortByStatus: fb12 "+fireBallList12.size());
+        Log.d(TAG, "sortByStatus: size " + size);
         adapter.notifyDataSetChanged();
-        fireBallList = mMapsFragment.getFireBallList();
-        Log.d(TAG, "sortByStatus: HERE I AM"+fireBallList.size());
     }
 
     public void sortTwelveMonths(){
         String date = mMapsFragment.getTwelveMonthsAgoDateMapsFrag();
-        ArrayList<FireBall> temp = new ArrayList<>();
         //Log.d(TAG, "sortTwo: date: "+ date);
         //Log.d(TAG, "sortTwo: date2: "+fireBallList.get(0).getDate());
         //past 6 months
         for (FireBall fireBall: fireBallList) {
             if (fireBall.getDate().compareTo(date) >= 0){
-                temp.add(fireBall);
+                fireBallList12.add(fireBall);
                 //Log.d(TAG, "sortByStatus: fireball" + fireBall.getDate());
             }
         }
 
-        fireBallList.clear();
-        for (FireBall fireBallTemp:temp) {
-            fireBallList.add(fireBallTemp);
-        }
-        fireBallList.sort(new Comparator<FireBall>() {
+        fireBallList12.sort(new Comparator<FireBall>() {
             @Override
             public int compare(FireBall fireBall, FireBall t1) {
                 return fireBall.getDate().compareTo(t1.getDate())*-1;
             }
         });
+        recyclerView.setAdapter(adapter12);
     }
+
     public void sortSixMonths(){
         String date = mMapsFragment.getSixMonthsAgoDateMapsFrag();
         ArrayList<FireBall> temp = new ArrayList<>();
@@ -171,16 +207,16 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         }
 
-        fireBallList.clear();
         for (FireBall fireBallTemp:temp) {
-            fireBallList.add(fireBallTemp);
+            fireBallList6.add(fireBallTemp);
         }
-        fireBallList.sort(new Comparator<FireBall>() {
+        fireBallList6.sort(new Comparator<FireBall>() {
             @Override
             public int compare(FireBall fireBall, FireBall t1) {
                 return fireBall.getDate().compareTo(t1.getDate())*-1;
             }
         });
+        recyclerView.setAdapter(adapter6);
     }
 
     //need this for interface to work
@@ -218,5 +254,6 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         ArrayList<FireBall> getFireBallList();
         String getSixMonthsAgoDateMapsFrag();
         String getTwelveMonthsAgoDateMapsFrag();
+        ArrayList<FireBall> getResetFireBallList();
     }
 }

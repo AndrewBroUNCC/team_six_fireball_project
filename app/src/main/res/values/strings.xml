@@ -9,9 +9,12 @@
 
     <!--drop down list names-->
     <string-array name="FireBall_Sort">
-       <item>Show All Descending (Newest First)</item>
+        <item>Show All Descending (Newest First)</item>
         <item>Show All Ascending (Oldest First)</item>
         <item>Show Past Six Months</item>
         <item>Show Past Twelve Months</item>
+        <item>Sort by Impact Energy</item>
     </string-array>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
