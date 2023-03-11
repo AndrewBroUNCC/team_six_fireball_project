@@ -48,40 +48,38 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 
-//https://www.youtube.com/watch?v=EBhmRaa8nhE drop down menu guide.
-//https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
-// OKHttpClient information: https://square.github.io/okhttp/
-//creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
+/*----------------GUIDES------------
+https://www.youtube.com/watch?v=EBhmRaa8nhE drop down menu guide.
+https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
+https://www.youtube.com/watch?v=vhKtbECeazQ Chart guide. histogram, pie chart, etc.
+ OKHttpClient information: https://square.github.io/okhttp/
+creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
+*/
 
 public class MainActivity extends AppCompatActivity implements GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    //TODO: map markers. (implementation last) (easy) -Drew
-    //TODO:visual page. (implement data) (med) -Drew, (DashBoard) -Anders (unknown difficulty)
-    //TODO:Home page (functionality) (easy) -JuiceMan
-    //TODO:General page (more stuff) (easy) -Justin L
-    //TODO: contact page (easy) -patrick
+    /*
+    TODO: map markers. (implementation last) (easy) -Drew
+    TODO:visual page. (implement data) (med) -Drew, (DashBoard) -Anders (unknown difficulty)
+    TODO:Home page (functionality) (easy) -JuiceMan
+    TODO:General page (more stuff) (easy) -Justin L
+    TODO: contact page (easy) -patrick
+    */
 
+    //--Global Scope--
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
-    //popup update window builder (updateProfileDialog)
     public AlertDialog.Builder dialogBuilder;
     private AlertDialog dialog;
     public Button buttonUpdatePopUpPictureSave, buttonUpdatePopUpNameSave, buttonPopUpUpdate;
-    public TextView updatePopUpCancel;
+    public TextView updatePopUpCancel, name;
     private EditText updatePopUpGetName, editTextPopUpUrl;
-    private ImageView profilePic, popUpPic;
-    private String url;
-    
-
+    private ImageView profilePic, popUpPic, navPic;
+    private String url, id;
     ArrayList<FireBall> fireBallList = new ArrayList<>();
-
     NavigationView navigationView;
     DrawerLayout drawer;
-    String id;
-    TextView name;
-    ImageView navPic;
     FirebaseAuth mAuth;
-
     HashMap<String, Object> userUpdate;
     QueryDocumentSnapshot docId;
 
