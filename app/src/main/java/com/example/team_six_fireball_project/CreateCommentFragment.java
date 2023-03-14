@@ -25,6 +25,9 @@ import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CreateCommentFragment extends Fragment {
 
@@ -33,6 +36,9 @@ public class CreateCommentFragment extends Fragment {
     Button buttonCreate, buttonCancel;
     FirebaseAuth mAuth;
     String forumID = "";
+
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     //FOR CREATING A COMMENT. (order is important)
     String comment;
@@ -77,6 +83,8 @@ public class CreateCommentFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_comment, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
         textViewMultiLine = view.findViewById(R.id.editTextCreateCommentFragComment);
         buttonCreate = view.findViewById(R.id.buttonCreateCommentFragCreateComment);
         buttonCancel = view.findViewById(R.id.buttonCreateCommentFragCancel);
@@ -101,7 +109,7 @@ public class CreateCommentFragment extends Fragment {
                 else {
                     forumID = mCreateCommentFragment.getCreateForumID();
                     CreateRunnable runnable = new CreateRunnable();
-                    new Thread(runnable).start();
+                    executorService.execute(runnable);
                 }
             }
         });

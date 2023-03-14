@@ -26,6 +26,8 @@ import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter.IRecycleViewForumsAdapter {
 
@@ -35,6 +37,8 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
     RecyclerView recyclerView;
     RecycleViewForumsAdapter adapter;
     ArrayList<Forum> forumList = new ArrayList<>();
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     IForumsFragment mForumsFragment;
 
@@ -74,6 +78,8 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_forums, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
         mAuth = FirebaseAuth.getInstance();
         getActivity().setTitle("Forum Page");
 
@@ -102,7 +108,7 @@ public class ForumsFragment extends Fragment implements RecycleViewForumsAdapter
         });
         //run in a thread to increase speed
         ForumsRunnable forumsRunnable = new ForumsRunnable();
-        new Thread(forumsRunnable).start();
+        executorService.execute(forumsRunnable);
 
         return view;
     }

@@ -42,6 +42,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ProfileFragment extends Fragment implements RecycleViewProfileAdapter.IRecycleViewProfileAdapter {
 
@@ -53,6 +55,9 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
     RecyclerView recyclerView;
     RecycleViewProfileAdapter adapter;
     //
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
+
     IProfileFragment mProfileFragment;
 
     ImageView profilePic;
@@ -96,6 +101,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         getActivity().setTitle("Profile");
 
         mAuth = FirebaseAuth.getInstance();
@@ -123,7 +129,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
 
         //run in a thread to increase speed
         ProfileRunnable profileRunnable = new ProfileRunnable();
-        new Thread(profileRunnable).start();
+        executorService.execute(profileRunnable);
 
         Uri uri = mAuth.getCurrentUser().getPhotoUrl();
 

@@ -27,12 +27,16 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RegisterFragment extends Fragment {
 
     final String TAG = "demo";
     private FirebaseAuth mAuth;
     IRegisterFragment mRegisterFragment;
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -73,6 +77,7 @@ public class RegisterFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_register, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         getActivity().setTitle("Register");
         editTextEmail = view.findViewById(R.id.editTextRegisterPgEmail);
         editTextPassword = view.findViewById(R.id.editTextRegisterPgPassword);
@@ -95,7 +100,7 @@ public class RegisterFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 RegisterRunnable registerRunnable = new RegisterRunnable();
-                new Thread(registerRunnable).start();
+                executorService.execute(registerRunnable);
             }
         });
 

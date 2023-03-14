@@ -15,6 +15,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -41,6 +42,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import okhttp3.Call;
 import okhttp3.Callback;
@@ -49,6 +52,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /*----------------GUIDES------------
+https://www.youtube.com/watch?v=9Lrei9GpcW8 how to go to a website from app.
 https://www.youtube.com/watch?v=EBhmRaa8nhE drop down menu guide.
 https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
 https://www.youtube.com/watch?v=vhKtbECeazQ Chart guide. histogram, pie chart, etc.
@@ -82,6 +86,9 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     FirebaseAuth mAuth;
     HashMap<String, Object> userUpdate;
     QueryDocumentSnapshot docId;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    ExecutorService executorService;
+    Menu menu;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +102,9 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         int permsRequestCode = 200;
         requestPermissions(perms, permsRequestCode);
 */
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
+
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -108,22 +118,30 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                 .addToBackStack(null)
                 .commit();
 
+        getAllFireBallData();
+
         //how to update the navigation bar
         View headerView = navigationView.getHeaderView(0);
         name = headerView.findViewById(R.id.textViewNavAccountType);
         navPic = headerView.findViewById(R.id.imageNavPicture);
-
+        menu = navigationView.getMenu();
 
         if (mAuth.getCurrentUser() != null){
             name.setText(mAuth.getCurrentUser().getDisplayName());
+            menu.getItem(6).setVisible(false);
+
             setNavPic();
+
         } else {
             name.setText(R.string.guest);
+            menu.getItem(7).setVisible(false);
+            menu.getItem(1).setVisible(false);
+            menu.getItem(2).setVisible(false);
+            //Log.d(TAG, "onCreate: "+ menu.getItem(1));
             navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
         }
 
 
-        getAllFireBallData();
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
                 R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -132,120 +150,129 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     }
 
     public void updateProfileDialog(View profileView){
-
         dialogBuilder = new AlertDialog.Builder(this);
-        final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
+        UpdateButtonRunnable updateButtonRunnable = new UpdateButtonRunnable();
 
-        //EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
-        updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
-        buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
-        buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
-        updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
-        popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
-        editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
-        buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
+        //how to limit threads
+        executorService.execute(updateButtonRunnable);
+    }
 
-        dialogBuilder.setView(updatePopUp);
-        dialog = dialogBuilder.create();
-        dialog.show();
+    class UpdateButtonRunnable implements Runnable{
 
-        if(mAuth.getCurrentUser() != null) {
-            updatePopUpGetName.setText(mAuth.getCurrentUser().getDisplayName());
-            setPopUpPic();
-        }
+        @Override
+        public void run() {
+                final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
 
-        profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
+                //EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
+                updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
+                buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
+                buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
+                updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+                popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
+                editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
+                buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
+
+                dialogBuilder.setView(updatePopUp);
+                dialog = dialogBuilder.create();
+                dialog.show();
+
+                if(mAuth.getCurrentUser() != null) {
+                    updatePopUpGetName.setText(mAuth.getCurrentUser().getDisplayName());
+                    setPopUpPic();
+                }
+
+                profilePic = findViewById(R.id.imageViewProfileFragProfileImage);
 
 
-        buttonUpdatePopUpNameSave.setOnClickListener(view -> {
-            //update name in auth and db
-            updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
-            FirebaseUser user = mAuth.getCurrentUser();
-            String updateName = updatePopUpGetName.getText().toString();
-            String userId = mAuth.getCurrentUser().getUid();
-            if (!updateName.isEmpty()) {
-                UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                        .setDisplayName(updateName)
-                        .build();
-                user.updateProfile(profileUpdates)
-                        .addOnCompleteListener(task -> {
-                            mAuth.updateCurrentUser(user).addOnCompleteListener(task1 -> {
-                                //Log.d(TAG, "onComplete: "+userId);
-                                updateUserNameInDB(updateName, userId);
-                            });
-                            //Log.d(TAG, "onComplete: User has been registered successfully");
-                        });
-            } else {
+                buttonUpdatePopUpNameSave.setOnClickListener(view -> {
+                    //update name in auth and db
+                    updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    String updateName = updatePopUpGetName.getText().toString();
+                    String userId = mAuth.getCurrentUser().getUid();
+                    if (!updateName.isEmpty()) {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(updateName)
+                                .build();
+                        user.updateProfile(profileUpdates)
+                                .addOnCompleteListener(task -> {
+                                    mAuth.updateCurrentUser(user).addOnCompleteListener(task1 -> {
+                                        //Log.d(TAG, "onComplete: "+userId);
+                                        updateUserNameInDB(updateName, userId);
+                                    });
+                                    //Log.d(TAG, "onComplete: User has been registered successfully");
+                                });
+                    } else {
                         //how to build an Alert Dialog
                         new AlertDialog.Builder(updatePopUp.getContext())
                                 .setTitle("Error")
                                 .setMessage("Name is Empty")
                                 .setPositiveButton("Ok", (dialogInterface, i) -> {
                                 }).show();
-            }
-        });
-        buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
-            //handle picture pop up and saving
-            if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                new AlertDialog.Builder(updatePopUp.getContext())
-                        .setTitle("Invalid Input")
-                        .setMessage("Url is empty")
-                        .setPositiveButton("Ok", (dialogInterface, i) -> {
+                    }
+                });
+                buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
+                    //handle picture pop up and saving
+                    if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                        new AlertDialog.Builder(updatePopUp.getContext())
+                                .setTitle("Invalid Input")
+                                .setMessage("Url is empty")
+                                .setPositiveButton("Ok", (dialogInterface, i) -> {
 
-                        }).show();
-            } else {
-                String urlTemp = editTextPopUpUrl.getText().toString();
-                FirebaseFirestore db = FirebaseFirestore.getInstance();
+                                }).show();
+                    } else {
+                        String urlTemp = editTextPopUpUrl.getText().toString();
+                        FirebaseFirestore db = FirebaseFirestore.getInstance();
 
-                db.collection("userList")
-                        .get()
-                        .addOnSuccessListener(queryDocumentSnapshots -> {
-                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                User user = document.toObject(User.class);
-                                if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid()) == 0) {
-                                    HashMap<String, Object> userUpdate = new HashMap<>();
-                                    userUpdate.put("email", user.getEmail());
-                                    userUpdate.put("joinDate", user.getJoinDate());
-                                    userUpdate.put("name", user.getName());
-                                    userUpdate.put("uri", urlTemp);
-                                    userUpdate.put("userID", user.getUserID());
+                        db.collection("userList")
+                                .get()
+                                .addOnSuccessListener(queryDocumentSnapshots -> {
+                                    for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                                        User user = document.toObject(User.class);
+                                        if (user.getUserID().compareTo(mAuth.getCurrentUser().getUid()) == 0) {
+                                            HashMap<String, Object> userUpdate = new HashMap<>();
+                                            userUpdate.put("email", user.getEmail());
+                                            userUpdate.put("joinDate", user.getJoinDate());
+                                            userUpdate.put("name", user.getName());
+                                            userUpdate.put("uri", urlTemp);
+                                            userUpdate.put("userID", user.getUserID());
 
-                                    db.collection("userList").document(document.getId()).update(userUpdate)
-                                            .addOnCompleteListener(task -> {
-                                                dialog.dismiss();
-                                                setProfilePic(view);
-                                            });
+                                            db.collection("userList").document(document.getId()).update(userUpdate)
+                                                    .addOnCompleteListener(task -> {
+                                                        dialog.dismiss();
+                                                        setProfilePic(view);
+                                                    });
 
-                                }
-                            }
-                        });
-            }
-        });
-        updatePopUpCancel.setOnClickListener(view -> dialog.dismiss());
-        buttonPopUpUpdate.setOnClickListener(view -> {
+                                        }
+                                    }
+                                });
+                    }
+                });
+                updatePopUpCancel.setOnClickListener(view -> dialog.dismiss());
+                buttonPopUpUpdate.setOnClickListener(view -> {
 
-            if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                new AlertDialog.Builder(updatePopUp.getContext())
-                        .setTitle("Invalid Input")
-                        .setMessage("Url is empty")
-                        .setPositiveButton("Ok", (dialogInterface, i) -> {
-                        }).show();
-            } else {
-                String urlTemp = editTextPopUpUrl.getText().toString();
-                Picasso.get()
-                        .load(urlTemp)
-                        .fit()
-                        .placeholder(R.drawable.meteor_icon)
-                        .error(R.drawable.meteor_icon)
-                        .into(popUpPic);
-            }
-        });
+                    if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
+                        new AlertDialog.Builder(updatePopUp.getContext())
+                                .setTitle("Invalid Input")
+                                .setMessage("Url is empty")
+                                .setPositiveButton("Ok", (dialogInterface, i) -> {
+                                }).show();
+                    } else {
+                        String urlTemp = editTextPopUpUrl.getText().toString();
+                        Picasso.get()
+                                .load(urlTemp)
+                                .fit()
+                                .placeholder(R.drawable.meteor_icon)
+                                .error(R.drawable.meteor_icon)
+                                .into(popUpPic);
+                    }
+                });
+
+        }
     }
 
     private void setPopUpPic() {
         try {
-
-
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("userList").get()
                     .addOnSuccessListener(queryDocumentSnapshots -> {
@@ -253,7 +280,6 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                             User user = document.toObject(User.class);
                             if (Objects.requireNonNull(mAuth.getCurrentUser()).getUid().compareTo(user.getUserID()) == 0) {
                                 url = user.getUri();
-
                                 break;
                             }
                         }
@@ -446,6 +472,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                                 //Working: Log.d(TAG, "onResponse: "+ fireBall.toString());
                                 fireBallList.add(fireBall);
                             }
+                            Log.d(TAG, "onResponse: Fireball data loaded");
                             //947 Log.d(TAG, "onResponse: "+fireBallList.size());
                         } catch (Exception e){
                             e.printStackTrace();
@@ -458,7 +485,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
     public void getAllFireBallData(){
         FireBallRunnable fireBallRunnable = new FireBallRunnable();
-        new Thread(fireBallRunnable).start();
+        executorService.execute(fireBallRunnable);
     }
 
     @Override
@@ -474,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
         //running on a new thread to increase app speed
         NavRunnable runnable = new NavRunnable(item);
-        new Thread(runnable).start();
+        executorService.execute(runnable);
         return true;
     }
 
@@ -517,6 +544,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     public void logOut(){
         mAuth.signOut();
         name.setText(R.string.guest);
+        menu.getItem(6).setVisible(true);
+        menu.getItem(7).setVisible(false);
+        menu.getItem(1).setVisible(false);
+        menu.getItem(2).setVisible(false);
         navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container, new MainFragment())
@@ -526,6 +557,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
     public void logIn(){
         if (mAuth.getCurrentUser() != null) {
+            menu.getItem(6).setVisible(false);
+            menu.getItem(7).setVisible(true);
+            menu.getItem(1).setVisible(true);
+            menu.getItem(2).setVisible(true);
             name.setText(mAuth.getCurrentUser().getDisplayName());
             setNavPic();
         }
