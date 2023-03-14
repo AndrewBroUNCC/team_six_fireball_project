@@ -21,6 +21,9 @@ import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 
 public class LoginFragment extends Fragment {
 
@@ -30,6 +33,9 @@ public class LoginFragment extends Fragment {
     ILoginFragment mLoginFragment;
     EditText editTextEmail, editTextPassword;
     Button buttonLogin, buttonRegister;
+
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     public LoginFragment() {
         // Required empty public constructor
@@ -67,6 +73,8 @@ public class LoginFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_login, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
         getActivity().setTitle("Login");
         editTextEmail = view.findViewById(R.id.editTextLoginEmail);
         editTextPassword = view.findViewById(R.id.editTextLoginPassword);
@@ -77,7 +85,7 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 LoginRunnable logRunnable = new LoginRunnable();
-                new Thread(logRunnable).start();
+                executorService.execute(logRunnable);
 
             }
         });

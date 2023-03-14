@@ -16,6 +16,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
@@ -32,6 +34,8 @@ public class CreateForumFragment extends Fragment {
     FirebaseAuth mAuth;
     String date, title, creator, description, userID, forumID, creatorId;
     Calendar c;
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     public CreateForumFragment() {
         // Required empty public constructor
@@ -57,6 +61,8 @@ public class CreateForumFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_create_forum, container, false);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
         getActivity().setTitle("Forum Page");
         mAuth = FirebaseAuth.getInstance();
 
@@ -67,7 +73,7 @@ public class CreateForumFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 CreateForumRunnable createForumRunnable = new CreateForumRunnable();
-                new Thread(createForumRunnable).start();
+                executorService.execute(createForumRunnable);
             }
         });
 

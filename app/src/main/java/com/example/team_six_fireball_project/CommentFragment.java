@@ -26,6 +26,8 @@ import com.google.firebase.firestore.QuerySnapshot;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CommentFragment extends Fragment implements  RecycleViewCommentAdapter.IRecycleViewCommentAdapter {
 
@@ -39,6 +41,8 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
     ArrayList<Comment> commentsList = new ArrayList<>();
     TextView textViewTitle;
     ICommentFragment mCommentFragment;
+    ExecutorService executorService;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
 
     public static CommentFragment newInstance() {
         CommentFragment fragment = new CommentFragment();
@@ -78,6 +82,8 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
         getActivity().setTitle("Comment Page");
         homeButton = view.findViewById(R.id.viewCommentFragHomeButton);
 
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+
         recyclerView = view.findViewById(R.id.recycleViewComments);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
@@ -105,7 +111,7 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
 
         //implemented Thread to speed up application.
         GetDataRunnable getData = new GetDataRunnable(textViewTitle);
-        new Thread(getData).start();
+        executorService.execute(getData);
 
         //now runs in thread above
         //getData(textViewTitle);
