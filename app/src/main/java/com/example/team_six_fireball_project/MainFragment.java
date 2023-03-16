@@ -24,13 +24,26 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Objects;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class MainFragment extends Fragment {
 
     private static final String TAG = "MainFragment";
     int alert;
     FirebaseAuth mAuth;
+    static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    ExecutorService executorService;
     IMainFragment mMainFragment;
+    TextView usernameTextView;
+    TextView logLabelTextView;
+    TextView logTitleTextView;
+    CardView forumContainer;
+    CardView profileContainer;
+    CardView loginContainer, logoutContainer;
+    CardView interMapContainer;
+    CardView graphContainer;
+    CardView genInfoContainer;
 
     public MainFragment() {
         // Required empty public constructor
@@ -40,9 +53,6 @@ public class MainFragment extends Fragment {
     public MainFragment(int i) {
         alert = i;
     }
-
-
-
 
     public static MainFragment newInstance() {
         MainFragment fragment = new MainFragment();
@@ -69,111 +79,130 @@ public class MainFragment extends Fragment {
         }
     }
 
-    @SuppressLint("SetTextI18n")
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main, container, false);
 
-        //determines the display for the hello banner and login/logout button based on
-        //if the user is logged in or not
-        TextView usernameTextView = view.findViewById(R.id.home_username_txt);
-        TextView logLabelTextView = view.findViewById(R.id.home_log_label_text);
-        TextView logTitleTextView = view.findViewById(R.id.home_log_title_text);
-        if (mAuth.getCurrentUser() != null){
-            usernameTextView.setText("Welcome, " + mAuth.getCurrentUser().getDisplayName());
-            logLabelTextView.setText("");
-            logTitleTextView.setText("Logout");
-        }
-        else {
-            usernameTextView.setText("Welcome, Guest!");
-            logLabelTextView.setText("Login or Register");
-            logTitleTextView.setText("Login");
-        }
+        usernameTextView = view.findViewById(R.id.home_username_txt);
+        logLabelTextView = view.findViewById(R.id.home_log_label_text);
+        logTitleTextView = view.findViewById(R.id.home_log_title_text);
+        forumContainer = view.findViewById(R.id.home_forum_btn_container);
+        profileContainer = view.findViewById(R.id.home_profile_btn_container);
+        loginContainer = view.findViewById(R.id.home_login_btn_container2);
+        logoutContainer = view.findViewById(R.id.home_logout_btn_container2);
+        interMapContainer = view.findViewById(R.id.home_map_btn_container);
+        graphContainer = view.findViewById(R.id.home_graph_btn_container);
+        genInfoContainer = view.findViewById(R.id.home_geninfo_btn_container);
 
-        //onclick events for all button clicks in the home page
-        CardView forumContainer = view.findViewById(R.id.home_forum_btn_container);
-        forumContainer.setOnClickListener(v -> {
-            if (mAuth.getCurrentUser() != null) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ForumsFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }else {
-                alert = 1;
-                handleAlert();
-            }
-        });
-
-        CardView profileContainer = view.findViewById(R.id.home_profile_btn_container);
-        profileContainer.setOnClickListener(v -> {
-            if (mAuth.getCurrentUser() != null) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfileFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }else {
-                alert = 3;
-                handleAlert();
-            }
-        });
-
-        CardView loginContainer = view.findViewById(R.id.home_login_btn_container);
-        loginContainer.setOnClickListener(v -> {
-            if (mAuth.getCurrentUser() == null) {
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new LoginFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }else {
-                alert = 2;
-                handleAlert();
-            }
-        });
-
-        CardView interMapContainer = view.findViewById(R.id.home_map_btn_container);
-        interMapContainer.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new MapsFragment())
-                        .addToBackStack(null)
-                        .commit()
-        );
-
-        CardView graphContainer = view.findViewById(R.id.home_graph_btn_container);
-        graphContainer.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new GraphFragment())
-                        .addToBackStack(null)
-                        .commit()
-        );
-
-        CardView genInfoContainer = view.findViewById(R.id.home_geninfo_btn_container);
-        genInfoContainer.setOnClickListener(v ->
-                requireActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new GeneralInfoFragment())
-                        .addToBackStack(null)
-                        .commit()
-            );
-
-        //testing date
-//        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-//        Date date = new Date();
-//        Log.d(TAG, "onCreateView: "+ (dateFormat.format(date)));
-//        String date = dateFormat.format(new Date());
-//        Log.d(TAG, "onCreateView: " + date);
-
+        //has to be done in main thread.
         getActivity().setTitle("Home Page");
 
-        handleAlert();
+        //take weight off main thread.
+        executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
+        MainFragRunnable mainFragRunnable = new MainFragRunnable();
+        executorService.execute(mainFragRunnable);
 
         return view;
     }
 
-    interface IMainFragment{
-        void mainSignOut();
+    class MainFragRunnable implements Runnable{
+
+        @Override
+        public void run() {
+            //determine the display for the hello banner and login/logout button based on
+            //runnable
+            if (mAuth.getCurrentUser() != null){
+                usernameTextView.setText("Welcome, " + mAuth.getCurrentUser().getDisplayName());
+                forumContainer.setVisibility(View.VISIBLE);
+                profileContainer.setVisibility(View.VISIBLE);
+                loginContainer.setVisibility(View.INVISIBLE);
+                logoutContainer.setVisibility(View.VISIBLE);
+            }
+            else {
+                usernameTextView.setText("Welcome, Guest!");
+                forumContainer.setVisibility(View.INVISIBLE);
+                profileContainer.setVisibility(View.INVISIBLE);
+                loginContainer.setVisibility(View.VISIBLE);
+                logoutContainer.setVisibility(View.INVISIBLE);
+            }
+
+            //onclick events for all button clicks in the home page
+            forumContainer.setOnClickListener(v -> {
+                if (mAuth.getCurrentUser() != null) {
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ForumsFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }else {
+                    alert = 1;
+                    handleAlert();
+                }
+            });
+
+            profileContainer.setOnClickListener(v -> {
+                if (mAuth.getCurrentUser() != null) {
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }else {
+                    alert = 3;
+                    handleAlert();
+                }
+            });
+
+            loginContainer.setOnClickListener(v -> {
+                if (mAuth.getCurrentUser() == null) {
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new LoginFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }else {
+                    alert = 2;
+                    handleAlert();
+                }
+            });
+
+            logoutContainer.setOnClickListener(v -> {
+                if (mAuth.getCurrentUser() == null) {
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new LoginFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }else {
+                    alert = 2;
+                    handleAlert();
+                }
+            });
+
+            interMapContainer.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new MapsFragment())
+                            .addToBackStack(null)
+                            .commit()
+            );
+
+            graphContainer.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new GraphFragment())
+                            .addToBackStack(null)
+                            .commit()
+            );
+
+            genInfoContainer.setOnClickListener(v ->
+                    requireActivity().getSupportFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new GeneralInfoFragment())
+                            .addToBackStack(null)
+                            .commit()
+            );
+
+            handleAlert();
+        }
     }
 
+    //handling alert. validation
     public void handleAlert(){
         if(alert == 1){
             new AlertDialog.Builder(requireActivity())
@@ -202,7 +231,7 @@ public class MainFragment extends Fragment {
                             mMainFragment.mainSignOut();
 
                             getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new LoginFragment())
+                                    .replace(R.id.fragment_container, new MainFragment())
                                     .addToBackStack(null)
                                     .commit();
                         }
@@ -232,5 +261,10 @@ public class MainFragment extends Fragment {
                     })
                     .show();
         }
+    }
+
+    //interface
+    interface IMainFragment{
+        void mainSignOut();
     }
 }

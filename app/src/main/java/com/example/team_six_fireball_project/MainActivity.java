@@ -89,6 +89,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
     ExecutorService executorService;
     Menu menu;
+    //--Global Scope (end)---
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -103,7 +104,6 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         requestPermissions(perms, permsRequestCode);
 */
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
-
 
         mAuth = FirebaseAuth.getInstance();
         Toolbar toolbar = findViewById(R.id.toolbar);
