@@ -42,11 +42,21 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/pieChart_view"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:visibility="invisible"
+        app:layout_constraintBottom_toTopOf="@+id/viewLine2"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/seekBarGraphFrag" />
 
     <com.github.mikephil.charting.charts.BarChart
         android:id="@+id/barChartGraphFrag"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/viewLine2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -57,7 +67,7 @@
         android:layout_width="0dp"
         android:layout_height="30dp"
         android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="55dp"
         android:layout_marginEnd="16dp"
         android:min="1988"
         android:progress="2023"
@@ -79,4 +89,38 @@
         app:layout_constraintBottom_toBottomOf="@+id/seekBarGraphFrag"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="@+id/seekBarGraphFrag" />
+
+    <Button
+        android:id="@+id/buttonGraphFragHIstogram"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="10dp"
+        android:text="Histogram"
+        android:clickable="false"
+        android:backgroundTint="@color/button_yellow_grey2"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarGraphFrag"
+        app:layout_constraintEnd_toStartOf="@+id/buttonGraphFragPieChart"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
+
+    <Button
+        android:id="@+id/buttonGraphFragPieChart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:text="Pie Chart"
+        android:backgroundTint="@color/yellow_button_header"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarGraphFrag"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonGraphFragHIstogram"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 </androidx.constraintlayout.widget.ConstraintLayout>
