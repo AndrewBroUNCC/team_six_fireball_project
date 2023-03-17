@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +35,8 @@ public class LoginFragment extends Fragment {
     ILoginFragment mLoginFragment;
     EditText editTextEmail, editTextPassword;
     Button buttonLogin, buttonRegister;
+    public AlertDialog.Builder dialogBuilder;
+    private AlertDialog dialog;
 
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
@@ -81,25 +85,8 @@ public class LoginFragment extends Fragment {
         buttonLogin = view.findViewById(R.id.buttonLogin);
         buttonRegister = view.findViewById(R.id.buttonRegister);
 
-        buttonLogin.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                LoginRunnable logRunnable = new LoginRunnable();
-                executorService.execute(logRunnable);
-
-            }
-        });
-
-        //goes to register page
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new RegisterFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        LoginRunnable logRunnable = new LoginRunnable();
+        executorService.execute(logRunnable);
 
         return view;
     }
@@ -110,6 +97,31 @@ public class LoginFragment extends Fragment {
 
         @Override
         public void run() {
+
+
+            buttonLogin.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+
+                    loginMethod();
+                }
+            });
+
+            //goes to register page
+            buttonRegister.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new RegisterFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
+        }
+
+        public void loginMethod(){
+
             String email = editTextEmail.getText().toString();
             String password = editTextPassword.getText().toString();
             if (email.isEmpty()) {
@@ -149,6 +161,22 @@ public class LoginFragment extends Fragment {
                                     //mAuth.getCurrentUser();
                                     //you can get stuff from user using = V
                                     //mAuth.getCurrentUser().getDisplayName();
+
+                                    final View updatePopUp = getLayoutInflater().inflate(R.layout.success_popup, null);
+
+                                    dialogBuilder = new AlertDialog.Builder(getContext());
+                                    dialogBuilder.setView(updatePopUp);
+                                    dialog = dialogBuilder.create();
+
+                                    dialog.show();
+                                    final Handler handler = new Handler(Looper.getMainLooper());
+                                    handler.postDelayed(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            //Do something after 2000ms
+                                            dialog.dismiss();
+                                        }
+                                    }, 2000);
 
                                     //in main activity
                                     mLoginFragment.loginSignIn();
