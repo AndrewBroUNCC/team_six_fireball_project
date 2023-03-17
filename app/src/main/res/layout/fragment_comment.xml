@@ -67,12 +67,12 @@
         app:layout_constraintStart_toStartOf="parent" />
 
     <Button
+        android:text="Create New Comment"
         android:id="@+id/buttonCommentFragNewComment"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
         android:backgroundTint="@color/yellow_button_header"
-        android:text="Create New Comment"
         android:textAllCaps="false"
         android:textColor="@color/blue_button_header_text"
         android:textStyle="bold|italic"

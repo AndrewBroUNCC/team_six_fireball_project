@@ -10,4 +10,5 @@
     <color name="grey">#FFEDECEC</color>
     <color name="yellow_button_header">#D7BA4D</color>
     <color name="blue_button_header_text">#2454C8</color>
+    <color name="button_yellow_grey2">#A38618</color>
 </resources>
