@@ -14,6 +14,8 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -23,6 +25,8 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -64,8 +68,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
     /*
     TODO: map markers. (implementation last) (easy) -Drew
-    TODO:visual page. (implement data) (med) -Drew, (DashBoard) -Anders (unknown difficulty)
-    TODO:Home page (functionality) (easy) -JuiceMan
+    TODO:(DashBoard) -Anders (unknown difficulty)
     TODO:General page (more stuff) (easy) -Justin L
     TODO: contact page (easy) -patrick
     */
@@ -86,9 +89,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     FirebaseAuth mAuth;
     HashMap<String, Object> userUpdate;
     QueryDocumentSnapshot docId;
-    static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    static final int DEFAULT_THREAD_POOL_SIZE = 5;
     ExecutorService executorService;
     Menu menu;
+    Toolbar toolbar;
     //--Global Scope (end)---
 
     @Override
@@ -106,19 +110,12 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
 
         mAuth = FirebaseAuth.getInstance();
-        Toolbar toolbar = findViewById(R.id.toolbar);
+        toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         drawer = findViewById(R.id.ContentView);
         navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
-
-        getSupportFragmentManager().beginTransaction()
-                .replace(R.id.fragment_container, new MainFragment())
-                .addToBackStack(null)
-                .commit();
-
-        getAllFireBallData();
 
         //how to update the navigation bar
         View headerView = navigationView.getHeaderView(0);
@@ -126,27 +123,42 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         navPic = headerView.findViewById(R.id.imageNavPicture);
         menu = navigationView.getMenu();
 
-        if (mAuth.getCurrentUser() != null){
-            name.setText(mAuth.getCurrentUser().getDisplayName());
-            menu.getItem(6).setVisible(false);
+        MainRunnable mainRunnable = new MainRunnable();
+        executorService.execute(mainRunnable);
+    }
 
-            setNavPic();
+    class MainRunnable implements Runnable{
 
-        } else {
-            name.setText(R.string.guest);
-            menu.getItem(7).setVisible(false);
-            menu.getItem(1).setVisible(false);
-            menu.getItem(2).setVisible(false);
-            //Log.d(TAG, "onCreate: "+ menu.getItem(1));
-            navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
+        @Override
+        public void run() {
+
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new MainFragment())
+                    .addToBackStack(null)
+                    .commit();
+
+            getAllFireBallData();
+
+            if (mAuth.getCurrentUser() != null){
+                name.setText(mAuth.getCurrentUser().getDisplayName());
+                menu.getItem(6).setVisible(false);
+
+                setNavPic();
+
+            } else {
+                name.setText(R.string.guest);
+                menu.getItem(7).setVisible(false);
+                menu.getItem(1).setVisible(false);
+                menu.getItem(2).setVisible(false);
+                //Log.d(TAG, "onCreate: "+ menu.getItem(1));
+                navPic.setImageDrawable(AppCompatResources.getDrawable(getApplicationContext(), R.drawable.meteor_icon));
+            }
+
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(getParent(), drawer, toolbar,
+                    R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.addDrawerListener(toggle);
+            toggle.syncState();
         }
-
-
-
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar,
-                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.addDrawerListener(toggle);
-        toggle.syncState();
     }
 
     public void updateProfileDialog(View profileView){
