@@ -16,6 +16,7 @@ import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.provider.DocumentsContract;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -93,6 +94,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     ExecutorService executorService;
     Menu menu;
     Toolbar toolbar;
+    View updatePopUp;
     //--Global Scope (end)---
 
     @Override
@@ -173,20 +175,27 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
         @Override
         public void run() {
-                final View updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
 
-                //EditText editText = updatePopUp.findViewById(R.id.editTextPopUpUrl);
-                updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
-                buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
-                buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
-                updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
-                popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
-                editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
-                buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
+            updatePopUp = getLayoutInflater().inflate(R.layout.popup, null);
 
-                dialogBuilder.setView(updatePopUp);
-                dialog = dialogBuilder.create();
-                dialog.show();
+            updatePopUpCancel = updatePopUp.findViewById(R.id.textViewUpdatePopUpCancel);
+            buttonUpdatePopUpPictureSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdatePicture);
+            buttonUpdatePopUpNameSave = updatePopUp.findViewById(R.id.buttonUpdatePopUpUpdateName);
+            updatePopUpGetName = updatePopUp.findViewById(R.id.editTextUpdatePopUpUserName);
+            popUpPic = updatePopUp.findViewById(R.id.imageViewPopUpImage);
+            editTextPopUpUrl = updatePopUp.findViewById(R.id.editTextPopUpUrlSave);
+            buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
+            dialogBuilder.setView(updatePopUp);
+
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    dialog = dialogBuilder.create();
+                    dialog.show();
+                }
+            });
+
+
 
                 if(mAuth.getCurrentUser() != null) {
                     updatePopUpGetName.setText(mAuth.getCurrentUser().getDisplayName());
