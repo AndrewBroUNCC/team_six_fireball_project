@@ -39,6 +39,7 @@ public class CreateCommentFragment extends Fragment {
 
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    AlertDialog validate;
 
     //FOR CREATING A COMMENT. (order is important)
     String comment;
@@ -90,38 +91,54 @@ public class CreateCommentFragment extends Fragment {
         buttonCancel = view.findViewById(R.id.buttonCreateCommentFragCancel);
         mAuth = FirebaseAuth.getInstance();
 
-
-        buttonCreate.setOnClickListener(new View.OnClickListener() {
+        validate = new AlertDialog.Builder(getActivity()).setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             @Override
-            public void onClick(View view) {
-                if (textViewMultiLine.getText().toString().isEmpty()){
-                    //Toast.makeText(getActivity(), getString(R.string.title_message_filler), Toast.LENGTH_SHORT).show();
-                    new AlertDialog.Builder(getActivity())
-                            .setTitle("Error")
-                            .setMessage("The Comment Field is Empty")
-                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
+            public void onClick(DialogInterface dialogInterface, int i) {
 
-                                }
-                            }).show();
-                }
-                else {
-                    forumID = mCreateCommentFragment.getCreateForumID();
-                    CreateRunnable runnable = new CreateRunnable();
-                    executorService.execute(runnable);
-                }
             }
-        });
+        }).create();
+        validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().popBackStack();
-            }
-        });
+        CreateCommentRunnable createCommentRunnable = new CreateCommentRunnable();
+        executorService.execute(createCommentRunnable);
 
         return view;
+    }
+
+    class CreateCommentRunnable implements Runnable{
+
+        @Override
+        public void run() {
+
+            buttonCreate.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (textViewMultiLine.getText().toString().isEmpty()){
+                        validate.setTitle("Error");
+                        validate.setMessage("The Comment Field is Empty");
+                        validate.show();
+
+                    } else if(textViewMultiLine.getText().toString().length() > 100){
+                        validate.setTitle("Error");
+                        validate.setMessage("The Comment Field limit is 100");
+                        validate.show();
+                    }
+                    else {
+                        forumID = mCreateCommentFragment.getCreateForumID();
+                        CreateRunnable runnable = new CreateRunnable();
+                        executorService.execute(runnable);
+                    }
+                }
+            });
+
+            buttonCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager().popBackStack();
+                }
+            });
+//----------------------stop runnable---------------------------------------
+        }
     }
 
     class CreateRunnable implements Runnable{

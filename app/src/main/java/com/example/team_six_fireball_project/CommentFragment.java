@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +39,7 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
     RecycleViewCommentAdapter adapter;
     String commentTitle =  "", forumID;
     CardView homeButton;
+    Button commentButton;
     ArrayList<Comment> commentsList = new ArrayList<>();
     TextView textViewTitle;
     ICommentFragment mCommentFragment;
@@ -81,36 +83,16 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
         forumID = mCommentFragment.getForumID();
         getActivity().setTitle("Comment Page");
         homeButton = view.findViewById(R.id.viewCommentFragHomeButton);
-
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
-
         recyclerView = view.findViewById(R.id.recycleViewComments);
         layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
         adapter = new RecycleViewCommentAdapter(commentsList, this);
         recyclerView.setAdapter(adapter);
-
-        view.findViewById(R.id.buttonCommentFragNewComment).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new CreateCommentFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
-
-        homeButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mCommentFragment.commentToHome();
-            }
-        });
-
+        commentButton = view.findViewById(R.id.buttonCommentFragNewComment);
         textViewTitle = view.findViewById(R.id.textViewCommentFragTopicTitle);
-
         //implemented Thread to speed up application.
-        GetDataRunnable getData = new GetDataRunnable(textViewTitle);
+        GetDataRunnable getData = new GetDataRunnable();
         executorService.execute(getData);
 
         //now runs in thread above
@@ -119,13 +101,26 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
     }
 
     class GetDataRunnable implements Runnable{
-        TextView textViewTitle;
-        public GetDataRunnable(TextView textViewTitle){
-            this.textViewTitle = textViewTitle;
-        }
 
         @Override
         public void run() {
+            commentButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager().beginTransaction()
+                            .replace(R.id.fragment_container, new CreateCommentFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
+
+            homeButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mCommentFragment.commentToHome();
+                }
+            });
+
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("Forum").document(forumID)
                     .collection("comments")
@@ -138,7 +133,6 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
                                 Comment comment = document.toObject(Comment.class);
                                 //Log.d(TAG, "onEvent: " + comment.commenterName);
                                 commentsList.add(comment);
-                                commentTitle = comment.getTopic();
                             }
                             Collections.sort(commentsList, new Comparator<Comment>() {
                                 @Override
@@ -147,7 +141,8 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
                                 }
                             });
 
-                            //Log.d(TAG, "compare: list= " + commentsList);
+                            commentTitle = commentsList.get(commentsList.size()-1).getTopic();
+                            Log.d(TAG, "onEvent: comment= " + commentsList.get(commentsList.size()-1));
                             textViewTitle.setText(commentTitle);
                             adapter.notifyDataSetChanged();
                         }

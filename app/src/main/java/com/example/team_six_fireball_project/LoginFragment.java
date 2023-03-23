@@ -122,30 +122,27 @@ public class LoginFragment extends Fragment {
 
         public void loginMethod(){
 
+            AlertDialog validate = new AlertDialog.Builder(getActivity())
+                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialogInterface, int i) {
+
+                        }
+                    }).create();
+            validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
             String email = editTextEmail.getText().toString();
             String password = editTextPassword.getText().toString();
             if (email.isEmpty()) {
                 //how to build an Alert Dialog
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("Email is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
+                        validate.setTitle("Error");
+                        validate.setMessage("Email is Empty");
+                        validate.show();
             } else if (password.isEmpty()) {
                 //how to build an Alert Dialog
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("Password is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
+                        validate.setTitle("Error");
+                        validate.setMessage("Password is Empty");
+                        validate.show();
             } else {
                 //calls firebase instance
                 mAuth = FirebaseAuth.getInstance();
@@ -167,6 +164,8 @@ public class LoginFragment extends Fragment {
                                     dialogBuilder = new AlertDialog.Builder(getContext());
                                     dialogBuilder.setView(updatePopUp);
                                     dialog = dialogBuilder.create();
+                                    //--success popup slides in from this V-- style is in theme.xml
+                                    dialog.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
                                     dialog.show();
                                     final Handler handler = new Handler(Looper.getMainLooper());
@@ -182,8 +181,9 @@ public class LoginFragment extends Fragment {
                                     mLoginFragment.loginSignIn();
 
                                 } else {
-                                    Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
-                                    Toast.makeText(getActivity(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    validate.setTitle("Login Failed");
+                                    validate.setMessage(task.getException().getMessage());
+                                    validate.show();
                                 }
                             }
                         });

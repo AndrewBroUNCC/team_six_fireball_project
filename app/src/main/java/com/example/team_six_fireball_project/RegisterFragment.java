@@ -37,6 +37,7 @@ public class RegisterFragment extends Fragment {
     IRegisterFragment mRegisterFragment;
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    AlertDialog validate;
 
     public RegisterFragment() {
         // Required empty public constructor
@@ -85,6 +86,15 @@ public class RegisterFragment extends Fragment {
         buttonCancel = view.findViewById(R.id.buttonRegisterPgCancel);
         editTextName = view.findViewById(R.id.editTextRegFragName);
 
+        validate = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).create();
+        validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
         buttonCancel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -117,38 +127,20 @@ public class RegisterFragment extends Fragment {
 
             if(name.isEmpty()){
                 //how to build an Alert Dialog
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("Name is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
+                        validate.setTitle("Error");
+                        validate.setMessage("Name is Empty");
+                        validate.show();
             }
             else if (email.isEmpty()) {
                 //how to build an Alert Dialog
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("Email is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
+                        validate.setTitle("Error");
+                        validate.setMessage("Email is Empty");
+                        validate.show();
             } else if (password.isEmpty()) {
                 //how to build an Alert Dialog
-                new AlertDialog.Builder(getActivity())
-                        .setTitle("Error")
-                        .setMessage("Password is Empty")
-                        .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialogInterface, int i) {
-
-                            }
-                        }).show();
+                        validate.setTitle("Error");
+                        validate.setMessage("Password is Empty");
+                        validate.show();
             } else {
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.createUserWithEmailAndPassword(email,password)
@@ -188,6 +180,10 @@ public class RegisterFragment extends Fragment {
                                                         public void onComplete(@NonNull Task<Void> task) {
                                                             //Log.d(TAG, "onComplete: User has been registered successfully");
                                                             getActivity().getSupportFragmentManager().beginTransaction()
+                                                                    .setCustomAnimations(
+                                                                            R.anim.slide_in,
+                                                                            R.anim.fade_out
+                                                                    )
                                                                     .replace(R.id.fragment_container, new MainFragment())
                                                                     .addToBackStack(null)
                                                                     .commit();
@@ -197,15 +193,9 @@ public class RegisterFragment extends Fragment {
                                     //Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
 
                                     //how to build an Alert Dialog
-                                    new AlertDialog.Builder(getActivity())
-                                            .setTitle("Error")
-                                            .setMessage(task.getException().getMessage())
-                                            .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                                @Override
-                                                public void onClick(DialogInterface dialogInterface, int i) {
-
-                                                }
-                                            }).show();
+                                            validate.setTitle("Error");
+                                            validate.setMessage(task.getException().getMessage());
+                                            validate.show();
                                 }
                             }
                         });

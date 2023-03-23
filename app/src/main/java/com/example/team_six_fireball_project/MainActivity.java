@@ -57,6 +57,10 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /*----------------GUIDES------------
+these three sites helped me do popup slide animation.
+    -https://stackoverflow.com/questions/9247792/how-to-make-animation-for-popup-window-in-android
+    -https://stackoverflow.com/questions/12048886/animate-an-alertdialogs-entrance-and-exit
+    -https://stackoverflow.com/questions/7092370/how-to-animate-popup-window-from-bottom-to-top-in-android
 https://www.youtube.com/watch?v=9Lrei9GpcW8 how to go to a website from app.
 https://www.youtube.com/watch?v=EBhmRaa8nhE drop down menu guide.
 https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
@@ -95,6 +99,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     Menu menu;
     Toolbar toolbar;
     View updatePopUp;
+    AlertDialog validate;
     //--Global Scope (end)---
 
     @Override
@@ -135,6 +140,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         public void run() {
 
             getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out
+                    )
                     .replace(R.id.fragment_container, new MainFragment())
                     .addToBackStack(null)
                     .commit();
@@ -190,7 +199,19 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
+                    //animating validation buttons (has to be in main thread)
+                    validate = new AlertDialog.Builder(updatePopUp.getContext())
+                            .setPositiveButton("Ok", (dialogInterface, i) -> {
+                            }).create();
+                    validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
                     dialog = dialogBuilder.create();
+
+                    //Animation is themes.xml. and runs using anim folders xml files hide and show
+                    if (dialog.getWindow() != null) {
+                        dialog.getWindow().getAttributes().windowAnimations = R.style.Animation;
+                    }
+
                     dialog.show();
                 }
             });
@@ -225,22 +246,17 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                                 });
                     } else {
                         //how to build an Alert Dialog
-                        new AlertDialog.Builder(updatePopUp.getContext())
-                                .setTitle("Error")
-                                .setMessage("Name is Empty")
-                                .setPositiveButton("Ok", (dialogInterface, i) -> {
-                                }).show();
+                                validate.setTitle("Error");
+                                validate.setMessage("Name is Empty");
+                                validate.show();
                     }
                 });
                 buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
                     //handle picture pop up and saving
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                        new AlertDialog.Builder(updatePopUp.getContext())
-                                .setTitle("Invalid Input")
-                                .setMessage("Url is empty")
-                                .setPositiveButton("Ok", (dialogInterface, i) -> {
-
-                                }).show();
+                                validate.setTitle("Invalid Input");
+                                validate.setMessage("Url is empty");
+                                validate.show();
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -273,11 +289,9 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                 buttonPopUpUpdate.setOnClickListener(view -> {
 
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
-                        new AlertDialog.Builder(updatePopUp.getContext())
-                                .setTitle("Invalid Input")
-                                .setMessage("Url is empty")
-                                .setPositiveButton("Ok", (dialogInterface, i) -> {
-                                }).show();
+                                validate.setTitle("Invalid Input");
+                                validate.setMessage("Url is empty");
+                                validate.show();
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         Picasso.get()
@@ -349,6 +363,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                             }
                             dialog.dismiss();
                             getSupportFragmentManager().beginTransaction()
+                                    .setCustomAnimations(
+                                            R.anim.slide_in,
+                                            R.anim.fade_out
+                                    )
                                     .replace(R.id.fragment_container, new ProfileFragment())
                                     .addToBackStack(null)
                                     .commit();
@@ -571,6 +589,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         menu.getItem(2).setVisible(false);
         navPic.setImageDrawable(AppCompatResources.getDrawable(this, R.drawable.meteor_icon));
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out
+                )
                 .replace(R.id.fragment_container, new MainFragment())
                 .addToBackStack(null)
                 .commit();
@@ -586,6 +608,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
             setNavPic();
         }
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out
+                )
                 .replace(R.id.fragment_container, new MainFragment())
                 .addToBackStack(null)
                 .commit();
@@ -610,6 +636,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
         id = tempForumId;
 
         getSupportFragmentManager().beginTransaction()
+                .setCustomAnimations(
+                        R.anim.slide_in,
+                        R.anim.fade_out
+                )
                 .replace(R.id.fragment_container, new CommentFragment())
                 .addToBackStack(null)
                 .commit();
@@ -644,6 +674,10 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
             switch (item.getItemId()){
                 case R.id.nav_home:
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new MainFragment())
                             .addToBackStack(null)
                             .commit();
@@ -651,11 +685,19 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                 case R.id.nav_profile:
                     if(mAuth.getCurrentUser() != null) {
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new ProfileFragment())
                                 .addToBackStack(null)
                                 .commit();
                     } else {
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new MainFragment(3))
                                 .addToBackStack(null)
                                 .commit();
@@ -664,11 +706,19 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                 case R.id.nav_login:
                     if(mAuth.getCurrentUser() == null) {
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new LoginFragment())
                                 .addToBackStack(null)
                                 .commit();
                     } else {
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new MainFragment(2))
                                 .addToBackStack(null)
                                 .commit();
@@ -676,18 +726,30 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                     break;
                 case R.id.nav_info:
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new GeneralInfoFragment())
                             .addToBackStack(null)
                             .commit();
                     break;
                 case R.id.nav_map:
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new MapsFragment())
                             .addToBackStack(null)
                             .commit();
                     break;
                 case R.id.nav_graph:
                     getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new GraphFragment())
                             .addToBackStack(null)
                             .commit();
@@ -697,12 +759,20 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
                         //HOW TO RUN ON MAIN THREAD
                         runOnUiThread(() -> getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new MainFragment(1))
                                 .addToBackStack(null)
                                 .commit());
 
                     } else {
                         getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(
+                                        R.anim.slide_in,
+                                        R.anim.fade_out
+                                )
                                 .replace(R.id.fragment_container, new ForumsFragment())
                                 .addToBackStack(null)
                                 .commit();

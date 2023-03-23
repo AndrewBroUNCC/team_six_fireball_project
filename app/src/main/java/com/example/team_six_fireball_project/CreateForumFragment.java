@@ -3,14 +3,16 @@ package com.example.team_six_fireball_project;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.DocumentReference;
@@ -34,8 +37,11 @@ public class CreateForumFragment extends Fragment {
     FirebaseAuth mAuth;
     String date, title, creator, description, userID, forumID, creatorId;
     Calendar c;
+    Button buttonCreateForumSubmit;
+    TextView buttonCreateForumCancel;
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
+    AlertDialog validate;
 
     public CreateForumFragment() {
         // Required empty public constructor
@@ -67,24 +73,44 @@ public class CreateForumFragment extends Fragment {
         mAuth = FirebaseAuth.getInstance();
 
         editTextForumTitle = view.findViewById(R.id.editTextCreateForumTitle);
-        editTextForumDescription = view.findViewById(R.id.editTextCreateForumDescription);
+        editTextForumDescription = view.findViewById(R.id.editTextCreateForumComment);
+        buttonCreateForumSubmit = view.findViewById(R.id.buttonCreateForumSubmit);
+        buttonCreateForumCancel = view.findViewById(R.id.textViewCreateForumCancel);
 
-        view.findViewById(R.id.buttonCreateForumSubmit).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CreateForumRunnable createForumRunnable = new CreateForumRunnable();
-                executorService.execute(createForumRunnable);
-            }
-        });
+        validate = new AlertDialog.Builder(getActivity())
+                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
 
-        view.findViewById(R.id.textViewCreateForumCancel).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().popBackStack();
-            }
-        });
+                    }
+                }).create();
+        validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
+        CreateForumMainRunnalbe createForumMainRunnalbe = new CreateForumMainRunnalbe();
+        executorService.execute(createForumMainRunnalbe);
 
         return view;
+    }
+
+    class CreateForumMainRunnalbe implements Runnable{
+
+        @Override
+        public void run() {
+            buttonCreateForumSubmit.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    CreateForumRunnable createForumRunnable = new CreateForumRunnable();
+                    executorService.execute(createForumRunnable);
+                }
+            });
+
+            buttonCreateForumCancel.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getParentFragmentManager().popBackStack();
+                }
+            });
+        }
     }
 
     class CreateForumRunnable implements Runnable {
@@ -98,15 +124,9 @@ public class CreateForumFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Error")
-                                .setMessage("The Title Field is Empty")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                }).show();
+                                validate.setTitle("Error");
+                                validate.setMessage("The Title Field is Empty");
+                                validate.show();
                     }
                 });
 
@@ -114,15 +134,9 @@ public class CreateForumFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Error")
-                                .setMessage("The Title Field must be under 22 chars")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                }).show();
+                                validate.setTitle("Error");
+                                validate.setMessage("The Title Field must be under 22 chars");
+                                validate.show();
                     }
                 });
 
@@ -131,15 +145,9 @@ public class CreateForumFragment extends Fragment {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        new AlertDialog.Builder(getActivity())
-                                .setTitle("Error")
-                                .setMessage("The Description Field is Empty")
-                                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-
-                                    }
-                                }).show();
+                                validate.setTitle("Error");
+                                validate.setMessage("The Comment Field is Empty");
+                                validate.show();
                     }
                 });
 
@@ -206,6 +214,13 @@ public class CreateForumFragment extends Fragment {
                                         }
                                     });
                         }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            validate.setTitle("Error");
+                            validate.setMessage(e.getMessage());
+                            validate.show();
+                        }
                     });
         }
         private void getData(){ //get users
@@ -227,6 +242,13 @@ public class CreateForumFragment extends Fragment {
                                 }
                             }
                             setData(date, title, creator, description, userID, forumID);
+                        }
+                    }).addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            validate.setTitle("Error");
+                            validate.setMessage(e.getMessage());
+                            validate.show();
                         }
                     });
         }

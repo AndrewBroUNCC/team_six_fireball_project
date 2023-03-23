@@ -44,6 +44,7 @@ public class MainFragment extends Fragment {
     CardView interMapContainer;
     CardView graphContainer;
     CardView genInfoContainer;
+    AlertDialog validate;
 
     public MainFragment() {
         // Required empty public constructor
@@ -96,6 +97,14 @@ public class MainFragment extends Fragment {
         graphContainer = view.findViewById(R.id.home_graph_btn_container);
         genInfoContainer = view.findViewById(R.id.home_geninfo_btn_container);
 
+        validate = new AlertDialog.Builder(requireActivity()).setPositiveButton("Error", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        }).create();
+        validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
         //has to be done in main thread.
         getActivity().setTitle("Home Page");
 
@@ -132,6 +141,10 @@ public class MainFragment extends Fragment {
             forumContainer.setOnClickListener(v -> {
                 if (mAuth.getCurrentUser() != null) {
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new ForumsFragment())
                             .addToBackStack(null)
                             .commit();
@@ -144,6 +157,10 @@ public class MainFragment extends Fragment {
             profileContainer.setOnClickListener(v -> {
                 if (mAuth.getCurrentUser() != null) {
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new ProfileFragment())
                             .addToBackStack(null)
                             .commit();
@@ -156,6 +173,10 @@ public class MainFragment extends Fragment {
             loginContainer.setOnClickListener(v -> {
                 if (mAuth.getCurrentUser() == null) {
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new LoginFragment())
                             .addToBackStack(null)
                             .commit();
@@ -168,6 +189,10 @@ public class MainFragment extends Fragment {
             logoutContainer.setOnClickListener(v -> {
                 if (mAuth.getCurrentUser() == null) {
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new LoginFragment())
                             .addToBackStack(null)
                             .commit();
@@ -179,6 +204,10 @@ public class MainFragment extends Fragment {
 
             interMapContainer.setOnClickListener(v ->
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new MapsFragment())
                             .addToBackStack(null)
                             .commit()
@@ -186,6 +215,10 @@ public class MainFragment extends Fragment {
 
             graphContainer.setOnClickListener(v ->
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new GraphFragment())
                             .addToBackStack(null)
                             .commit()
@@ -193,6 +226,10 @@ public class MainFragment extends Fragment {
 
             genInfoContainer.setOnClickListener(v ->
                     requireActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
                             .replace(R.id.fragment_container, new GeneralInfoFragment())
                             .addToBackStack(null)
                             .commit()
@@ -205,17 +242,11 @@ public class MainFragment extends Fragment {
     //handling alert. validation
     public void handleAlert(){
         if(alert == 1){
-            new AlertDialog.Builder(requireActivity())
-                    .setTitle("Error")
-                    .setMessage("You must be Logged In to access Forum")
-                    .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-
-                        }
-                    }).show();
+                    validate.setTitle("Error");
+                    validate.setMessage("You must be Logged In to access Forum");
+                    validate.show();
         } else if (alert ==2){
-            new AlertDialog.Builder(requireActivity())
+            AlertDialog validate2 = new AlertDialog.Builder(requireActivity())
                     .setTitle("Logout")
                     .setMessage("Would you like to logout?")
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -235,10 +266,12 @@ public class MainFragment extends Fragment {
                                     .addToBackStack(null)
                                     .commit();
                         }
-                    })
-                    .show();
+                    }).create();
+                    validate2.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+                    validate2.show();
+
         } else if (alert ==3){
-            new AlertDialog.Builder(requireActivity())
+            AlertDialog validate3 = new AlertDialog.Builder(requireActivity())
                     .setTitle("Must be logged in")
                     .setMessage("Would you like to go to login screen?")
                     .setNegativeButton("No", new DialogInterface.OnClickListener() {
@@ -258,8 +291,9 @@ public class MainFragment extends Fragment {
                                     .addToBackStack(null)
                                     .commit();
                         }
-                    })
-                    .show();
+                    }).create();
+            validate3.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+            validate3.show();
         }
     }
 
