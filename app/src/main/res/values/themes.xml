@@ -26,4 +26,14 @@
         <item name="color">@android:color/white</item>
     </style>
 
+    <!--Animation 1. is bottom to top, 2. is left in, right out-->
+    <style name="Animation">
+        <item name="android:windowEnterAnimation">@anim/popup_show</item>
+        <item name="android:windowExitAnimation">@anim/popup_hide</item>
+    </style>
+    <style name="AnimationSlide">
+        <item name="android:windowEnterAnimation">@android:anim/slide_in_left</item>
+        <item name="android:windowExitAnimation">@android:anim/slide_out_right</item>
+    </style>
+
 </resources>
