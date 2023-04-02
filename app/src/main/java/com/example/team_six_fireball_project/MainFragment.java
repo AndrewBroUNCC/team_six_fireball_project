@@ -244,7 +244,13 @@ public class MainFragment extends Fragment {
         if(alert == 1){
                     validate.setTitle("Error");
                     validate.setMessage("You must be Logged In to access Forum");
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
                     validate.show();
+
+                }
+            });
         } else if (alert ==2){
             AlertDialog validate2 = new AlertDialog.Builder(requireActivity())
                     .setTitle("Logout")
