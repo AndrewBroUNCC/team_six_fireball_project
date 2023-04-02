@@ -129,18 +129,36 @@ public class RegisterFragment extends Fragment {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Name is Empty");
-                        validate.show();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                validate.show();
+
+                            }
+                        });
             }
             else if (email.isEmpty()) {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Email is Empty");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         validate.show();
+
+                    }
+                });
             } else if (password.isEmpty()) {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Password is Empty");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         validate.show();
+
+                    }
+                });
             } else {
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.createUserWithEmailAndPassword(email,password)
@@ -170,32 +188,20 @@ public class RegisterFragment extends Fragment {
 //                                            });
 
                                     //UPDATE user display name on Auth user side
-                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                            .setDisplayName(name)
-                                            .build();
-                                    user.updateProfile(profileUpdates)
-                                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                        @Override
-                                                        public void onComplete(@NonNull Task<Void> task) {
-                                                            //Log.d(TAG, "onComplete: User has been registered successfully");
-                                                            getActivity().getSupportFragmentManager().beginTransaction()
-                                                                    .setCustomAnimations(
-                                                                            R.anim.slide_in,
-                                                                            R.anim.fade_out
-                                                                    )
-                                                                    .replace(R.id.fragment_container, new MainFragment())
-                                                                    .addToBackStack(null)
-                                                                    .commit();
-                                                        }
-                                                    });
+
                                 } else {
                                     //Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
 
                                     //how to build an Alert Dialog
                                             validate.setTitle("Error");
                                             validate.setMessage(task.getException().getMessage());
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
                                             validate.show();
+
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -222,14 +228,25 @@ public class RegisterFragment extends Fragment {
                     }).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                         @Override
                         public void onComplete(@NonNull Task<DocumentReference> task) {
-                            mRegisterFragment.goToHomeFragment();
+                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                    .setDisplayName(name)
+                                    .build();
+                            user.updateProfile(profileUpdates)
+                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<Void> task) {
+                                            //Log.d(TAG, "onComplete: User has been registered successfully");
+                                            mRegisterFragment.goToHomeFragment(getContext());
+                                        }
+                                    });
                         }
                     });
         }
     }
 
     interface IRegisterFragment {
-        void goToHomeFragment ();
+        void goToHomeFragment (Context context);
         String getCurrentDateRegisterFrag();
     }
 }

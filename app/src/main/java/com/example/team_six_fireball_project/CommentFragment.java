@@ -140,10 +140,11 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
                                     return comment.date.compareTo(comment2.date)*-1;
                                 }
                             });
-
-                            commentTitle = commentsList.get(commentsList.size()-1).getTopic();
-                            Log.d(TAG, "onEvent: comment= " + commentsList.get(commentsList.size()-1));
-                            textViewTitle.setText(commentTitle);
+                            if (commentsList.size() > 0) {
+                                commentTitle = commentsList.get(commentsList.size() - 1).getTopic();
+                                Log.d(TAG, "onEvent: comment= " + commentsList.get(commentsList.size()-1));
+                                textViewTitle.setText(commentTitle);
+                            }
                             adapter.notifyDataSetChanged();
                         }
                     });

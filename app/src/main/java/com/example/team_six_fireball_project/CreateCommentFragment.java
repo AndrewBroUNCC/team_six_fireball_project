@@ -116,12 +116,24 @@ public class CreateCommentFragment extends Fragment {
                     if (textViewMultiLine.getText().toString().isEmpty()){
                         validate.setTitle("Error");
                         validate.setMessage("The Comment Field is Empty");
-                        validate.show();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                validate.show();
+
+                            }
+                        });
 
                     } else if(textViewMultiLine.getText().toString().length() > 100){
                         validate.setTitle("Error");
                         validate.setMessage("The Comment Field limit is 100");
-                        validate.show();
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                validate.show();
+
+                            }
+                        });
                     }
                     else {
                         forumID = mCreateCommentFragment.getCreateForumID();

@@ -126,7 +126,13 @@ public class CreateForumFragment extends Fragment {
                     public void run() {
                                 validate.setTitle("Error");
                                 validate.setMessage("The Title Field is Empty");
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
+
+                            }
+                        });
                     }
                 });
 
@@ -136,8 +142,13 @@ public class CreateForumFragment extends Fragment {
                     public void run() {
                                 validate.setTitle("Error");
                                 validate.setMessage("The Title Field must be under 22 chars");
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
-                    }
+
+                            }
+                        });                    }
                 });
 
             } else if (editTextForumDescription.getText().toString().isEmpty()){
@@ -147,7 +158,13 @@ public class CreateForumFragment extends Fragment {
                     public void run() {
                                 validate.setTitle("Error");
                                 validate.setMessage("The Comment Field is Empty");
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
+
+                            }
+                        });
                     }
                 });
 
@@ -219,7 +236,13 @@ public class CreateForumFragment extends Fragment {
                         public void onFailure(@NonNull Exception e) {
                             validate.setTitle("Error");
                             validate.setMessage(e.getMessage());
-                            validate.show();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    validate.show();
+
+                                }
+                            });
                         }
                     });
         }
@@ -248,7 +271,13 @@ public class CreateForumFragment extends Fragment {
                         public void onFailure(@NonNull Exception e) {
                             validate.setTitle("Error");
                             validate.setMessage(e.getMessage());
-                            validate.show();
+                            getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    validate.show();
+
+                                }
+                            });
                         }
                     });
         }

@@ -13,11 +13,13 @@ import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.provider.DocumentsContract;
 import android.util.Log;
+import android.view.ContentInfo;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -57,6 +59,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /*----------------GUIDES------------
+https://developer.android.com/guide/fragments/animate how to do page transitions.
 these three sites helped me do popup slide animation.
     -https://stackoverflow.com/questions/9247792/how-to-make-animation-for-popup-window-in-android
     -https://stackoverflow.com/questions/12048886/animate-an-alertdialogs-entrance-and-exit
@@ -100,6 +103,7 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     Toolbar toolbar;
     View updatePopUp;
     AlertDialog validate;
+    View successPopUp;
     //--Global Scope (end)---
 
     @Override
@@ -248,7 +252,13 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                         //how to build an Alert Dialog
                                 validate.setTitle("Error");
                                 validate.setMessage("Name is Empty");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
+
+                            }
+                        });
                     }
                 });
                 buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
@@ -256,7 +266,13 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
                                 validate.setTitle("Invalid Input");
                                 validate.setMessage("Url is empty");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
+
+                            }
+                        });
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -291,7 +307,13 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
                                 validate.setTitle("Invalid Input");
                                 validate.setMessage("Url is empty");
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
                                 validate.show();
+
+                            }
+                        });
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         Picasso.get()
@@ -571,7 +593,8 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     }
 
     @Override
-    public void goToHomeFragment() {
+    public void goToHomeFragment(Context context) {
+        loginRegisterSuccessPopup(context);
         logIn();
     }
 
@@ -625,6 +648,34 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     @Override
     public void loginSignIn() {
         logIn();
+    }
+
+    public void loginRegisterSuccessPopup(Context context){
+        AlertDialog.Builder dialogBuilderSuccess;
+        AlertDialog dialogSuccess;
+        successPopUp = getLayoutInflater().inflate(R.layout.success_popup, null);
+        //======how to show success screen v ==============
+        dialogBuilderSuccess = new AlertDialog.Builder(context);
+        dialogBuilderSuccess.setView(successPopUp);
+        dialogSuccess = dialogBuilderSuccess.create();
+        //--success popup slides in from this V-- style is in theme.xml
+        dialogSuccess.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+
+        dialogSuccess.show();
+        final Handler handler = new Handler(Looper.getMainLooper());
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                //Do something after 2000ms
+                dialogSuccess.dismiss();
+            }
+        }, 2000);
+        //========how to show success screen ^ =============
+    }
+
+    @Override
+    public void showSuccessScreenLogin(Context context) {
+        loginRegisterSuccessPopup(context);
     }
 
     @Override

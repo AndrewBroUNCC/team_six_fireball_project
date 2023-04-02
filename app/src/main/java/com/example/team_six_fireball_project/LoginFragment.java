@@ -35,8 +35,6 @@ public class LoginFragment extends Fragment {
     ILoginFragment mLoginFragment;
     EditText editTextEmail, editTextPassword;
     Button buttonLogin, buttonRegister;
-    public AlertDialog.Builder dialogBuilder;
-    private AlertDialog dialog;
 
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 4;
@@ -137,12 +135,24 @@ public class LoginFragment extends Fragment {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Email is Empty");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         validate.show();
+
+                    }
+                });
             } else if (password.isEmpty()) {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Password is Empty");
+                getActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
                         validate.show();
+
+                    }
+                });
             } else {
                 //calls firebase instance
                 mAuth = FirebaseAuth.getInstance();
@@ -159,23 +169,7 @@ public class LoginFragment extends Fragment {
                                     //you can get stuff from user using = V
                                     //mAuth.getCurrentUser().getDisplayName();
 
-                                    final View updatePopUp = getLayoutInflater().inflate(R.layout.success_popup, null);
-
-                                    dialogBuilder = new AlertDialog.Builder(getContext());
-                                    dialogBuilder.setView(updatePopUp);
-                                    dialog = dialogBuilder.create();
-                                    //--success popup slides in from this V-- style is in theme.xml
-                                    dialog.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
-
-                                    dialog.show();
-                                    final Handler handler = new Handler(Looper.getMainLooper());
-                                    handler.postDelayed(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            //Do something after 2000ms
-                                            dialog.dismiss();
-                                        }
-                                    }, 2000);
+                                    mLoginFragment.showSuccessScreenLogin(getContext());
 
                                     //in main activity
                                     mLoginFragment.loginSignIn();
@@ -183,7 +177,13 @@ public class LoginFragment extends Fragment {
                                 } else {
                                     validate.setTitle("Login Failed");
                                     validate.setMessage(task.getException().getMessage());
-                                    validate.show();
+                                    getActivity().runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            validate.show();
+
+                                        }
+                                    });
                                 }
                             }
                         });
@@ -193,5 +193,6 @@ public class LoginFragment extends Fragment {
     }
     interface ILoginFragment{
         void loginSignIn();
+        void showSuccessScreenLogin(Context context);
     }
 }
