@@ -23,36 +23,32 @@ import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Comparator;
-import java.util.Date;
-import java.util.List;
 
-import okhttp3.Call;
-import okhttp3.Callback;
 import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.Response;
 
 public class MapsFragment extends Fragment implements AdapterView.OnItemClickListener, RecycleViewMapsAdapter.IRecycleViewMapsAdapter {
 
     private final OkHttpClient client = new OkHttpClient();
     private static final String TAG = "demo";
     IMapsFragment mMapsFragment;
+    GoogleMap googleMap;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
-
+        //map markers get placed
         @Override
-        public void onMapReady(GoogleMap googleMap) {
-            LatLng sydney = new LatLng(-34, 151);
-            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
-            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        public void onMapReady(GoogleMap googleMapReady) {
+
+            googleMap = googleMapReady;
+            setMapMarkers(googleMap, fireBallList);
+//            //==how to create a marker==
+//            LatLng sydney = new LatLng(-34, 151);
+//            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
+//
+//            //how to moveCamera==
+//            googleMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         }
     };
 
@@ -92,12 +88,38 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         fireballSort = view.getResources().getStringArray(R.array.FireBall_Sort);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.drop_down_menu_items, fireballSort);
         autoCompleteTextView.setAdapter(arrayAdapter);
+        fireBallList = mMapsFragment.getFireBallList();
 
-
+        setMapMarkers(googleMap, fireBallList);
+//        callback = new OnMapReadyCallback() {
+//            @Override
+//            public void onMapReady(@NonNull GoogleMap googleMap) {
+//
+//                googleMap.clear();
+//                LatLng ballMaker = new LatLng(0,0);
+//                int count = 0;
+//
+//                for (FireBall fireballMarker: fireBallList) {
+//                    if (fireballMarker.getLat() != "null" || fireballMarker.getLon() != "null") {
+//                        count +=1;
+//                        //==how to create a marker==
+//                        ballMaker = new LatLng(Double.parseDouble(fireballMarker.getLat()), Double.parseDouble(fireballMarker.getLon()));
+//                        googleMap.addMarker(new MarkerOptions().position(ballMaker).title("FireBall: "+count+" Impact Power: " + fireballMarker.getImpactE()));
+//                    }
+//                }
+//
+//                //how to moveCamera==
+//                googleMap.getUiSettings().setZoomControlsEnabled(true);
+//                //googleMap.moveCamera(CameraUpdateFactory.zoomTo(0));
+//                googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 4));
+//                /*animate
+//                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(16), 5000, null);
+//                 */
+//            }
+//        };
 
         Log.d(TAG, "onCreateView: "+arrayAdapter.getItemViewType(0));
 
-        fireBallList = mMapsFragment.getFireBallList();
         size = fireBallList.size();
 
         recyclerView = view.findViewById(R.id.recycleViewMapsFrag);
@@ -124,6 +146,10 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     }
 
     public void sortByStatus(RecyclerView recyclerView2, int status){
+        //to reload full list
+        if (status== 0 || status == 1 || status == 4){
+            setMapMarkers(googleMap,fireBallList);
+        }
         if (status == 0){
             //newest first
             fireBallList.sort(new Comparator<FireBall>() {
@@ -166,10 +192,6 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
             });
             recyclerView.setAdapter(adapter);
         }
-        Log.d(TAG, "sortByStatus: fb1 "+fireBallList.size());
-        Log.d(TAG, "sortByStatus: fb6 "+fireBallList6.size());
-        Log.d(TAG, "sortByStatus: fb12 "+fireBallList12.size());
-        Log.d(TAG, "sortByStatus: size " + size);
         adapter.notifyDataSetChanged();
     }
 
@@ -193,6 +215,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         });
         recyclerView.setAdapter(adapter12);
+        setMapMarkers(googleMap, fireBallList12);
     }
 
     public void sortSixMonths(){
@@ -219,6 +242,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
             }
         });
         recyclerView.setAdapter(adapter6);
+        setMapMarkers(googleMap, fireBallList6);
     }
 
     //need this for interface to work
@@ -231,6 +255,41 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         } else {
             throw new RuntimeException(context.toString());
         }
+    }
+
+    //call and pass fireball list to clear map and reload with new list and sets markers
+    public void setMapMarkers(GoogleMap googleMap, ArrayList<FireBall> FireballsForMarkers) {
+//        callback = new OnMapReadyCallback() {
+//            @Override
+//            public void onMapReady(@NonNull GoogleMap googleMap) {
+
+                if(googleMap != null) {
+                    googleMap.clear();
+                    LatLng ballMaker = new LatLng(0, 0);
+                    int count = 0;
+
+                    for (FireBall fireballMarker : FireballsForMarkers) {
+                        if (fireballMarker.getLat() != "null" || fireballMarker.getLon() != "null") {
+                            count += 1;
+                            //==how to create a marker==
+                            ballMaker = new LatLng(Double.parseDouble(fireballMarker.getLat()), Double.parseDouble(fireballMarker.getLon()));
+                            googleMap.addMarker(new MarkerOptions().position(ballMaker).title("FireBall: " + count + " Impact Power: " + fireballMarker.getImpactE()));
+                        }
+                    }
+                    //==how to moveCamera==
+                    googleMap.getUiSettings().setZoomControlsEnabled(true);
+                    //googleMap.moveCamera(CameraUpdateFactory.zoomTo(0));
+                    if (count > 250) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 3));
+                    } else {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 0));
+                    }
+                /*  ==animate==
+                    googleMap.animateCamera(CameraUpdateFactory.zoomTo(16), 5000, null);
+                 */
+                    //  }
+                    //};
+                }
     }
 
     SupportMapFragment mapFragment;
@@ -256,6 +315,5 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         ArrayList<FireBall> getFireBallList();
         String getSixMonthsAgoDateMapsFrag();
         String getTwelveMonthsAgoDateMapsFrag();
-        ArrayList<FireBall> getResetFireBallList();
     }
 }
