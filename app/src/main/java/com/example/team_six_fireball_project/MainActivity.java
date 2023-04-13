@@ -28,6 +28,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.android.material.navigation.NavigationView;
@@ -446,11 +449,33 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
     @Override
     public ArrayList<FireBall> getFireBallList() {
-        return fireBallList;
-    }
 
-    @Override
-    public ArrayList<FireBall> getResetFireBallList() {
+        for (FireBall fireBall: fireBallList) {
+            if (fireBall.getLat() != "null" || fireBall.getLon() != "null" || fireBall.getLatDir() != "null" || fireBall.getLonDir() != "null") {
+                // Log.d(TAG, "sortFireBallListForPieChart: " + fireBall.getLat());
+                double lat;
+                double lon;
+//                double lat = 0;
+//                double lon = 0;
+                String latDir = fireBall.getLatDir();
+                String lonDir = fireBall.getLonDir();
+
+                if (latDir.compareTo("S") == 0) {
+                    lat = 0 - Double.parseDouble(fireBall.getLat());
+                } else {
+                    lat = Double.parseDouble(fireBall.getLat());
+                }
+
+                if (lonDir.compareTo("W") == 0) {
+                    lon = 0 - Double.parseDouble(fireBall.getLon());
+                } else {
+                    lon = Double.parseDouble(fireBall.getLon());
+                }
+                fireBall.setLat(Double.toString(lat));
+                fireBall.setLon(Double.toString(lon));
+            }
+        }
+
         return fireBallList;
     }
 
