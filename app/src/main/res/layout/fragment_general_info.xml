@@ -297,7 +297,7 @@
                 android:id="@+id/textViewTest"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="(Click For Link)"
+                android:text="(Click For Link.)"
                 android:textColor="#2196F3"
                 android:textStyle="bold|italic"
                 app:layout_constraintBottom_toBottomOf="@+id/textViewTest3"
