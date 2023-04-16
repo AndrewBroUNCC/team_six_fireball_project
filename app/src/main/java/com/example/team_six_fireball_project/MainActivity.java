@@ -14,6 +14,9 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -75,7 +78,7 @@ https://www.youtube.com/watch?v=vhKtbECeazQ Chart guide. histogram, pie chart, e
 creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
 */
 
-public class MainActivity extends AppCompatActivity implements GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
+public class MainActivity extends AppCompatActivity implements GeneralInfoFragment.IGeneralInfoFragment, GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
     /*
     TODO: map markers. (implementation last) (easy) -Drew
@@ -139,6 +142,28 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
 
         MainRunnable mainRunnable = new MainRunnable();
         executorService.execute(mainRunnable);
+    }
+
+    /*you can set the alert title and message, then insert a url to go to an outside website.
+      used in general info fragment and graphs fragment for heat map. */
+    @Override
+    public void generalInfoAlert(String title, String message, String url) {
+        AlertDialog validate = new AlertDialog.Builder(this)
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        Uri webpage = Uri.parse(url);
+                        Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+                        startActivity(webIntent);
+                    }
+                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                }).setTitle(title).setMessage(message).create();
+        validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+        validate.show();
     }
 
     class MainRunnable implements Runnable{
@@ -506,6 +531,11 @@ public class MainActivity extends AppCompatActivity implements GraphFragment.IGr
     @Override
     public ArrayList<FireBall> getFireBallDataGraph() {
         return fireBallList;
+    }
+
+    @Override
+    public void graphFragAlertUrl(String title, String message, String url) {
+        generalInfoAlert(title, message, url);
     }
 
     class FireBallRunnable implements Runnable{

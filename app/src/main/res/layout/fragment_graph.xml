@@ -56,11 +56,14 @@
         android:id="@+id/barChartGraphFrag"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:visibility="visible"
         app:layout_constraintBottom_toTopOf="@+id/viewLine2"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/seekBarGraphFrag" />
+        app:layout_constraintTop_toBottomOf="@+id/seekBarGraphFrag"
+        app:layout_constraintVertical_bias="0.0" />
 
     <SeekBar
         android:id="@+id/seekBarGraphFrag"
@@ -95,10 +98,10 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginEnd="10dp"
-        android:text="Histogram"
-        android:clickable="false"
+        android:layout_marginEnd="8dp"
         android:backgroundTint="@color/button_yellow_grey2"
+        android:clickable="false"
+        android:text="Histogram"
         android:textAllCaps="false"
         android:textColor="@color/blue_button_header_text"
         android:textStyle="bold|italic"
@@ -109,18 +112,34 @@
         app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 
     <Button
-        android:id="@+id/buttonGraphFragPieChart"
+        android:id="@+id/buttonGraphHeatMapTable"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginEnd="8dp"
-        android:text="Pie Chart"
         android:backgroundTint="@color/yellow_button_header"
+        android:text="Heat Map"
         android:textAllCaps="false"
         android:textColor="@color/blue_button_header_text"
         android:textStyle="bold|italic"
         app:cornerRadius="90dp"
         app:layout_constraintBottom_toTopOf="@+id/seekBarGraphFrag"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/buttonGraphFragPieChart"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
+
+    <Button
+        android:id="@+id/buttonGraphFragPieChart"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:backgroundTint="@color/yellow_button_header"
+        android:text="Pie Chart"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
+        app:layout_constraintBottom_toTopOf="@+id/seekBarGraphFrag"
+        app:layout_constraintEnd_toStartOf="@+id/buttonGraphHeatMapTable"
         app:layout_constraintStart_toEndOf="@+id/buttonGraphFragHIstogram"
         app:layout_constraintTop_toBottomOf="@+id/viewLine" />
 </androidx.constraintlayout.widget.ConstraintLayout>

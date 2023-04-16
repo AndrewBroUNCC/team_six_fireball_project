@@ -57,7 +57,7 @@ public class GraphFragment extends Fragment {
     PieChart pieChart;
     ExecutorService executorService;
     static final int DEFAULT_THREAD_POOL_SIZE = 1;
-    Button pieButton, histButton;
+    Button pieButton, histButton, heatMapButton;
 
 
     public GraphFragment() {
@@ -102,6 +102,7 @@ public class GraphFragment extends Fragment {
         seekBarYear = view.findViewById(R.id.textViewGraphFragYear);
         pieButton = view.findViewById(R.id.buttonGraphFragPieChart);
         histButton = view.findViewById(R.id.buttonGraphFragHIstogram);
+        heatMapButton = view.findViewById(R.id.buttonGraphHeatMapTable);
 
         //get fireball data
         fireBallList = mGraphFragment.getFireBallDataGraph();
@@ -196,6 +197,12 @@ public class GraphFragment extends Fragment {
                     pieButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
                     pieButton.setClickable(false);
                     histButton.setClickable(true);
+                }
+            });
+            heatMapButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    mGraphFragment.graphFragAlertUrl("Leaving FireBorn","Would you like to proceed to the Website?", "https://public.tableau.com/app/profile/anders.pierson/viz/FireBornVisualization/Dashboard1?publish=yes");
                 }
             });
             //end button swap from pie to hist, hist to pie//
@@ -464,5 +471,6 @@ public class GraphFragment extends Fragment {
 
     interface IGraphFragment{
         ArrayList<FireBall> getFireBallDataGraph();
+        void graphFragAlertUrl(String title, String message, String url);
     }
 }
