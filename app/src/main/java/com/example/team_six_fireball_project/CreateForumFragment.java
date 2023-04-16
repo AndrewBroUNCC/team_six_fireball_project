@@ -136,12 +136,12 @@ public class CreateForumFragment extends Fragment {
                     }
                 });
 
-            } else if (editTextForumTitle.getText().toString().length() > 22) {
+            } else if (editTextForumTitle.getText().toString().length() > 15) {
                 getActivity().runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
                                 validate.setTitle("Error");
-                                validate.setMessage("The Title Field must be under 22 chars");
+                                validate.setMessage("The Title Field must be under 15 chars");
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
