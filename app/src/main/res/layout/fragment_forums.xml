@@ -66,11 +66,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="32dp"
+        android:fontFamily="@font/playfai_display_medium"
         android:text="Forum"
         android:textAllCaps="false"
         android:textColor="@color/white"
         android:textSize="40sp"
-        android:textStyle="bold|italic"
+        android:textStyle="normal"
         app:layout_constraintBottom_toTopOf="@+id/viewLine"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
