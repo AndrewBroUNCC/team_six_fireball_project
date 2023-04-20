@@ -19,7 +19,7 @@
         app:layout_constraintTop_toTopOf="@+id/editTextCreateCommentFragComment" />
 
     <View
-        android:id="@+id/viewProfileFragHomeButton"
+        android:id="@+id/cardViewContactUsFragImage"
         android:layout_width="2dp"
         android:layout_height="0dp"
         android:layout_marginStart="4dp"
@@ -29,7 +29,7 @@
         app:layout_constraintTop_toTopOf="@+id/editTextCreateCommentFragComment" />
 
     <View
-        android:id="@+id/view3"
+        android:id="@+id/viewCount"
         android:layout_width="0dp"
         android:layout_height="2dp"
         android:layout_marginStart="4dp"
@@ -111,8 +111,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
         android:layout_marginEnd="8dp"
-        android:backgroundTint="@color/yellow_button_header"
         android:text="Create Comment"
+        android:backgroundTint="@color/yellow_button_header"
         android:textAllCaps="false"
         android:textColor="@color/blue_button_header_text"
         android:textSize="24sp"
@@ -120,7 +120,7 @@
         app:cornerRadius="90dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
+        app:layout_constraintTop_toBottomOf="@+id/viewCount" />
 
     <Button
         android:id="@+id/buttonCreateCommentFragCancel"

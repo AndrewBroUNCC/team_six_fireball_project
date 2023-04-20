@@ -37,7 +37,7 @@ public class MainFragment extends Fragment {
     IMainFragment mMainFragment;
     TextView usernameTextView;
     TextView logLabelTextView;
-    TextView logTitleTextView;
+    TextView logTitleTextView, contactUs;
     CardView forumContainer;
     CardView profileContainer;
     CardView loginContainer, logoutContainer;
@@ -96,6 +96,7 @@ public class MainFragment extends Fragment {
         interMapContainer = view.findViewById(R.id.home_map_btn_container);
         graphContainer = view.findViewById(R.id.home_graph_btn_container);
         genInfoContainer = view.findViewById(R.id.home_geninfo_btn_container);
+        contactUs = view.findViewById(R.id.textViewMainFragContactLink);
 
         validate = new AlertDialog.Builder(requireActivity()).setPositiveButton("Error", new DialogInterface.OnClickListener() {
             @Override
@@ -136,6 +137,21 @@ public class MainFragment extends Fragment {
                 loginContainer.setVisibility(View.VISIBLE);
                 logoutContainer.setVisibility(View.INVISIBLE);
             }
+
+            //go to contactUs Fragment
+            contactUs.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    getActivity().getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(
+                                    R.anim.slide_in,
+                                    R.anim.fade_out
+                            )
+                            .replace(R.id.fragment_container, new ContactUsFragment())
+                            .addToBackStack(null)
+                            .commit();
+                }
+            });
 
             //onclick events for all button clicks in the home page
             forumContainer.setOnClickListener(v -> {

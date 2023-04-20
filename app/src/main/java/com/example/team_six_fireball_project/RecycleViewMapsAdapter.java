@@ -53,6 +53,12 @@ public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMaps
         holder.meteorAlt.setText("Alt: "+fireBall.getAlt());
         holder.meteorVel.setText("Vel: "+fireBall.getVel());
 
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRecycleViewMapsAdapter.goToFireBallOnMap(fireBall);
+            }
+        });
     }
 
     @Override
@@ -78,5 +84,6 @@ public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMaps
         }
     }
     interface IRecycleViewMapsAdapter{
+        void goToFireBallOnMap(FireBall fireBallFromMap);
     }
 }

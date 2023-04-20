@@ -1,8 +1,5 @@
 package com.example.team_six_fireball_project;
 
-import static android.app.Activity.RESULT_OK;
-import static android.content.Intent.ACTION_OPEN_DOCUMENT;
-
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -26,18 +23,13 @@ import android.widget.TextView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthCredential;
-import com.google.firebase.auth.EmailAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.auth.OAuthCredential;
 import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
-import com.google.firebase.firestore.auth.FirebaseAuthCredentialsProvider;
-import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -107,7 +99,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         mAuth = FirebaseAuth.getInstance();
         profilePic = view.findViewById(R.id.imageViewProfileFragProfileImage);
         updateButton = view.findViewById(R.id.buttonProfileFragUpdate);
-        homeButton = view.findViewById(R.id.viewProfileFragHomeButton);
+        homeButton = view.findViewById(R.id.cardViewContactUsFragImage);
         topicCount = view.findViewById(R.id.textViewProfileTopicNumber);
         nameHolder = view.findViewById(R.id.textViewProfileFragName);
         emailHolder = view.findViewById(R.id.textViewProfileFragEmail);

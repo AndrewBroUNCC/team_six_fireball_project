@@ -50,7 +50,7 @@ public class GraphFragment extends Fragment {
     ArrayList barArrayList;
     IGraphFragment mGraphFragment;
     SeekBar seekBar;
-    TextView seekBarYear;
+    TextView seekBarYear, meteorCount;
     String[] list = {"dummy","jan", "feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"};
     int year, jan=0, feb=0, mar=0, apr=0, may=0, jun=0, jul=0, aug=0, sep=0, oct=0, nov=0, dec=0;
     int northAmerica=0, southAmerica=0, asia=0, africa=0, americas=0, antarctica=0, europe=0, australia=0;
@@ -103,6 +103,7 @@ public class GraphFragment extends Fragment {
         pieButton = view.findViewById(R.id.buttonGraphFragPieChart);
         histButton = view.findViewById(R.id.buttonGraphFragHIstogram);
         heatMapButton = view.findViewById(R.id.buttonGraphHeatMapTable);
+        meteorCount = view.findViewById(R.id.textViewMeteorCount);
 
         //get fireball data
         fireBallList = mGraphFragment.getFireBallDataGraph();
@@ -180,6 +181,7 @@ public class GraphFragment extends Fragment {
                     barChart.setVisibility(View.VISIBLE);
                     seekBarYear.setVisibility(View.VISIBLE);
                     seekBar.setVisibility(View.VISIBLE);
+                    meteorCount.setVisibility(View.VISIBLE);
                     histButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
                     pieButton.setBackgroundColor(getActivity().getColor(R.color.yellow_button_header));
                     histButton.setClickable(false);
@@ -193,6 +195,7 @@ public class GraphFragment extends Fragment {
                     seekBar.setVisibility(View.INVISIBLE);
                     pieChart.setVisibility(View.VISIBLE);
                     barChart.setVisibility(View.INVISIBLE);
+                    meteorCount.setVisibility(View.INVISIBLE);
                     histButton.setBackgroundColor(getActivity().getColor(R.color.yellow_button_header));
                     pieButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
                     pieButton.setClickable(false);
@@ -422,16 +425,16 @@ public class GraphFragment extends Fragment {
                     dec += 1;
                 }
             }
-            getData();
+            GetDataRunnable getDataRunnable2 = new GetDataRunnable(yearForGraph);
+            new Thread(getDataRunnable2).start();
         }
     }
 
-    private void getData(){
-       GetDataRunnable getDataRunnable2 = new GetDataRunnable();
-       new Thread(getDataRunnable2).start();
-    }
-
     class GetDataRunnable implements Runnable{
+        int yearForCount;
+        public GetDataRunnable(int yearForGraph){
+            this.yearForCount = yearForGraph;
+        };
 
         @Override
         public void run() {
@@ -449,6 +452,16 @@ public class GraphFragment extends Fragment {
             barArrayList.add(new BarEntry(10,oct));
             barArrayList.add(new BarEntry(11,nov));
             barArrayList.add(new BarEntry(12,dec));
+
+
+            int count = (jan+ feb+ mar+ apr+ may+ jun+ jul+ aug+ sep+ oct+ nov+ dec);
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    meteorCount.setText("FireBall count is " + count + " for " +yearForCount);
+                }
+            });
 
             BarDataSet barDataSet = new BarDataSet(barArrayList, "Jan - Dec");
             BarData barData = new BarData(barDataSet);

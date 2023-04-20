@@ -22,6 +22,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+
     <View
         android:id="@+id/viewLine"
         android:layout_width="wrap_content"
@@ -31,6 +32,173 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+
+
+    <View
+        android:id="@+id/view2"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="#191818"
+        app:layout_constraintBottom_toTopOf="@+id/editTextContactFragEmailMessage"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <androidx.cardview.widget.CardView
+        android:id="@+id/cardViewContactUsFragImage"
+        android:layout_width="80dp"
+        android:layout_height="60dp"
+        android:backgroundTint="#D2DCE1"
+        android:clickable="false"
+        android:elevation="12dp"
+        android:foreground="?android:attr/selectableItemBackground"
+        android:innerRadius="0dp"
+        android:outlineProvider="background"
+        android:shape="ring"
+        android:thicknessRatio="1.9"
+        app:cardCornerRadius="70dp"
+        app:layout_constraintEnd_toEndOf="@+id/editTextContactFragUserName"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine"
+        tools:ignore="MissingConstraints">
+
+        <ImageView
+            android:id="@+id/imageViewProfileFragHomeButton"
+            android:layout_width="95dp"
+            android:layout_height="67dp"
+            android:scaleX="1"
+            android:scaleY="1"
+            android:src="@drawable/contact" />
+    </androidx.cardview.widget.CardView>
+
+    <View
+        android:id="@+id/view4"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:background="#191818"
+        app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+        app:layout_constraintEnd_toStartOf="@+id/editTextContactFragEmailMessage"
+        app:layout_constraintTop_toTopOf="@+id/view2" />
+
+    <View
+        android:id="@+id/view5"
+        android:layout_width="2dp"
+        android:layout_height="0dp"
+        android:background="#191818"
+        app:layout_constraintBottom_toBottomOf="@+id/viewCount"
+        app:layout_constraintStart_toEndOf="@+id/editTextContactFragEmailMessage"
+        app:layout_constraintTop_toTopOf="@+id/view2" />
+
+
+    <View
+        android:id="@+id/viewCount"
+        android:layout_width="0dp"
+        android:layout_height="2dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:background="#191818"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextContactFragEmailMessage" />
+
+
+    <EditText
+        android:id="@+id/editTextContactFragEmailMessage"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:gravity="start|top"
+        android:hint="Enter your message here!"
+        android:inputType="textMultiLine"
+        android:minLines="8"
+        android:outlineProvider="none"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/message" />
+
+    <TextView
+        android:id="@+id/message"
+        android:layout_width="95dp"
+        android:layout_height="33dp"
+        android:layout_marginTop="25dp"
+        android:text="Message:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/email"
+        app:layout_constraintTop_toBottomOf="@+id/email" />
+
+    <EditText
+        android:id="@+id/editTextContactFragUserSubject"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:ems="10"
+        android:hint="Enter the subject here!"
+        android:inputType="textEmailAddress"
+        app:layout_constraintBottom_toBottomOf="@+id/email"
+        app:layout_constraintEnd_toEndOf="@+id/editTextContactFragUserName"
+        app:layout_constraintStart_toStartOf="@+id/editTextContactFragUserName"
+        app:layout_constraintTop_toTopOf="@+id/email" />
+
+    <TextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:text="Subject:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="@+id/name"
+        app:layout_constraintTop_toBottomOf="@+id/name" />
+
+    <EditText
+        android:id="@+id/editTextContactFragUserName"
+        android:layout_width="0dp"
+        android:layout_height="50dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:ems="10"
+        android:hint="Enter your name here!"
+        android:inputType="textPersonName"
+        app:layout_constraintBottom_toBottomOf="@+id/name"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/name"
+        app:layout_constraintTop_toTopOf="@+id/name" />
+
+    <TextView
+        android:id="@+id/name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="60dp"
+        android:text="Name:"
+        android:textColor="@color/black"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewLine" />
+
+    <Button
+        android:id="@+id/buttonContactFragSubmit"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="16dp"
+        android:backgroundTint="@color/yellow_button_header"
+        android:text="Submit"
+        android:textAllCaps="false"
+        android:textColor="@color/blue_button_header_text"
+        android:textSize="24sp"
+        android:textStyle="bold|italic"
+        app:cornerRadius="90dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/viewCount" />
 
     <View
         android:id="@+id/viewLine2"
