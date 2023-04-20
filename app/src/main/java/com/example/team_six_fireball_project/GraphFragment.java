@@ -456,13 +456,6 @@ public class GraphFragment extends Fragment {
 
             int count = (jan+ feb+ mar+ apr+ may+ jun+ jul+ aug+ sep+ oct+ nov+ dec);
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    meteorCount.setText("FireBall count is " + count + " for " +yearForCount);
-                }
-            });
-
             BarDataSet barDataSet = new BarDataSet(barArrayList, "Jan - Dec");
             BarData barData = new BarData(barDataSet);
 
@@ -479,6 +472,13 @@ public class GraphFragment extends Fragment {
             if((jan+feb+mar+apr+may+jun+jul+aug+sep+oct+nov+dec) != 0) {
                 barChart.setData(barData);
             }
+
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    meteorCount.setText("FireBall count is " + count + " for " +yearForCount);
+                }
+            });
         }
     }
 
