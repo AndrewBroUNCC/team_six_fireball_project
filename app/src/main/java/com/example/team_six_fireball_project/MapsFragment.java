@@ -273,16 +273,14 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                             count += 1;
                             //==how to create a marker==
                             ballMaker = new LatLng(Double.parseDouble(fireballMarker.getLat()), Double.parseDouble(fireballMarker.getLon()));
-                            googleMap.addMarker(new MarkerOptions().position(ballMaker).title("FireBall: " + count + " Impact Power: " + fireballMarker.getImpactE()));
+                            googleMap.addMarker(new MarkerOptions().position(ballMaker).title("FireBall- Lat:" + fireballMarker.getLat()+" Lon: "+ fireballMarker.getLon() + " Impact Power: " + fireballMarker.getImpactE()));
                         }
                     }
                     //==how to moveCamera==
                     googleMap.getUiSettings().setZoomControlsEnabled(true);
                     //googleMap.moveCamera(CameraUpdateFactory.zoomTo(0));
-                    if (count > 250) {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 3));
-                    } else {
-                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 0));
+                    if (count == 1) {
+                        googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 4));
                     }
                 /*  ==animate==
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(16), 5000, null);
@@ -309,6 +307,14 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         //Log.d(TAG, "onItemSelected: test 1 " + adapterView.getSelectedItem());
         //Log.d(TAG, "onItemSelected: test 2 "+adapterView.getItemAtPosition(i));
+    }
+
+    //this is where the fireball data from the recycle view gets passed back to maps fragment.
+    @Override
+    public void goToFireBallOnMap(FireBall fireBallFromMap) {
+        ArrayList<FireBall> mapList = new ArrayList<>();
+        mapList.add(fireBallFromMap);
+        setMapMarkers(googleMap, mapList);
     }
 
     interface IMapsFragment{

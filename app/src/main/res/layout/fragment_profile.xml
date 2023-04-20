@@ -33,7 +33,7 @@
         app:layout_constraintTop_toBottomOf="@+id/textView20" />
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/viewProfileFragHomeButton"
+        android:id="@+id/cardViewContactUsFragImage"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_marginTop="140dp"
@@ -61,7 +61,7 @@
     </androidx.cardview.widget.CardView>
 
     <androidx.cardview.widget.CardView
-        android:id="@+id/view3"
+        android:id="@+id/viewCount"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:backgroundTint="#D2DCE1"
@@ -71,10 +71,10 @@
         android:shape="ring"
         android:thicknessRatio="1.9"
         app:cardCornerRadius="70dp"
-        app:layout_constraintBottom_toBottomOf="@+id/viewProfileFragHomeButton"
+        app:layout_constraintBottom_toBottomOf="@+id/cardViewContactUsFragImage"
         app:layout_constraintEnd_toStartOf="@+id/view2"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/viewProfileFragHomeButton"
+        app:layout_constraintTop_toTopOf="@+id/cardViewContactUsFragImage"
         tools:ignore="MissingConstraints">
 
         <TextView
@@ -123,10 +123,10 @@
         android:text="# of Topics"
         android:textColor="@color/black"
         android:textStyle="bold|italic"
-        app:layout_constraintEnd_toEndOf="@+id/view3"
+        app:layout_constraintEnd_toEndOf="@+id/viewCount"
         app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="@+id/view3"
-        app:layout_constraintTop_toBottomOf="@+id/view3" />
+        app:layout_constraintStart_toStartOf="@+id/viewCount"
+        app:layout_constraintTop_toBottomOf="@+id/viewCount" />
 
 
     <View
@@ -209,8 +209,8 @@
         android:textStyle="bold|italic"
         app:cornerRadius="90dp"
         app:layout_constraintBottom_toBottomOf="@+id/textView14"
-        app:layout_constraintEnd_toEndOf="@+id/viewProfileFragHomeButton"
-        app:layout_constraintStart_toStartOf="@+id/viewProfileFragHomeButton"
+        app:layout_constraintEnd_toEndOf="@+id/cardViewContactUsFragImage"
+        app:layout_constraintStart_toStartOf="@+id/cardViewContactUsFragImage"
         app:layout_constraintTop_toTopOf="@+id/textView14" />
 
     <TextView

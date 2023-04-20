@@ -65,6 +65,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 
 /*----------------GUIDES------------
+https://www.youtube.com/watch?v=tZ2YEw6SoBU how to set up and use gmail api
 https://developer.android.com/guide/fragments/animate how to do page transitions.
 these three sites helped me do popup slide animation.
     -https://stackoverflow.com/questions/9247792/how-to-make-animation-for-popup-window-in-android
@@ -76,6 +77,7 @@ https://www.youtube.com/watch?v=bjYstsO1PgI navigation menu guide.
 https://www.youtube.com/watch?v=vhKtbECeazQ Chart guide. histogram, pie chart, etc.
  OKHttpClient information: https://square.github.io/okhttp/
 creating popup window: https://www.google.com/search?q=andriod+studio+popup+window&rlz=1C1JZAP_enUS937US937&oq=andriod+studio+popup+window&aqs=chrome..69i57j0i13i512l5j0i22i30l4.8002j0j4&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:da640af1,vid:4GYKOzgQDWI
+
 */
 
 public class MainActivity extends AppCompatActivity implements GeneralInfoFragment.IGeneralInfoFragment, GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
@@ -241,7 +243,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
 
                     //Animation is themes.xml. and runs using anim folders xml files hide and show
                     if (dialog.getWindow() != null) {
-                        dialog.getWindow().getAttributes().windowAnimations = R.style.Animation;
+                        dialog.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
                     }
 
                     dialog.show();
