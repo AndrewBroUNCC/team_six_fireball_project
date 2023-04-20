@@ -83,6 +83,7 @@ public class ContactUsFragment extends Fragment {
                                 public void onClick(DialogInterface dialogInterface, int i) {
                                 }
                             }).setTitle("Error").setMessage("Message is Empty.").create();
+                    validate.show();
                 } else if (subject == null || subject.isEmpty()){
                         AlertDialog validate = new AlertDialog.Builder(getActivity())
                                 .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
@@ -90,6 +91,7 @@ public class ContactUsFragment extends Fragment {
                                     public void onClick(DialogInterface dialogInterface, int i) {
                                     }
                                 }).setTitle("Error").setMessage("Subject is Empty.").create();
+                        validate.show();
                     } else {
                     Intent intent = new Intent(Intent.ACTION_SEND);
                     intent.putExtra(Intent.EXTRA_EMAIL, supportEmail);
