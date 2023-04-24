@@ -200,6 +200,9 @@ public class GraphFragment extends Fragment {
                     pieButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
                     pieButton.setClickable(false);
                     histButton.setClickable(true);
+                    //Pie Chart//
+                    showPieChart();
+                    //end pie chart//
                 }
             });
             heatMapButton.setOnClickListener(new View.OnClickListener() {
@@ -258,9 +261,6 @@ public class GraphFragment extends Fragment {
             }
         }
 
-        //Pie Chart//
-        showPieChart();
-        //end pie chart//
     }
 
     private void showPieChart(){
