@@ -82,13 +82,6 @@ creating popup window: https://www.google.com/search?q=andriod+studio+popup+wind
 
 public class MainActivity extends AppCompatActivity implements GeneralInfoFragment.IGeneralInfoFragment, GraphFragment.IGraphFragment, ActivityCompat.OnRequestPermissionsResultCallback, MapsFragment.IMapsFragment, ProfileFragment.IProfileFragment, LoginFragment.ILoginFragment, RegisterFragment.IRegisterFragment, MainFragment.IMainFragment, CreateCommentFragment.ICreateCommentFragment, CommentFragment.ICommentFragment, ForumsFragment.IForumsFragment, NavigationView.OnNavigationItemSelectedListener{
 
-    /*
-    TODO: map markers. (implementation last) (easy) -Drew
-    TODO:(DashBoard) -Anders (unknown difficulty)
-    TODO:General page (more stuff) (easy) -Justin L
-    TODO: contact page (easy) -patrick
-    */
-
     //--Global Scope--
     private static final String TAG = "demo";
     private final OkHttpClient client = new OkHttpClient();
