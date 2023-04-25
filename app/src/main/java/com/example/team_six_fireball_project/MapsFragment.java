@@ -35,14 +35,17 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     private static final String TAG = "demo";
     IMapsFragment mMapsFragment;
     GoogleMap googleMap;
+    boolean flag;
     private OnMapReadyCallback callback = new OnMapReadyCallback() {
 
         //map markers get placed
         @Override
         public void onMapReady(GoogleMap googleMapReady) {
 
+
             googleMap = googleMapReady;
             setMapMarkers(googleMap, fireBallList);
+
 //            //==how to create a marker==
 //            LatLng sydney = new LatLng(-34, 151);
 //            googleMap.addMarker(new MarkerOptions().position(sydney).title("Marker in Sydney"));
@@ -88,9 +91,11 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
         fireballSort = view.getResources().getStringArray(R.array.FireBall_Sort);
         ArrayAdapter arrayAdapter = new ArrayAdapter(getActivity(), R.layout.drop_down_menu_items, fireballSort);
         autoCompleteTextView.setAdapter(arrayAdapter);
-        fireBallList = mMapsFragment.getFireBallList();
 
-        setMapMarkers(googleMap, fireBallList);
+        for (FireBall fireBallSetter: mMapsFragment.getFireBallList()) {
+            fireBallList.add(fireBallSetter);
+        }
+
 //        callback = new OnMapReadyCallback() {
 //            @Override
 //            public void onMapReady(@NonNull GoogleMap googleMap) {
@@ -148,7 +153,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
     public void sortByStatus(RecyclerView recyclerView2, int status){
         //to reload full list
         if (status== 0 || status == 1 || status == 4){
-            setMapMarkers(googleMap,fireBallList);
+            flag = true;
         }
         if (status == 0){
             //newest first
@@ -158,6 +163,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                     return fireBall.getDate().compareTo(t1.getDate()) *-1;
                 }
             });
+            setMapMarkers(googleMap, fireBallList);
             recyclerView.setAdapter(adapter);
         } else if(status == 1){
             //oldest first
@@ -167,6 +173,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                     return fireBall.getDate().compareTo(t1.getDate()) * 1;
                 }
             });
+            setMapMarkers(googleMap, fireBallList);
             recyclerView.setAdapter(adapter);
         } else if (status ==2){
             sortSixMonths();
@@ -190,6 +197,7 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                 }
 
             });
+            setMapMarkers(googleMap, fireBallList);
             recyclerView.setAdapter(adapter);
         }
         adapter.notifyDataSetChanged();
@@ -282,12 +290,26 @@ public class MapsFragment extends Fragment implements AdapterView.OnItemClickLis
                     if (count == 1) {
                         googleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(ballMaker, 4));
                     }
+                    else {
+//                        mapFragment =
+//                                (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+//                        if (mapFragment != null && flag == true) {
+//                            flag = false;
+//                            mapFragment.getMapAsync(callback);
+//                        }
+                    }
                 /*  ==animate==
                     googleMap.animateCamera(CameraUpdateFactory.zoomTo(16), 5000, null);
                  */
                     //  }
                     //};
                 }
+    }
+
+    @Override
+    public void onDestroy() {
+        googleMap.clear();
+        super.onDestroy();
     }
 
     SupportMapFragment mapFragment;

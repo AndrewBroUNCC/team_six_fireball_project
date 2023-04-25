@@ -201,6 +201,7 @@ public class GraphFragment extends Fragment {
                     pieButton.setClickable(false);
                     histButton.setClickable(true);
                     //Pie Chart//
+                    sortFireBallListForPieChart();
                     showPieChart();
                     //end pie chart//
                 }
@@ -227,14 +228,16 @@ public class GraphFragment extends Fragment {
 //                double lon = 0;
                 String latDir = fireBall.getLatDir();
                 String lonDir = fireBall.getLonDir();
+                Double laat = Double.parseDouble(fireBall.getLat());
+                Double lonn = Double.parseDouble(fireBall.getLon());
 
-                if (latDir.compareTo("S") == 0){
+                if (latDir.compareTo("S") == 0 && laat > 0){
                     lat = 0 - Double.parseDouble(fireBall.getLat());
                 }else{
                     lat = Double.parseDouble(fireBall.getLat());
                 }
 
-                if(lonDir.compareTo("W")==0){
+                if(lonDir.compareTo("W")==0 && lonn > 0){
                     lon = 0 - Double.parseDouble(fireBall.getLon());
                 }else {
                     lon = Double.parseDouble(fireBall.getLon());

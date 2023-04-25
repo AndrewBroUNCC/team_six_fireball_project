@@ -93,6 +93,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
     private ImageView profilePic, popUpPic, navPic;
     private String url, id;
     ArrayList<FireBall> fireBallList = new ArrayList<>();
+    ArrayList<FireBall> fireBallList2 = new ArrayList<>();
     NavigationView navigationView;
     DrawerLayout drawer;
     FirebaseAuth mAuth;
@@ -469,7 +470,6 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
 
     @Override
     public ArrayList<FireBall> getFireBallList() {
-
         for (FireBall fireBall: fireBallList) {
             if (fireBall.getLat() != "null" || fireBall.getLon() != "null" || fireBall.getLatDir() != "null" || fireBall.getLonDir() != "null") {
                 // Log.d(TAG, "sortFireBallListForPieChart: " + fireBall.getLat());
@@ -479,14 +479,16 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
 //                double lon = 0;
                 String latDir = fireBall.getLatDir();
                 String lonDir = fireBall.getLonDir();
+                Double laat = Double.parseDouble(fireBall.getLat());
+                Double logg = Double.parseDouble(fireBall.getLon());
 
-                if (latDir.compareTo("S") == 0) {
+                if (latDir.compareTo("S") == 0 && !(laat < 0)) {
                     lat = 0 - Double.parseDouble(fireBall.getLat());
                 } else {
                     lat = Double.parseDouble(fireBall.getLat());
                 }
 
-                if (lonDir.compareTo("W") == 0) {
+                if (lonDir.compareTo("W") == 0 && !(logg < 0)) {
                     lon = 0 - Double.parseDouble(fireBall.getLon());
                 } else {
                     lon = Double.parseDouble(fireBall.getLon());
@@ -525,7 +527,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
 
     @Override
     public ArrayList<FireBall> getFireBallDataGraph() {
-        return fireBallList;
+        return fireBallList2;
     }
 
     @Override
@@ -582,6 +584,9 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
                                 FireBall fireBall = new FireBall(date, energy, impactE, lat, latDir, lon, lonDir, alt, vel);
                                 //Working: Log.d(TAG, "onResponse: "+ fireBall.toString());
                                 fireBallList.add(fireBall);
+                            }
+                            if (fireBallList2.isEmpty()) {
+                                fireBallList2 = fireBallList;
                             }
                             Log.d(TAG, "onResponse: Fireball data loaded");
                             //947 Log.d(TAG, "onResponse: "+fireBallList.size());
