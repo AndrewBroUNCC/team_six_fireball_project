@@ -1,9 +1,7 @@
 package com.example.team_six_fireball_project;
 
-import android.content.DialogInterface;
 import android.os.Bundle;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
@@ -18,16 +16,14 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
+
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 
 public class CreateForumFragment extends Fragment {
@@ -69,7 +65,7 @@ public class CreateForumFragment extends Fragment {
 
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
 
-        getActivity().setTitle("Forum Page");
+        requireActivity().setTitle("Forum Page");
         mAuth = FirebaseAuth.getInstance();
 
         editTextForumTitle = view.findViewById(R.id.editTextCreateForumTitle);
@@ -77,12 +73,9 @@ public class CreateForumFragment extends Fragment {
         buttonCreateForumSubmit = view.findViewById(R.id.buttonCreateForumSubmit);
         buttonCreateForumCancel = view.findViewById(R.id.textViewCreateForumCancel);
 
-        validate = new AlertDialog.Builder(getActivity())
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        validate = new AlertDialog.Builder(requireActivity())
+                .setPositiveButton("Ok", (dialogInterface, i) -> {
 
-                    }
                 }).create();
         validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
@@ -96,20 +89,12 @@ public class CreateForumFragment extends Fragment {
 
         @Override
         public void run() {
-            buttonCreateForumSubmit.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    CreateForumRunnable createForumRunnable = new CreateForumRunnable();
-                    executorService.execute(createForumRunnable);
-                }
+            buttonCreateForumSubmit.setOnClickListener(view -> {
+                CreateForumRunnable createForumRunnable = new CreateForumRunnable();
+                executorService.execute(createForumRunnable);
             });
 
-            buttonCreateForumCancel.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getParentFragmentManager().popBackStack();
-                }
-            });
+            buttonCreateForumCancel.setOnClickListener(view -> getParentFragmentManager().popBackStack());
         }
     }
 
@@ -121,60 +106,32 @@ public class CreateForumFragment extends Fragment {
 
             if (editTextForumTitle.getText().toString().isEmpty()){
                 //Toast.makeText(getActivity(), getString(R.string.title_message_filler), Toast.LENGTH_SHORT).show();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                                validate.setTitle("Error");
-                                validate.setMessage("The Title Field is Empty");
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
-                    }
+                requireActivity().runOnUiThread(() -> {
+                            validate.setTitle("Error");
+                            validate.setMessage("The Title Field is Empty");
+                    requireActivity().runOnUiThread(() -> validate.show());
                 });
 
             } else if (editTextForumTitle.getText().toString().length() > 15) {
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                                validate.setTitle("Error");
-                                validate.setMessage("The Title Field must be under 15 chars");
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });                    }
-                });
+                requireActivity().runOnUiThread(() -> {
+                            validate.setTitle("Error");
+                            validate.setMessage("The Title Field must be under 15 chars");
+                    requireActivity().runOnUiThread(() -> validate.show());                    });
 
             } else if (editTextForumDescription.getText().toString().isEmpty()){
                 //Toast.makeText(getActivity(), getString(R.string.description_filler_2), Toast.LENGTH_SHORT).show();
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                                validate.setTitle("Error");
-                                validate.setMessage("The Comment Field is Empty");
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
-                    }
+                requireActivity().runOnUiThread(() -> {
+                            validate.setTitle("Error");
+                            validate.setMessage("The Comment Field is Empty");
+                    requireActivity().runOnUiThread(() -> validate.show());
                 });
 
             } else {
                 ///////////////////////////////////////////////////////CURRENT DATE GETTER////////////////////////////IMPORTANT DATE
                 SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-                String createdDate = dateFormat.format(new Date());
-                date = createdDate;
+                date = dateFormat.format(new Date());
 
-                userID = mAuth.getCurrentUser().getUid();
+                userID = Objects.requireNonNull(mAuth.getCurrentUser()).getUid();
                 title = editTextForumTitle.getText().toString();
                 description = editTextForumDescription.getText().toString();
 
@@ -195,10 +152,6 @@ public class CreateForumFragment extends Fragment {
             user.put("title", title);
             user.put("userID", userID);
 
-            //    String comment;
-            //    String commenterName;
-            //    String topic;
-            //    String commenterID;
             HashMap<String, Object> comment = new HashMap<>();
             comment.put("comment", description);
             comment.put("commenterID", userID);
@@ -209,41 +162,24 @@ public class CreateForumFragment extends Fragment {
 
             db2.collection("Forum")
                     .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
+                    .addOnSuccessListener(documentReference -> {
 
-                            //updating forum with forum id
-                            user.put("forumID", documentReference.getId());
-                            db2.collection("Forum").document(documentReference.getId())
-                                    .update(user);
+                        //updating forum with forum id
+                        user.put("forumID", documentReference.getId());
+                        db2.collection("Forum").document(documentReference.getId())
+                                .update(user);
 
-                            db2.collection("Forum").document(documentReference.getId())
-                                    .collection("comments")
-                                    .add(comment)
-                                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                                        @Override
-                                        public void onSuccess(DocumentReference documentReference) {
-                                            getParentFragmentManager().beginTransaction()
-                                                    .replace(R.id.fragment_container, new ForumsFragment())
-                                                    .addToBackStack(null)
-                                                    .commit();
-                                        }
-                                    });
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            validate.setTitle("Error");
-                            validate.setMessage(e.getMessage());
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    validate.show();
-
-                                }
-                            });
-                        }
+                        db2.collection("Forum").document(documentReference.getId())
+                                .collection("comments")
+                                .add(comment)
+                                .addOnSuccessListener(documentReference1 -> getParentFragmentManager().beginTransaction()
+                                        .replace(R.id.fragment_container, new ForumsFragment())
+                                        .addToBackStack(null)
+                                        .commit());
+                    }).addOnFailureListener(e -> {
+                        validate.setTitle("Error");
+                        validate.setMessage(e.getMessage());
+                        requireActivity().runOnUiThread(() -> validate.show());
                     });
         }
         private void getData(){ //get users
@@ -252,33 +188,21 @@ public class CreateForumFragment extends Fragment {
 
             db.collection("userList")
                     .get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot value) {
-                            for (QueryDocumentSnapshot document : value) {
-                                //Log.d(TAG, "onEvent: getData() = --------------- " + document.getData().toString());
-                                User user = document.toObject(User.class);
-                                //forumList.add(forum);
-                                if(user.userID.equals(mAuth.getUid())){
-                                    creator = user.getName();
-                                    userID = user.getUserID();
-                                }
+                    .addOnSuccessListener(value -> {
+                        for (QueryDocumentSnapshot document : value) {
+                            //Log.d(TAG, "onEvent: getData() = --------------- " + document.getData().toString());
+                            User user = document.toObject(User.class);
+                            //forumList.add(forum);
+                            if(user.userID.equals(mAuth.getUid())){
+                                creator = user.getName();
+                                userID = user.getUserID();
                             }
-                            setData(date, title, creator, description, userID, forumID);
                         }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            validate.setTitle("Error");
-                            validate.setMessage(e.getMessage());
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    validate.show();
-
-                                }
-                            });
-                        }
+                        setData(date, title, creator, description, userID, forumID);
+                    }).addOnFailureListener(e -> {
+                        validate.setTitle("Error");
+                        validate.setMessage(e.getMessage());
+                        requireActivity().runOnUiThread(() -> validate.show());
                     });
         }
 

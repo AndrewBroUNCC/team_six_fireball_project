@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,20 +19,14 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -94,7 +87,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         View view = inflater.inflate(R.layout.fragment_profile, container, false);
 
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
-        getActivity().setTitle("Profile");
+        requireActivity().setTitle("Profile");
 
         mAuth = FirebaseAuth.getInstance();
         profilePic = view.findViewById(R.id.imageViewProfileFragProfileImage);
@@ -123,7 +116,7 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         ProfileRunnable profileRunnable = new ProfileRunnable();
         executorService.execute(profileRunnable);
 
-        Uri uri = mAuth.getCurrentUser().getPhotoUrl();
+        Uri uri = Objects.requireNonNull(mAuth.getCurrentUser()).getPhotoUrl();
 
         Intent intent = new Intent();
         intent.setAction(Intent.ACTION_OPEN_DOCUMENT);
@@ -146,21 +139,17 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
                 .document(forumId)
                 .collection("comments")
                 .get()
-                .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                    @Override
-                    public void onSuccess(QuerySnapshot value) {
+                .addOnSuccessListener(value -> {
 
-                        for (QueryDocumentSnapshot document: value) {
-                            dbDelete.collection("Forum")
-                                    .document(forumId)
-                                    .collection("comments")
-                                    .document(document.getId())
-                                    .delete();
-                        }
+                    for (QueryDocumentSnapshot document: value) {
                         dbDelete.collection("Forum")
-                                .document(forumId).delete();
+                                .document(forumId)
+                                .collection("comments")
+                                .document(document.getId())
+                                .delete();
                     }
-
+                    dbDelete.collection("Forum")
+                            .document(forumId).delete();
                 });
         adapter.notifyDataSetChanged();
     }
@@ -174,21 +163,13 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
         @Override
         public void run()
         {
-            homeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    //Log.d(TAG, "onClick: TEST");
-                    mProfileFragment.profileToHome();
-                }
+            homeButton.setOnClickListener(view -> {
+                //Log.d(TAG, "onClick: TEST");
+                mProfileFragment.profileToHome();
             });
             getData();
 
-            updateButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mProfileFragment.openUpdatePopUp(view);
-                }
-            });
+            updateButton.setOnClickListener(view -> mProfileFragment.openUpdatePopUp(view));
         }
         
         private void getData() {
@@ -199,73 +180,58 @@ public class ProfileFragment extends Fragment implements RecycleViewProfileAdapt
 
             db.collection("userList")
                     .get()
-                    .addOnSuccessListener(new OnSuccessListener<QuerySnapshot>() {
-                        @Override
-                        public void onSuccess(QuerySnapshot queryDocumentSnapshots) {
-                            for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
-                                User userDoc = document.toObject(User.class);
-                                if (currentUser.getUid().compareTo(userDoc.getUserID()) == 0) {
-                                    userReturn.add(userDoc);
-                                    user = userReturn.get(0);
-                                    break;
-                                }
+                    .addOnSuccessListener(queryDocumentSnapshots -> {
+                        for (QueryDocumentSnapshot document : queryDocumentSnapshots) {
+                            User userDoc = document.toObject(User.class);
+                            assert currentUser != null;
+                            if (currentUser.getUid().compareTo(userDoc.getUserID()) == 0) {
+                                userReturn.add(userDoc);
+                                user = userReturn.get(0);
+                                break;
                             }
                         }
-                    }).addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                        @Override
-                        public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    }).addOnCompleteListener(task -> {
 
 
-                            String userName = mAuth.getCurrentUser().getDisplayName();
-                            String userEmail = mAuth.getCurrentUser().getEmail();
-                            String userJoinDate = user.getJoinDate();
+                        String userName = Objects.requireNonNull(mAuth.getCurrentUser()).getDisplayName();
+                        String userEmail = mAuth.getCurrentUser().getEmail();
+                        String userJoinDate = user.getJoinDate();
 
-                            getActivity().runOnUiThread(new Runnable() {
-                                @Override
-                                public void run() {
-                                    nameHolder.setText(userName);
-                                    emailHolder.setText(userEmail);
-                                    dateHolder.setText(userJoinDate);
-                                }
-                            });
+                        requireActivity().runOnUiThread(() -> {
+                            nameHolder.setText(userName);
+                            emailHolder.setText(userEmail);
+                            dateHolder.setText(userJoinDate);
+                        });
 
 
-                            //get current user's id
-                            String userId = mAuth.getCurrentUser().getUid();
-                            //THIS IS BEST WAY TO SHOW AND UPDATE DATA IN THE ADAPTER OF THE RECYCLE/LIST VIEW- SO IMPORTANT!!!!
-                            db.collection("Forum")
-                                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                                        @Override
-                                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                                            forumList.clear(); //CLEARS LIST SO IT DOESNT RELOAD MORE ON TOP OF OLD LIST EACH UPDATE
+                        //get current user's id
+                        String userId = mAuth.getCurrentUser().getUid();
+                        //THIS IS BEST WAY TO SHOW AND UPDATE DATA IN THE ADAPTER OF THE RECYCLE/LIST VIEW- SO IMPORTANT!!!!
+                        db.collection("Forum")
+                                .addSnapshotListener((value, error) -> {
+                                    forumList.clear(); //CLEARS LIST SO IT DOESNT RELOAD MORE ON TOP OF OLD LIST EACH UPDATE
 
-                                            //for each loop to loop through the documents and pull out info.
-                                            for (QueryDocumentSnapshot document : value) {
-                                                //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
-                                                Forum forum = document.toObject(Forum.class);
-                                                if (forum.getUserID().compareTo(userId) == 0) {
-                                                    forumList.add(forum);
-                                                }
-                                            }
-                                            Log.d(TAG, "onEvent: " + forumList);
-                                            Collections.sort(forumList, new Comparator<Forum>() {
-                                                @Override
-                                                public int compare(Forum forum, Forum forum2) {
-                                                    return forum.createdDate.compareTo(forum2.createdDate) * -1;
-                                                }
-                                            });
-                                            int count = adapter.getItemCount();
-
-                                            if(count > 99){
-                                                topicCount.setText("99+");
-                                            } else {
-                                                topicCount.setText(Integer.toString(count));
-                                            }
-                                            //HOW TO TELL THE ADAPTER TO UPDATE -----------------------SUPER IMPORTANT!!-----
-                                            adapter.notifyDataSetChanged();
+                                    //for each loop to loop through the documents and pull out info.
+                                    assert value != null;
+                                    for (QueryDocumentSnapshot document : value) {
+                                        //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
+                                        Forum forum = document.toObject(Forum.class);
+                                        if (forum.getUserID().compareTo(userId) == 0) {
+                                            forumList.add(forum);
                                         }
-                                    });
-                        }
+                                    }
+                                    Log.d(TAG, "onEvent: " + forumList);
+                                    Collections.sort(forumList, (forum, forum2) -> forum.createdDate.compareTo(forum2.createdDate) * -1);
+                                    int count = adapter.getItemCount();
+
+                                    if(count > 99){
+                                        topicCount.setText("99+");
+                                    } else {
+                                        topicCount.setText(Integer.toString(count));
+                                    }
+                                    //HOW TO TELL THE ADAPTER TO UPDATE -----------------------SUPER IMPORTANT!!-----
+                                    adapter.notifyDataSetChanged();
+                                });
                     });
         }
     }

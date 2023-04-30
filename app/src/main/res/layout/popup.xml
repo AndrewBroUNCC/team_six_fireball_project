@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
         android:fontFamily="@font/playfai_display_medium"
-        android:paddingRight="2dp"
+        android:paddingEnd="2dp"
         android:text="Update Profile"
         android:textColor="@color/black"
         android:textSize="34sp"

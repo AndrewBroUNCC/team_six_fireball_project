@@ -1,15 +1,11 @@
 package com.example.team_six_fireball_project;
 
 import android.content.Context;
-import android.content.res.Resources;
-import android.content.res.Resources.Theme;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -39,6 +35,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -126,7 +123,7 @@ public class GraphFragment extends Fragment {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 seekBar.setMin(1988);
             }
-            int now = 0;
+            int now;
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 now = LocalDate.now().getYear();
             } else {
@@ -138,12 +135,7 @@ public class GraphFragment extends Fragment {
             year = seekBar.getProgress();
             getHistogramYear(year);
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    seekBarYear.setText(Integer.toString(year));
-                }
-            });
+            requireActivity().runOnUiThread(() -> seekBarYear.setText(Integer.toString(year)));
 
 
 
@@ -174,44 +166,33 @@ public class GraphFragment extends Fragment {
             });
 
             //Buttons to swap back and forth from pie to hist//
-            histButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    pieChart.setVisibility(View.INVISIBLE);
-                    barChart.setVisibility(View.VISIBLE);
-                    seekBarYear.setVisibility(View.VISIBLE);
-                    seekBar.setVisibility(View.VISIBLE);
-                    meteorCount.setVisibility(View.VISIBLE);
-                    histButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
-                    pieButton.setBackgroundColor(getActivity().getColor(R.color.yellow_button_header));
-                    histButton.setClickable(false);
-                    pieButton.setClickable(true);
-                }
+            histButton.setOnClickListener(view -> {
+                pieChart.setVisibility(View.INVISIBLE);
+                barChart.setVisibility(View.VISIBLE);
+                seekBarYear.setVisibility(View.VISIBLE);
+                seekBar.setVisibility(View.VISIBLE);
+                meteorCount.setVisibility(View.VISIBLE);
+                histButton.setBackgroundColor(requireActivity().getColor(R.color.button_yellow_grey2));
+                pieButton.setBackgroundColor(requireActivity().getColor(R.color.yellow_button_header));
+                histButton.setClickable(false);
+                pieButton.setClickable(true);
             });
-            pieButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    seekBarYear.setVisibility(View.INVISIBLE);
-                    seekBar.setVisibility(View.INVISIBLE);
-                    pieChart.setVisibility(View.VISIBLE);
-                    barChart.setVisibility(View.INVISIBLE);
-                    meteorCount.setVisibility(View.INVISIBLE);
-                    histButton.setBackgroundColor(getActivity().getColor(R.color.yellow_button_header));
-                    pieButton.setBackgroundColor(getActivity().getColor(R.color.button_yellow_grey2));
-                    pieButton.setClickable(false);
-                    histButton.setClickable(true);
-                    //Pie Chart//
-                    sortFireBallListForPieChart();
-                    showPieChart();
-                    //end pie chart//
-                }
+            pieButton.setOnClickListener(view -> {
+                seekBarYear.setVisibility(View.INVISIBLE);
+                seekBar.setVisibility(View.INVISIBLE);
+                pieChart.setVisibility(View.VISIBLE);
+                barChart.setVisibility(View.INVISIBLE);
+                meteorCount.setVisibility(View.INVISIBLE);
+                histButton.setBackgroundColor(requireActivity().getColor(R.color.yellow_button_header));
+                pieButton.setBackgroundColor(requireActivity().getColor(R.color.button_yellow_grey2));
+                pieButton.setClickable(false);
+                histButton.setClickable(true);
+                //Pie Chart//
+                sortFireBallListForPieChart();
+                showPieChart();
+                //end pie chart//
             });
-            heatMapButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mGraphFragment.graphFragAlertUrl("Leaving FireBorn","Would you like to proceed to the Website?", "https://public.tableau.com/app/profile/anders.pierson/viz/FireBornVisualization/Dashboard1?publish=yes");
-                }
-            });
+            heatMapButton.setOnClickListener(view -> mGraphFragment.graphFragAlertUrl("Leaving FireBorn","Would you like to proceed to the Website?", "https://public.tableau.com/app/profile/anders.pierson/viz/FireBornVisualization/Dashboard1?publish=yes"));
             //end button swap from pie to hist, hist to pie//
             //thread stop//
         }
@@ -220,12 +201,14 @@ public class GraphFragment extends Fragment {
     public void sortFireBallListForPieChart(){
         int nullCount = 0;
         for (FireBall fireBall: fireBallList) {
-            if (fireBall.getLat() != "null" || fireBall.getLon() != "null" || fireBall.getLatDir() != "null" || fireBall.getLonDir()!="null") {
+               /*
+            ####
+            WAS ORIGINALLY WRITTEN AS fireBall.get() != "null", WAS CHANGED TO EQUALS
+             */
+            if (!Objects.equals(fireBall.getLat(), "null") || !Objects.equals(fireBall.getLon(), "null") || !Objects.equals(fireBall.getLatDir(), "null") || !Objects.equals(fireBall.getLonDir(), "null")) {
                // Log.d(TAG, "sortFireBallListForPieChart: " + fireBall.getLat());
                 double lat;
                 double lon;
-//                double lat = 0;
-//                double lon = 0;
                 String latDir = fireBall.getLatDir();
                 String lonDir = fireBall.getLonDir();
                 Double laat = Double.parseDouble(fireBall.getLat());
@@ -293,7 +276,7 @@ public class GraphFragment extends Fragment {
 
         //input data and fit data into pie chart entry
         for(String type: typeAmountMap.keySet()){
-            pieEntries.add(new PieEntry(typeAmountMap.get(type).floatValue(), type));
+            pieEntries.add(new PieEntry(Objects.requireNonNull(typeAmountMap.get(type)).floatValue(), type));
         }
 
         //collecting the entries with label name
@@ -324,7 +307,7 @@ public class GraphFragment extends Fragment {
         int yearForGraph;
         public HistogramRunnable(int yearForGraph){
             this.yearForGraph = yearForGraph;
-        };
+        }
 
         @Override
         public void run() {
@@ -394,16 +377,9 @@ public class GraphFragment extends Fragment {
             calEnd.set(yearForGraph+1,0,1,0,0,1);
             String strCalEnd = dateFormat.format(calEnd.getTime());
 
-        /*
-        dateFormat.format(cal.getTime());
-        Log.d(TAG, "getHistogramYear: " + dateFormat.format(calEnd.getTime()));
-         */
-            //Log.d(TAG, "getHistogramYear: test 1: "+fireBallList.get(0).getDate());
-            //Log.d(TAG, "getHistogramYear: test 2: "+strCalStartJan);
             for (FireBall fireBallTemp :fireBallList) {
                 if (fireBallTemp.getDate().compareTo(strCalStartJan)>=0 && fireBallTemp.getDate().compareTo(strCalFeb)<0){
                     jan += 1;
-                    //Log.d(TAG, "getHistogramYear: "+fireBallTemp.getDate());
                 } else if (fireBallTemp.getDate().compareTo(strCalFeb)>=0 && fireBallTemp.getDate().compareTo(strCalMar)<0){
                     feb += 1;
                 } else if (fireBallTemp.getDate().compareTo(strCalMar)>=0 && fireBallTemp.getDate().compareTo(strCalApr)<0){
@@ -437,7 +413,7 @@ public class GraphFragment extends Fragment {
         int yearForCount;
         public GetDataRunnable(int yearForGraph){
             this.yearForCount = yearForGraph;
-        };
+        }
 
         @Override
         public void run() {
@@ -476,12 +452,7 @@ public class GraphFragment extends Fragment {
                 barChart.setData(barData);
             }
 
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    meteorCount.setText("FireBall count is " + count + " for " +yearForCount);
-                }
-            });
+            requireActivity().runOnUiThread(() -> meteorCount.setText("FireBall count is " + count + " for " +yearForCount));
         }
     }
 

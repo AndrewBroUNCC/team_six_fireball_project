@@ -4,7 +4,6 @@ import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -18,15 +17,11 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -81,7 +76,7 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
         //gets list from main activity.
         //get forumID
         forumID = mCommentFragment.getForumID();
-        getActivity().setTitle("Comment Page");
+        requireActivity().setTitle("Comment Page");
         homeButton = view.findViewById(R.id.viewCommentFragHomeButton);
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
         recyclerView = view.findViewById(R.id.recycleViewComments);
@@ -104,80 +99,35 @@ public class CommentFragment extends Fragment implements  RecycleViewCommentAdap
 
         @Override
         public void run() {
-            commentButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getParentFragmentManager().beginTransaction()
-                            .replace(R.id.fragment_container, new CreateCommentFragment())
-                            .addToBackStack(null)
-                            .commit();
-                }
-            });
+            commentButton.setOnClickListener(view -> getParentFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_container, new CreateCommentFragment())
+                    .addToBackStack(null)
+                    .commit());
 
-            homeButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    mCommentFragment.commentToHome();
-                }
-            });
+            homeButton.setOnClickListener(view -> mCommentFragment.commentToHome());
 
             FirebaseFirestore db = FirebaseFirestore.getInstance();
             db.collection("Forum").document(forumID)
                     .collection("comments")
-                    .addSnapshotListener(new EventListener<QuerySnapshot>() {
-                        @Override
-                        public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-                            commentsList.clear();
-                            for (QueryDocumentSnapshot document: value) {
-                                //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
-                                Comment comment = document.toObject(Comment.class);
-                                //Log.d(TAG, "onEvent: " + comment.commenterName);
-                                commentsList.add(comment);
-                            }
-                            Collections.sort(commentsList, new Comparator<Comment>() {
-                                @Override
-                                public int compare(Comment comment, Comment comment2) {
-                                    return comment.date.compareTo(comment2.date)*-1;
-                                }
-                            });
-                            if (commentsList.size() > 0) {
-                                commentTitle = commentsList.get(commentsList.size() - 1).getTopic();
-                                Log.d(TAG, "onEvent: comment= " + commentsList.get(commentsList.size()-1));
-                                textViewTitle.setText(commentTitle);
-                            }
-                            adapter.notifyDataSetChanged();
+                    .addSnapshotListener((value, error) -> {
+                        commentsList.clear();
+                        assert value != null;
+                        for (QueryDocumentSnapshot document: value) {
+                            //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
+                            Comment comment = document.toObject(Comment.class);
+                            //Log.d(TAG, "onEvent: " + comment.commenterName);
+                            commentsList.add(comment);
                         }
+                        Collections.sort(commentsList, (comment, comment2) -> comment.date.compareTo(comment2.date)*-1);
+                        if (commentsList.size() > 0) {
+                            commentTitle = commentsList.get(commentsList.size() - 1).getTopic();
+                            Log.d(TAG, "onEvent: comment= " + commentsList.get(commentsList.size()-1));
+                            textViewTitle.setText(commentTitle);
+                        }
+                        adapter.notifyDataSetChanged();
                     });
         }
     }
-
-    //moved to a thread.
-//    private void getData(TextView textViewTitle){
-//        FirebaseFirestore db = FirebaseFirestore.getInstance();
-//        db.collection("Forum").document(forumID)
-//                .collection("comments")
-//                .addSnapshotListener(new EventListener<QuerySnapshot>() {
-//                    @Override
-//                    public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
-//                        commentsList.clear();
-//                        for (QueryDocumentSnapshot document: value) {
-//                            //Log.d(TAG, "onEvent: getData() = " + document.getData().toString());
-//                            Comment comment = document.toObject(Comment.class);
-//                            //Log.d(TAG, "onEvent: " + comment.commenterName);
-//                            commentsList.add(comment);
-//                            commentTitle = comment.getTopic();
-//                        }
-//                        Collections.sort(commentsList, new Comparator<Comment>() {
-//                            @Override
-//                            public int compare(Comment comment, Comment comment2) {
-//                                return comment.date.compareTo(comment2.date)*-1;
-//                            }
-//                        });
-//                        textViewTitle.setText(commentTitle);
-//                        adapter.notifyDataSetChanged();
-//                    }
-//                });
-//    }
 
     interface ICommentFragment{
         String  getForumID();

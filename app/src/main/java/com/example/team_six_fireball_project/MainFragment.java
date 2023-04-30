@@ -1,8 +1,6 @@
 package com.example.team_six_fireball_project;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,7 +8,6 @@ import androidx.appcompat.app.AlertDialog;
 import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,12 +15,6 @@ import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.w3c.dom.Text;
-
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -98,16 +89,13 @@ public class MainFragment extends Fragment {
         genInfoContainer = view.findViewById(R.id.home_geninfo_btn_container);
         contactUs = view.findViewById(R.id.textViewMainFragContactLink);
 
-        validate = new AlertDialog.Builder(requireActivity()).setPositiveButton("Error", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+        validate = new AlertDialog.Builder(requireActivity()).setPositiveButton("Error", (dialogInterface, i) -> {
 
-            }
         }).create();
         validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
         //has to be done in main thread.
-        getActivity().setTitle("Home Page");
+        requireActivity().setTitle("Home Page");
 
         //take weight off main thread.
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
@@ -139,19 +127,14 @@ public class MainFragment extends Fragment {
             }
 
             //go to contactUs Fragment
-            contactUs.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    getActivity().getSupportFragmentManager().beginTransaction()
-                            .setCustomAnimations(
-                                    R.anim.slide_in,
-                                    R.anim.fade_out
-                            )
-                            .replace(R.id.fragment_container, new ContactUsFragment())
-                            .addToBackStack(null)
-                            .commit();
-                }
-            });
+            contactUs.setOnClickListener(view -> requireActivity().getSupportFragmentManager().beginTransaction()
+                    .setCustomAnimations(
+                            R.anim.slide_in,
+                            R.anim.fade_out
+                    )
+                    .replace(R.id.fragment_container, new ContactUsFragment())
+                    .addToBackStack(null)
+                    .commit());
 
             //onclick events for all button clicks in the home page
             forumContainer.setOnClickListener(v -> {
@@ -260,34 +243,22 @@ public class MainFragment extends Fragment {
         if(alert == 1){
                     validate.setTitle("Error");
                     validate.setMessage("You must be Logged In to access Forum");
-            getActivity().runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    validate.show();
-
-                }
-            });
+            requireActivity().runOnUiThread(() -> validate.show());
         } else if (alert ==2){
             AlertDialog validate2 = new AlertDialog.Builder(requireActivity())
                     .setTitle("Logout")
                     .setMessage("Would you like to logout?")
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    .setNegativeButton("No", (dialogInterface, i) -> {
 
-                        }
                     })
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //sign out
-                            mMainFragment.mainSignOut();
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        //sign out
+                        mMainFragment.mainSignOut();
 
-                            getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new MainFragment())
-                                    .addToBackStack(null)
-                                    .commit();
-                        }
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new MainFragment())
+                                .addToBackStack(null)
+                                .commit();
                     }).create();
                     validate2.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
                     validate2.show();
@@ -296,23 +267,17 @@ public class MainFragment extends Fragment {
             AlertDialog validate3 = new AlertDialog.Builder(requireActivity())
                     .setTitle("Must be logged in")
                     .setMessage("Would you like to go to login screen?")
-                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                    .setNegativeButton("No", (dialogInterface, i) -> {
 
-                        }
                     })
-                    .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
-                            //sign out
-                            mMainFragment.mainSignOut();
+                    .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        //sign out
+                        mMainFragment.mainSignOut();
 
-                            getParentFragmentManager().beginTransaction()
-                                    .replace(R.id.fragment_container, new LoginFragment())
-                                    .addToBackStack(null)
-                                    .commit();
-                        }
+                        getParentFragmentManager().beginTransaction()
+                                .replace(R.id.fragment_container, new LoginFragment())
+                                .addToBackStack(null)
+                                .commit();
                     }).create();
             validate3.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
             validate3.show();

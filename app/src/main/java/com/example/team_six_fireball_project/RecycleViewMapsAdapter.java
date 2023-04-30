@@ -11,8 +11,6 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.firebase.auth.FirebaseAuth;
 
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 
 public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMapsAdapter.UserViewHolder> {
@@ -36,8 +34,7 @@ public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMaps
     public RecycleViewMapsAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         //
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_view_maps_item, parent, false);
-        RecycleViewMapsAdapter.UserViewHolder userViewHolder = new RecycleViewMapsAdapter.UserViewHolder(view);
-        return userViewHolder;
+        return new UserViewHolder(view);
     }
 
     @Override
@@ -53,12 +50,7 @@ public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMaps
         holder.meteorAlt.setText("Alt: "+fireBall.getAlt());
         holder.meteorVel.setText("Vel: "+fireBall.getVel());
 
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mRecycleViewMapsAdapter.goToFireBallOnMap(fireBall);
-            }
-        });
+        holder.itemView.setOnClickListener(view -> mRecycleViewMapsAdapter.goToFireBallOnMap(fireBall));
     }
 
     @Override
@@ -67,8 +59,6 @@ public class RecycleViewMapsAdapter extends RecyclerView.Adapter<RecycleViewMaps
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
-        //TextView textView = itemView.findViewById(R.id.textViewSortText);
-        // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
         TextView meteorDate = itemView.findViewById(R.id.textViewMapsFragRecDate);
         TextView meteorLat = itemView.findViewById(R.id.textViewMapsFragRecLat);
         TextView meteorLon = itemView.findViewById(R.id.textViewMapsFragRecLon);

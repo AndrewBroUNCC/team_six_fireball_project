@@ -1,11 +1,9 @@
 package com.example.team_six_fireball_project;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -15,8 +13,8 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+import java.util.Objects;
+
 
 public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewForumsAdapter.UserViewHolder> {
 
@@ -39,8 +37,7 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
     public RecycleViewForumsAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_view_forum_item, parent, false);
-        RecycleViewForumsAdapter.UserViewHolder userViewHolder = new RecycleViewForumsAdapter.UserViewHolder(view);
-        return userViewHolder;
+        return new UserViewHolder(view);
     }
 
     @Override
@@ -56,28 +53,18 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
         holder.textViewDate.setText(date);
 
         mAuth = FirebaseAuth.getInstance();
-        //Log.d(TAG, "onBindViewHolder: user LOGGED IN: id test = " + mAuth.getCurrentUser().getUid());
-        //Log.d(TAG, "onBindViewHolder: user id of post = " + forum.userID);
 
-        if (mAuth.getCurrentUser().getUid().equals(forum.userID)){
+        if (Objects.requireNonNull(mAuth.getCurrentUser()).getUid().equals(forum.userID)){
             holder.imageViewTrash.setVisibility(View.VISIBLE);
         } else{
             holder.imageViewTrash.setVisibility(View.INVISIBLE);
         }
 
-        holder.imageViewTrash.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                //Log.d(TAG, "onClick: position " + position );
-                mRecycleViewForumsAdapter.deleteThisExpense(forumId);
-            }
+        holder.imageViewTrash.setOnClickListener(view -> {
+            //Log.d(TAG, "onClick: position " + position );
+            mRecycleViewForumsAdapter.deleteThisExpense(forumId);
         });
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mRecycleViewForumsAdapter.openCommentSectionOfTopic(forum.getForumID());
-            }
-        });
+        holder.itemView.setOnClickListener(view -> mRecycleViewForumsAdapter.openCommentSectionOfTopic(forum.getForumID()));
     }
 
     @Override
@@ -86,8 +73,6 @@ public class RecycleViewForumsAdapter extends RecyclerView.Adapter<RecycleViewFo
     }
 
     public static class UserViewHolder extends RecyclerView.ViewHolder {
-        //TextView textView = itemView.findViewById(R.id.textViewSortText);
-        // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
         TextView textViewTitle = itemView.findViewById(R.id.textViewForumViewTitle);
         TextView textViewCreator = itemView.findViewById(R.id.textViewForumViewCreator);
         TextView textViewDate = itemView.findViewById(R.id.textViewForumViewDate);

@@ -1,32 +1,25 @@
 package com.example.team_six_fireball_project;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.Toast;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
-import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
-import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -79,39 +72,28 @@ public class RegisterFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_register, container, false);
 
         executorService = Executors.newFixedThreadPool(DEFAULT_THREAD_POOL_SIZE);
-        getActivity().setTitle("Register");
+        requireActivity().setTitle("Register");
         editTextEmail = view.findViewById(R.id.editTextRegisterPgEmail);
         editTextPassword = view.findViewById(R.id.editTextRegisterPgPassword);
         buttonRegister = view.findViewById(R.id.buttonRegisterPgRegister);
         buttonCancel = view.findViewById(R.id.buttonRegisterPgCancel);
         editTextName = view.findViewById(R.id.editTextRegFragName);
 
-        validate = new AlertDialog.Builder(getActivity())
-                .setPositiveButton("Ok", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+        validate = new AlertDialog.Builder(requireActivity())
+                .setPositiveButton("Ok", (dialogInterface, i) -> {
 
-                    }
                 }).create();
         validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
-        buttonCancel.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                getParentFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new LoginFragment())
-                        .addToBackStack(null)
-                        .commit();
-            }
-        });
+        buttonCancel.setOnClickListener(view1 -> getParentFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new LoginFragment())
+                .addToBackStack(null)
+                .commit());
 
-        buttonRegister.setOnClickListener(new View.OnClickListener() {
-            //made a new thread to run registering
-            @Override
-            public void onClick(View view) {
-                RegisterRunnable registerRunnable = new RegisterRunnable();
-                executorService.execute(registerRunnable);
-            }
+        //made a new thread to run registering
+        buttonRegister.setOnClickListener(view12 -> {
+            RegisterRunnable registerRunnable = new RegisterRunnable();
+            executorService.execute(registerRunnable);
         });
 
         return view;
@@ -129,47 +111,27 @@ public class RegisterFragment extends Fragment {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Name is Empty");
-                        getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
+                requireActivity().runOnUiThread(() -> validate.show());
             }
             else if (email.isEmpty()) {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Email is Empty");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        validate.show();
-
-                    }
-                });
+                requireActivity().runOnUiThread(() -> validate.show());
             } else if (password.isEmpty()) {
                 //how to build an Alert Dialog
                         validate.setTitle("Error");
                         validate.setMessage("Password is Empty");
-                getActivity().runOnUiThread(new Runnable() {
-                    @Override
-                    public void run() {
-                        validate.show();
-
-                    }
-                });
+                requireActivity().runOnUiThread(() -> validate.show());
             } else {
                 mAuth = FirebaseAuth.getInstance();
                 mAuth.createUserWithEmailAndPassword(email,password)
-                        .addOnCompleteListener(getActivity(), new OnCompleteListener<AuthResult>() {
-                            @Override
-                            public void onComplete(@NonNull Task<AuthResult> task) {
-                                if(task.isSuccessful()){
+                        .addOnCompleteListener(requireActivity(), task -> {
+                            if(task.isSuccessful()){
 
-                                    setData(name, mAuth.getCurrentUser().getUid(), email);
+                                setData(name, Objects.requireNonNull(mAuth.getCurrentUser()).getUid(), email);
 
-                                    //HOW TO UPDATE USER PROFILE
+                                //HOW TO UPDATE USER PROFILE
 //                                    FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 //
 //                                    UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
@@ -187,22 +149,15 @@ public class RegisterFragment extends Fragment {
 //                                                }
 //                                            });
 
-                                    //UPDATE user display name on Auth user side
+                                //UPDATE user display name on Auth user side
 
-                                } else {
-                                    //Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
+                            } else {
+                                //Log.d(TAG, "onComplete: Login Failed: message = " + task.getException().getMessage());
 
-                                    //how to build an Alert Dialog
-                                            validate.setTitle("Error");
-                                            validate.setMessage(task.getException().getMessage());
-                                    getActivity().runOnUiThread(new Runnable() {
-                                        @Override
-                                        public void run() {
-                                            validate.show();
-
-                                        }
-                                    });
-                                }
+                                //how to build an Alert Dialog
+                                        validate.setTitle("Error");
+                                        validate.setMessage(Objects.requireNonNull(task.getException()).getMessage());
+                                requireActivity().runOnUiThread(() -> validate.show());
                             }
                         });
             }
@@ -221,26 +176,18 @@ public class RegisterFragment extends Fragment {
 
             db.collection("userList")
                     .add(user)
-                    .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
-                        @Override
-                        public void onSuccess(DocumentReference documentReference) {
-                        }
-                    }).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                        @Override
-                        public void onComplete(@NonNull Task<DocumentReference> task) {
-                            FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                            UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
-                                    .setDisplayName(name)
-                                    .build();
-                            user.updateProfile(profileUpdates)
-                                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<Void> task) {
-                                            //Log.d(TAG, "onComplete: User has been registered successfully");
-                                            mRegisterFragment.goToHomeFragment(getContext());
-                                        }
-                                    });
-                        }
+                    .addOnSuccessListener(documentReference -> {
+                    }).addOnCompleteListener(task -> {
+                        FirebaseUser user1 = FirebaseAuth.getInstance().getCurrentUser();
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(name)
+                                .build();
+                        assert user1 != null;
+                        user1.updateProfile(profileUpdates)
+                                .addOnCompleteListener(task1 -> {
+                                    //Log.d(TAG, "onComplete: User has been registered successfully");
+                                    mRegisterFragment.goToHomeFragment(getContext());
+                                });
                     });
         }
     }

@@ -2,9 +2,7 @@ package com.example.team_six_fireball_project;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.appcompat.app.AlertDialog;
@@ -16,7 +14,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -59,7 +56,7 @@ public class ContactUsFragment extends Fragment {
         crossFade();
 
         //code here
-        getActivity().setTitle("Support Page");
+        requireActivity().setTitle("Support Page");
 
         FirebaseAuth mAuth = FirebaseAuth.getInstance();
         if (mAuth.getCurrentUser() != null){
@@ -69,39 +66,30 @@ public class ContactUsFragment extends Fragment {
 
 
 
-        submitButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String[] supportEmail = {"abrow359@uncc.edu"};
-                String message =  editTextMsg.getText().toString();
-                String subject = editTextUserSubject.getText().toString();
+        submitButton.setOnClickListener(view1 -> {
+            String[] supportEmail = {"abrow359@uncc.edu"};
+            String message =  editTextMsg.getText().toString();
+            String subject = editTextUserSubject.getText().toString();
 
-                if (message == null || message.isEmpty()) {
-                    AlertDialog validate = new AlertDialog.Builder(getActivity())
-                            .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                @Override
-                                public void onClick(DialogInterface dialogInterface, int i) {
-                                }
-                            }).setTitle("Error").setMessage("Message is Empty.").create();
+            if (message == null || message.isEmpty()) {
+                AlertDialog validate = new AlertDialog.Builder(requireActivity())
+                        .setPositiveButton("Yes", (dialogInterface, i) -> {
+                        }).setTitle("Error").setMessage("Message is Empty.").create();
+                validate.show();
+            } else if (subject == null || subject.isEmpty()){
+                    AlertDialog validate = new AlertDialog.Builder(requireActivity())
+                            .setPositiveButton("Yes", (dialogInterface, i) -> {
+                            }).setTitle("Error").setMessage("Subject is Empty.").create();
                     validate.show();
-                } else if (subject == null || subject.isEmpty()){
-                        AlertDialog validate = new AlertDialog.Builder(getActivity())
-                                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialogInterface, int i) {
-                                    }
-                                }).setTitle("Error").setMessage("Subject is Empty.").create();
-                        validate.show();
-                    } else {
-                    Intent intent = new Intent(Intent.ACTION_SEND);
-                    intent.putExtra(Intent.EXTRA_EMAIL, supportEmail);
-                    intent.putExtra(Intent.EXTRA_SUBJECT, subject);
-                    intent.putExtra(Intent.EXTRA_TEXT, message);
+                } else {
+                Intent intent = new Intent(Intent.ACTION_SEND);
+                intent.putExtra(Intent.EXTRA_EMAIL, supportEmail);
+                intent.putExtra(Intent.EXTRA_SUBJECT, subject);
+                intent.putExtra(Intent.EXTRA_TEXT, message);
 
-                    intent.setType("message/rfc822");
-                    startActivity(Intent.createChooser(intent, "Choose an email client"));
+                intent.setType("message/rfc822");
+                startActivity(Intent.createChooser(intent, "Choose an email client"));
 
-                }
             }
         });
         return view;
