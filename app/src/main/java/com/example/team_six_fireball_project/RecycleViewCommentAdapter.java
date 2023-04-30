@@ -1,26 +1,21 @@
 package com.example.team_six_fireball_project;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.firebase.auth.FirebaseAuth;
-
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
+
 
 public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewCommentAdapter.UserViewHolder> {
 
     private static final String TAG = "RecycleViewCommentAdapt";
     IRecycleViewCommentAdapter mRecycleViewCommentAdapter;
-    ArrayList<Comment> comments = new ArrayList<>();
+    ArrayList<Comment> comments;
 
     public RecycleViewCommentAdapter(ArrayList<Comment> data, IRecycleViewCommentAdapter adapter) {
         this.comments = data;
@@ -32,8 +27,7 @@ public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewC
     public RecycleViewCommentAdapter.UserViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycle_view_chat_item, parent, false);
-        RecycleViewCommentAdapter.UserViewHolder userViewHolder = new RecycleViewCommentAdapter.UserViewHolder(view);
-        return userViewHolder;
+        return new UserViewHolder(view);
     }
 
     @Override
@@ -58,8 +52,6 @@ public class RecycleViewCommentAdapter extends RecyclerView.Adapter<RecycleViewC
         return this.comments.size();
     }
     public static class UserViewHolder extends RecyclerView.ViewHolder {
-        //TextView textView = itemView.findViewById(R.id.textViewSortText);
-        // View sortViewContainer = itemView.findViewById(R.id.viewSortContainer);
         TextView textViewCommenterName = itemView.findViewById(R.id.textViewCommentersName);
         TextView textViewComment = itemView.findViewById(R.id.textViewComment);
         TextView textViewDateTime = itemView.findViewById(R.id.textViewDateTime);

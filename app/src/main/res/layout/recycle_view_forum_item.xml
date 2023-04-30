@@ -30,7 +30,7 @@
             android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="26dp"
             android:text="Topic:"
             android:textColor="@color/black" />
@@ -39,7 +39,7 @@
             android:id="@+id/textView17"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="47dp"
             android:text="Date:"
             android:textColor="@color/black" />
@@ -48,7 +48,7 @@
             android:id="@+id/textViewForumViewDate"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="65dp"
+            android:layout_marginStart="65dp"
             android:layout_marginTop="47dp"
             android:text="Example Date yy/mm/dd"
             android:textColor="@color/black"
@@ -59,7 +59,7 @@
             android:id="@+id/textViewForumViewTitle"
             android:layout_width="185dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="65dp"
+            android:layout_marginStart="65dp"
             android:layout_marginTop="24dp"
             android:singleLine="true"
             android:text="Topic example"
@@ -71,7 +71,7 @@
             android:id="@+id/textViewForumViewCreator"
             android:layout_width="223dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="25dp"
+            android:layout_marginStart="25dp"
             android:layout_marginTop="2dp"
             android:singleLine="true"
             android:text="Topic example"
@@ -83,7 +83,7 @@
             android:id="@+id/imageViewTrashDelete"
             android:layout_width="50dp"
             android:layout_height="50dp"
-            android:layout_marginLeft="285dp"
+            android:layout_marginStart="285dp"
             android:layout_marginTop="10dp"
             android:backgroundTint="#FFFFFF"
             android:elevation="12dp"
@@ -102,7 +102,7 @@
                 android:layout_height="wrap_content"
                 android:scaleX=".75"
                 android:scaleY=".75"
-                android:src="@drawable/rubbish_bin"></ImageView>
+                android:src="@drawable/rubbish_bin" />
         </androidx.cardview.widget.CardView>
 
     </androidx.cardview.widget.CardView>

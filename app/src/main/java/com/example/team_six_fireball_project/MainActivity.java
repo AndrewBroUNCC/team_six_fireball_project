@@ -145,18 +145,12 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
     @Override
     public void generalInfoAlert(String title, String message, String url) {
         AlertDialog validate = new AlertDialog.Builder(this)
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        Uri webpage = Uri.parse(url);
-                        Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
-                        startActivity(webIntent);
-                    }
-                }).setNegativeButton("No", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setPositiveButton("Yes", (dialogInterface, i) -> {
+                    Uri webpage = Uri.parse(url);
+                    Intent webIntent = new Intent(Intent.ACTION_VIEW, webpage);
+                    startActivity(webIntent);
+                }).setNegativeButton("No", (dialogInterface, i) -> {
 
-                    }
                 }).setTitle(title).setMessage(message).create();
         validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
         validate.show();
@@ -224,24 +218,21 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
             buttonPopUpUpdate = updatePopUp.findViewById(R.id.buttonPopUpUpdate);
             dialogBuilder.setView(updatePopUp);
 
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    //animating validation buttons (has to be in main thread)
-                    validate = new AlertDialog.Builder(updatePopUp.getContext())
-                            .setPositiveButton("Ok", (dialogInterface, i) -> {
-                            }).create();
-                    validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
+            runOnUiThread(() -> {
+                //animating validation buttons (has to be in main thread)
+                validate = new AlertDialog.Builder(updatePopUp.getContext())
+                        .setPositiveButton("Ok", (dialogInterface, i) -> {
+                        }).create();
+                validate.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
 
-                    dialog = dialogBuilder.create();
+                dialog = dialogBuilder.create();
 
-                    //Animation is themes.xml. and runs using anim folders xml files hide and show
-                    if (dialog.getWindow() != null) {
-                        dialog.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
-                    }
-
-                    dialog.show();
+                //Animation is themes.xml. and runs using anim folders xml files hide and show
+                if (dialog.getWindow() != null) {
+                    dialog.getWindow().getAttributes().windowAnimations = R.style.AnimationSlide;
                 }
+
+                dialog.show();
             });
 
 
@@ -276,13 +267,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
                         //how to build an Alert Dialog
                                 validate.setTitle("Error");
                                 validate.setMessage("Name is Empty");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
+                        runOnUiThread(() -> validate.show());
                     }
                 });
                 buttonUpdatePopUpPictureSave.setOnClickListener(view -> {
@@ -290,13 +275,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
                                 validate.setTitle("Invalid Input");
                                 validate.setMessage("Url is empty");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
+                        runOnUiThread(() -> validate.show());
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -331,13 +310,7 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
                     if (editTextPopUpUrl.getText() == null || editTextPopUpUrl.getText().toString().isEmpty()) {
                                 validate.setTitle("Invalid Input");
                                 validate.setMessage("Url is empty");
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                validate.show();
-
-                            }
-                        });
+                        runOnUiThread(() -> validate.show());
                     } else {
                         String urlTemp = editTextPopUpUrl.getText().toString();
                         Picasso.get()
@@ -471,12 +444,11 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
     @Override
     public ArrayList<FireBall> getFireBallList() {
         for (FireBall fireBall: fireBallList) {
-            if (fireBall.getLat() != "null" || fireBall.getLon() != "null" || fireBall.getLatDir() != "null" || fireBall.getLonDir() != "null") {
+            if (!Objects.equals(fireBall.getLat(), "null") || !Objects.equals(fireBall.getLon(), "null") || !Objects.equals(fireBall.getLatDir(), "null") || !Objects.equals(fireBall.getLonDir(), "null")) {
                 // Log.d(TAG, "sortFireBallListForPieChart: " + fireBall.getLat());
                 double lat;
                 double lon;
-//                double lat = 0;
-//                double lon = 0;
+
                 String latDir = fireBall.getLatDir();
                 String lonDir = fireBall.getLonDir();
                 Double laat = Double.parseDouble(fireBall.getLat());
@@ -718,13 +690,8 @@ public class MainActivity extends AppCompatActivity implements GeneralInfoFragme
 
         dialogSuccess.show();
         final Handler handler = new Handler(Looper.getMainLooper());
-        handler.postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                //Do something after 2000ms
-                dialogSuccess.dismiss();
-            }
-        }, 2000);
+        //Do something after 2000ms
+        handler.postDelayed(dialogSuccess::dismiss, 2000);
         //========how to show success screen ^ =============
     }
 

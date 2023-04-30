@@ -1,8 +1,6 @@
 package com.example.team_six_fireball_project;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,8 +11,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
-
-import org.w3c.dom.Text;
 
 
 public class GeneralInfoFragment extends Fragment {
@@ -57,42 +53,22 @@ public class GeneralInfoFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_general_info, container, false);
-        getActivity().setTitle("Information");
+        requireActivity().setTitle("Information");
 
         /* Example block for wanting an onclick event (Ex. click on text, button, image,e tc..) */
         TextView testTextView = view.findViewById(R.id.textViewTest);
-        testTextView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://www.theguardian.com/science/2013/nov/06/chelyabinsk-meteor-russia");
-            }
-        });
+        testTextView.setOnClickListener(view1 -> mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://www.theguardian.com/science/2013/nov/06/chelyabinsk-meteor-russia"));
 
 
         Button button_Recent_Fireball_Activity = view.findViewById(R.id.button_Recent_Fireball_Activity);
-        button_Recent_Fireball_Activity.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://fireball.imo.net/members/imo_view/browse_events");
-            }
-        });
+        button_Recent_Fireball_Activity.setOnClickListener(view12 -> mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://fireball.imo.net/members/imo_view/browse_events"));
 
         Button button_report = view.findViewById(R.id.button_report);
 
-        button_report.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://ams.imo.net/members/imo/report_intro/");
-            }
-        });
+        button_report.setOnClickListener(view13 -> mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://ams.imo.net/members/imo/report_intro/"));
 
         Button button_faq = view.findViewById(R.id.button_faq);
-        button_faq.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://www.amsmeteors.org/fireballs/faqf/");
-            }
-        });
+        button_faq.setOnClickListener(view14 -> mGeneralInfoFragment.generalInfoAlert("Leaving FireBorn","Would you like to proceed to the Website?","https://www.amsmeteors.org/fireballs/faqf/"));
 
         return view;
     }
